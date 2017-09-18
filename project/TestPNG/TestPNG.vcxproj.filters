@@ -1,0 +1,109 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Base Files">
+      <UniqueIdentifier>{0b05af4a-96ea-4022-b957-521183b5349c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base Files\IO">
+      <UniqueIdentifier>{dbaad80b-57c6-4c91-965a-61493ef2cd12}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TestPNG.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CBaseObject.h">
+      <Filter>Base Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CNodeList.h">
+      <Filter>Base Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CRegMng.h">
+      <Filter>Base Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\USystemFunc.h">
+      <Filter>Base Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CPngDec.h">
+      <Filter>Base Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CIOcurl.h">
+      <Filter>Base Files\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CIOFile.h">
+      <Filter>Base Files\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CIOBase.h">
+      <Filter>Base Files\IO</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TestPNG.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CBaseObject.cpp">
+      <Filter>Base Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CNodeList.cpp">
+      <Filter>Base Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CRegMng.cpp">
+      <Filter>Base Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\USystemFunc.cpp">
+      <Filter>Base Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CPngDec.cpp">
+      <Filter>Base Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CIOcurl.cpp">
+      <Filter>Base Files\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CIOFile.cpp">
+      <Filter>Base Files\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CIOBase.cpp">
+      <Filter>Base Files\IO</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="TestPNG.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="TestPNG.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

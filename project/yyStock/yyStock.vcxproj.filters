@@ -1,0 +1,154 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Base Files">
+      <UniqueIdentifier>{9a623a70-7bf5-4f44-8ac6-f1bc44644bc1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files">
+      <UniqueIdentifier>{6a7102d8-d9ed-444d-bcee-621422565d69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Stock Files">
+      <UniqueIdentifier>{ef6355f4-5775-4d32-9701-5c3d609f9af4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI Files">
+      <UniqueIdentifier>{b6901895-da97-4064-9dfa-0bd159b81d03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Base Files\IO">
+      <UniqueIdentifier>{9d5abae6-7be1-4742-b69d-3e5f511da2b6}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="yyStock.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CBaseObject.h">
+      <Filter>Base Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CNodeList.h">
+      <Filter>Base Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CPngDec.h">
+      <Filter>Base Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CRegMng.h">
+      <Filter>Base Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\USystemFunc.h">
+      <Filter>Base Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\qcDef.h">
+      <Filter>Include Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\qcErr.h">
+      <Filter>Include Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\qcStock.h">
+      <Filter>Include Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\qcType.h">
+      <Filter>Include Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\stock\CStockItemList.h">
+      <Filter>Stock Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CIOBase.h">
+      <Filter>Base Files\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CIOcurl.h">
+      <Filter>Base Files\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CIOFile.h">
+      <Filter>Base Files\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\ULogFunc.h">
+      <Filter>Base Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\UThreadFunc.h">
+      <Filter>Base Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\stock\UStockParser.h">
+      <Filter>Stock Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="yyStock.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CBaseObject.cpp">
+      <Filter>Base Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CNodeList.cpp">
+      <Filter>Base Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CPngDec.cpp">
+      <Filter>Base Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CRegMng.cpp">
+      <Filter>Base Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\USystemFunc.cpp">
+      <Filter>Base Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\stock\CStockItemList.cpp">
+      <Filter>Stock Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CIOBase.cpp">
+      <Filter>Base Files\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CIOcurl.cpp">
+      <Filter>Base Files\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CIOFile.cpp">
+      <Filter>Base Files\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\ULogFunc.c">
+      <Filter>Base Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\UThreadFunc.cpp">
+      <Filter>Base Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\stock\UStockParser.cpp">
+      <Filter>Stock Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="yyStock.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="yyStock.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+  </ItemGroup>
+</Project>
