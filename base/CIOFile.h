@@ -27,6 +27,7 @@ public:
 	virtual int			Write (unsigned char * pBuff, int nSize);
 	virtual long long 	SetPos (long long llPos, int nFlag);
 
+	virtual char *		GetData(void);
 	virtual QCIOType	GetType (void);
 
 protected:

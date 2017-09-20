@@ -49,10 +49,6 @@ int CIOFile::Open (const char * pURL, long long llOffset, int nFlag)
 		m_llSize = dwHigh;
 		m_llSize = m_llSize << 32;
 		m_llSize += dwSize;
-
-		int nSize = (int)m_llSize;
-		m_pData = new char[nSize];
-		Read((unsigned char *)m_pData, nSize, true, 0);
 	}
 	m_llReadPos = llOffset;
 	
@@ -137,6 +133,24 @@ long long CIOFile::SetPos (long long llPos, int nFlag)
 	if(dwRC == INVALID_SET_FILE_POINTER)
 		return QC_ERR_FAILED;
 	return llPos;
+}
+
+char * CIOFile::GetData(void)
+{
+	if (m_pData != NULL)
+		return m_pData;
+	if (m_hFile == NULL)
+		return NULL;
+
+	int nSize = (int)m_llSize;
+	m_pData = new char[nSize];
+
+	long long llPos = m_llReadPos;
+	SetPos(0, QCIO_SEEK_BEGIN);
+	Read((unsigned char *)m_pData, nSize, true, 0);
+	SetPos(llPos, QCIO_SEEK_BEGIN);
+
+	return m_pData;
 }
 
 QCIOType CIOFile::GetType (void)

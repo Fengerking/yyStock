@@ -22,14 +22,12 @@ public:
     CStockItemList(void);
     virtual ~CStockItemList(void);
 
-protected:
-	virtual int	UpdateList(void);
-
 	virtual int OpenHttpList(void);
 	virtual int OpenFileList(void);
 
-	virtual int	SaveList(void);
 
+protected:
+	virtual int	SaveList(void);
 
 protected:
 	char	m_szStockListURL[256];

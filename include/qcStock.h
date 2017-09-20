@@ -108,7 +108,7 @@ struct qcStockKXTInfoItem
 	double		m_dOpen;
 	double		m_dClose;
 	int			m_nVolume;
-	int			m_nMoney;
+	double		m_dMoney;
 	double		m_dDiffNum;
 	double		m_dDiffRate;
 	double		m_dSwing;

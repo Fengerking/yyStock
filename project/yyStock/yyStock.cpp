@@ -9,6 +9,8 @@
 #include "CPngDec.h"
 
 #include "UStockParser.h"
+#include "UStockTools.h"
+
 #include "USystemFunc.h"
 
 #define MAX_LOADSTRING 100
@@ -102,20 +104,39 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 
    pngDec.OpenSource("http://img1.money.126.net/chart/hs/time/540x360/1300316.png");
 //	CIOcurl ioURL;
-//	int nStart = qcGetSysTime();
 //	ioURL.Open("http://quotes.money.163.com/service/chddata.html?code=1300316&start=20170901&end=20170917", 0, 0);
-//	int nUsed = qcGetSysTime() - nStart;
 //	ioURL.Open("http://api.money.126.net/data/feed/0601398", 0, 0);
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
+  
+   int nStart = qcGetSysTime();
 
 //   SetTimer(hWnd, 1001, 500, NULL);
-//   CStockItemList stockList;
-   qcStockRealTimeItem * pStockInfo = new qcStockRealTimeItem();
-   memset(pStockInfo, 0, sizeof(qcStockRealTimeItem));
-   qcStock_ParseRealTimeInfo("600895", pStockInfo);
-   delete pStockInfo;
+     CStockItemList stockList;
+	 stockList.OpenFileList();
+	 
+	 int nUsed = qcGetSysTime() - nStart;
+	 nStart = qcGetSysTime();
+
+//   qcStockRealTimeItem * pStockInfo = new qcStockRealTimeItem();
+//   memset(pStockInfo, 0, sizeof(qcStockRealTimeItem));
+//   qcStock_ParseRealTimeInfo("600895", pStockInfo);
+//   delete pStockInfo;
+/*
+	 qcStockInfoItem * pItem = NULL;
+	 NODEPOS pos = stockList.m_lstStock.GetHeadPosition();
+	 while (pos != NULL)
+	 {
+		pItem = stockList.m_lstStock.GetNext(pos);
+		qcStock_DownLoadHistoryData(pItem->m_szCode);
+	 }
+*/
+
+//	 CObjectList<qcStockKXTInfoItem> lstHistory;
+//	 qcStock_ParseHistoryData("000001", &lstHistory);
+	 
+	 nUsed = qcGetSysTime() - nStart;
 
    return TRUE;
 }

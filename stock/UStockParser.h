@@ -13,9 +13,14 @@
 #define __UStockParser_H__
 
 #include "qcStock.h"
+#include "CNodeList.h"
+
+
+int		qcStock_ParseRealTimeInfo(const char * pCode, qcStockRealTimeItem * pStockInfo);
+
+int		qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem> * pList);
 
 int		qcStock_ParseValue(char * pText, char * pItem, void * pValue, int nType);
 
-int		qcStock_ParseRealTimeInfo(const char * pCode, qcStockRealTimeItem * pStockInfo);
 
 #endif // __UStockParser_H__

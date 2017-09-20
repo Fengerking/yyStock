@@ -27,8 +27,6 @@ CStockItemList::CStockItemList(void)
 	qcGetAppPath(NULL, m_szStockListFile, sizeof(m_szStockListFile));
 	strcat(m_szStockListFile, "data\\qcStockList.txt");
 
-	UpdateList();
-
 	g_stkList = this;
 }
 
@@ -41,13 +39,6 @@ CStockItemList::~CStockItemList(void)
 		pItem = m_lstStock.RemoveTail();
 	}
 	g_stkList = NULL;
-}
-
-int	CStockItemList::UpdateList(void)
-{
-//	if (OpenHttpList() != QC_ERR_NONE)
-		OpenFileList();
-	return QC_ERR_NONE;
 }
 
 int CStockItemList::OpenHttpList(void)

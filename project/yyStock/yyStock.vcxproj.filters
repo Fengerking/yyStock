@@ -93,6 +93,9 @@
     <ClInclude Include="..\..\stock\UStockParser.h">
       <Filter>Stock Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\stock\UStockTools.h">
+      <Filter>Stock Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -135,6 +138,9 @@
       <Filter>Base Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\stock\UStockParser.cpp">
+      <Filter>Stock Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\stock\UStockTools.cpp">
       <Filter>Stock Files</Filter>
     </ClCompile>
   </ItemGroup>
