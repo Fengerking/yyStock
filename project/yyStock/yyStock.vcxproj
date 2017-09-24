@@ -69,6 +69,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__QC_OS_WIN32__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>..\..\include;..\..\base;..\..\ext\libpng;..\..\stock;..\..\lib\include;..\..\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -100,6 +101,15 @@
     <ClInclude Include="..\..\stock\CStockItemList.h" />
     <ClInclude Include="..\..\stock\UStockParser.h" />
     <ClInclude Include="..\..\stock\UStockTools.h" />
+    <ClInclude Include="..\..\ui\CBaseGraphics.h" />
+    <ClInclude Include="..\..\ui\CGroupBase.h" />
+    <ClInclude Include="..\..\ui\CGroupMain.h" />
+    <ClInclude Include="..\..\ui\CViewCode.h" />
+    <ClInclude Include="..\..\ui\CViewFST.h" />
+    <ClInclude Include="..\..\ui\CViewRTInfo.h" />
+    <ClInclude Include="..\..\ui\CViewSelList.h" />
+    <ClInclude Include="..\..\ui\CWndBase.h" />
+    <ClInclude Include="..\..\ui\CWndGrpMng.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -119,6 +129,15 @@
     <ClCompile Include="..\..\stock\CStockItemList.cpp" />
     <ClCompile Include="..\..\stock\UStockParser.cpp" />
     <ClCompile Include="..\..\stock\UStockTools.cpp" />
+    <ClCompile Include="..\..\ui\CBaseGraphics.cpp" />
+    <ClCompile Include="..\..\ui\CGroupBase.cpp" />
+    <ClCompile Include="..\..\ui\CGroupMain.cpp" />
+    <ClCompile Include="..\..\ui\CViewCode.cpp" />
+    <ClCompile Include="..\..\ui\CViewFST.cpp" />
+    <ClCompile Include="..\..\ui\CViewRTInfo.cpp" />
+    <ClCompile Include="..\..\ui\CViewSelList.cpp" />
+    <ClCompile Include="..\..\ui\CWndBase.cpp" />
+    <ClCompile Include="..\..\ui\CWndGrpMng.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

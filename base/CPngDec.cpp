@@ -92,29 +92,52 @@ int	CPngDec::OpenSource(const char * pURL)
 			for (int x = 0; x < m_nWidth * nBytesPixel;)
 			{
 				//QCLOGI("Y   X  R  G  B %d  %d  %d  %d  %d", y, x, m_pData[y][x], m_pData[y][x+1], m_pData[y][x+2])
-				if (m_pData[y][x] == 255 && m_pData[y][x+1] == 255 && m_pData[y][x+2] == 255)
+				if (x > 456 * nBytesPixel && x < 498 * nBytesPixel && y > 18 && y < 27)
 				{
-					*pBmpBuff++ = 0; // red
-					*pBmpBuff++ = 0; // green
-					*pBmpBuff++ = 0; // blue
+					QCLOGI("Y   X  R  G  B %d  %d  %d  %d  %d", y, x, m_pData[y][x], m_pData[y][x + 1], m_pData[y][x + 2])
+
+					if (m_pData[y][x] == 204 && m_pData[y][x + 1] == 204 && m_pData[y][x + 2] == 204)
+					{
+						*pBmpBuff++ = 0; // blue
+						*pBmpBuff++ = 0; // green
+						*pBmpBuff++ = 0; // red
+					}
+					else if (m_pData[y][x] == 255 && m_pData[y][x + 1] == 255 && m_pData[y][x + 2] == 255)
+					{
+						*pBmpBuff++ = 0;
+						*pBmpBuff++ = 0;
+						*pBmpBuff++ = 0;
+					}
+					else
+					{
+						*pBmpBuff++ = m_pData[y][x];
+						*pBmpBuff++ = m_pData[y][x + 1];
+						*pBmpBuff++ = m_pData[y][x + 2];
+					}
+				}
+				else if (m_pData[y][x] == 255 && m_pData[y][x+1] == 255 && m_pData[y][x+2] == 255)
+				{
+					*pBmpBuff++ = 0; 
+					*pBmpBuff++ = 0; 
+					*pBmpBuff++ = 0; 
 				}
 				else if (m_pData[y][x] == 221 && m_pData[y][x + 1] == 233 && m_pData[y][x + 2] == 253)
 				{
-					*pBmpBuff++ = 0; // red
-					*pBmpBuff++ = 0; // green
-					*pBmpBuff++ = 0; // blue
+					*pBmpBuff++ = 0;
+					*pBmpBuff++ = 0;
+					*pBmpBuff++ = 0;
 				}
 				else if (m_pData[y][x] == 254 && m_pData[y][x + 1] == 10 && m_pData[y][x + 2] == 10)
 				{
-					*pBmpBuff++ = 0; // red
-					*pBmpBuff++ = 0; // green
-					*pBmpBuff++ = 255; // blue
+					*pBmpBuff++ = 0; 
+					*pBmpBuff++ = 0; 
+					*pBmpBuff++ = 255; 
 				}
 				else
 				{
-					*pBmpBuff++ = m_pData[y][x]; // red
-					*pBmpBuff++ = m_pData[y][x+1]; // green
-					*pBmpBuff++ = m_pData[y][x+2]; // blue
+					*pBmpBuff++ = m_pData[y][x]; 
+					*pBmpBuff++ = m_pData[y][x+1]; 
+					*pBmpBuff++ = m_pData[y][x+2]; 
 				}
 				x += 3;
 
@@ -137,7 +160,7 @@ int	CPngDec::OpenSource(const char * pURL)
 void CPngDec::pngReadCallback(png_structp png_ptr, png_bytep data, png_size_t length)
 {
 	CPngDec* pDec = (CPngDec*)png_get_io_ptr(png_ptr);
-	if (pDec->m_nBuffRead + length <= pDec->m_nBuffSize)
+	if ((int)(pDec->m_nBuffRead + length) <= pDec->m_nBuffSize)
 	{
 		memcpy(data, pDec->m_pBuffData + pDec->m_nBuffRead, length);
 		pDec->m_nBuffRead += length;

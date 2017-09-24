@@ -28,6 +28,15 @@
     <Filter Include="Base Files\IO">
       <UniqueIdentifier>{9d5abae6-7be1-4742-b69d-3e5f511da2b6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI Files\Base">
+      <UniqueIdentifier>{4ba91585-88c0-4a28-9592-17996de347c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI Files\Group">
+      <UniqueIdentifier>{88abbff1-89a3-4642-9358-d216077caf76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="UI Files\View">
+      <UniqueIdentifier>{9b3b7bde-5987-421e-b9ea-0636e9b4e275}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -96,6 +105,33 @@
     <ClInclude Include="..\..\stock\UStockTools.h">
       <Filter>Stock Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\ui\CWndGrpMng.h">
+      <Filter>UI Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\CBaseGraphics.h">
+      <Filter>UI Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\CGroupMain.h">
+      <Filter>UI Files\Group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\CGroupBase.h">
+      <Filter>UI Files\Group</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\CWndBase.h">
+      <Filter>UI Files\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\CViewFST.h">
+      <Filter>UI Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\CViewRTInfo.h">
+      <Filter>UI Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\CViewSelList.h">
+      <Filter>UI Files\View</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\CViewCode.h">
+      <Filter>UI Files\View</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -142,6 +178,33 @@
     </ClCompile>
     <ClCompile Include="..\..\stock\UStockTools.cpp">
       <Filter>Stock Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CWndGrpMng.cpp">
+      <Filter>UI Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CBaseGraphics.cpp">
+      <Filter>UI Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CGroupBase.cpp">
+      <Filter>UI Files\Group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CGroupMain.cpp">
+      <Filter>UI Files\Group</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CWndBase.cpp">
+      <Filter>UI Files\Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CViewFST.cpp">
+      <Filter>UI Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CViewRTInfo.cpp">
+      <Filter>UI Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CViewSelList.cpp">
+      <Filter>UI Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CViewCode.cpp">
+      <Filter>UI Files\View</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

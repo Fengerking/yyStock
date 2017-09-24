@@ -226,8 +226,9 @@ bool qcDeleteFolder (char * pFolder)
 
 bool qcIsTradeTime (void)
 {
+	return true;
 #ifdef __QC_OS_WIN32__
-		// only update the stock info in working time
+	// only update the stock info in working time
 	SYSTEMTIME tmSys;
 	GetLocalTime (&tmSys);
 	tmSys.wHour -= 1;

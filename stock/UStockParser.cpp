@@ -102,6 +102,30 @@ int	qcStock_ParseRealTimeInfo(const char * pCode, qcStockRealTimeItem * pStockIn
 	if (qcStock_ParseValue(pTextInfo, "\"askvol5\":", &pStockInfo->m_nSellNum5, QCSTOCK_VALUE_INT) != QC_ERR_NONE)
 		return QC_ERR_FAILED;
 
+	char * pNamePos = strstr(pTextInfo, "\"name\":");
+	if (pNamePos != NULL)
+	{
+		pNamePos = strstr(pNamePos + 7, "\"") + 1;
+		int	nPos = 0;
+		while (*pNamePos != '\"')
+		{
+			if (*pNamePos == ' ')
+			{
+				pNamePos++;
+			}
+			if (!strncmp (pNamePos, "\\u", 2))
+			{
+				sscanf(pNamePos + 2, "%x", &pStockInfo->m_wzName[nPos++]);
+				pNamePos += 6;
+			}
+			else
+			{
+				pStockInfo->m_wzName[nPos++] = *pNamePos;
+				pNamePos++;
+			}
+		}
+	}
+
 	pStockInfo->m_dSwing = (pStockInfo->m_dMaxPrice - pStockInfo->m_dMinPrice) * 100 / pStockInfo->m_dClosePrice;
 	pStockInfo->m_dDiffRate = (pStockInfo->m_dNowPrice - pStockInfo->m_dClosePrice) * 100 / pStockInfo->m_dClosePrice;
 	pStockInfo->m_dDiffNum = pStockInfo->m_dNowPrice - pStockInfo->m_dClosePrice;
@@ -154,7 +178,6 @@ int	qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem>
 
 		pItem = new qcStockKXTInfoItem();
 		memset(pItem, 0, sizeof(qcStockKXTInfoItem));
-		pList->AddHead(pItem);
 
 		//日期, 股票代码, 名称, 收盘价, 最高价, 最低价, 开盘价, 前收盘, 涨跌额, 涨跌幅, 换手率, 成交量, 成交金额, 总市值, 流通市值, 成交笔数
 		//2017-09-19, '000001,平安银行,11.13,11.34,11.08,11.25,11.25,-0.12,-1.0667,0.4517,76421262,853815999.65,1.91106678504e+11,1.88297420559e+11,26241
@@ -164,6 +187,17 @@ int	qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem>
 			&pItem->m_dClose, &pItem->m_dMax, &pItem->m_dMin, &pItem->m_dOpen, &dYesClose,
 			&pItem->m_dDiffNum, &pItem->m_dDiffRate, &pItem->m_dExchange, &pItem->m_nVolume, &pItem->m_dMoney);
 		pItem->m_dSwing = (pItem->m_dMax - pItem->m_dMin) / dYesClose;
+
+		if (pItem->m_dClose != 0 && dYesClose != 0)
+		{
+			if (pItem->m_dClose > dYesClose * 1.11 || pItem->m_dClose < dYesClose * 0.89)
+				dYesClose = dYesClose;
+		}
+
+		if (pItem->m_dClose > 0)
+			pList->AddHead(pItem);
+		else
+			delete pItem;
 	}
 
 	return QC_ERR_NONE;

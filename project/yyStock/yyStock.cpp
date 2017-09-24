@@ -8,6 +8,8 @@
 #include "CStockItemList.h"
 #include "CPngDec.h"
 
+#include "CWndGrpMng.h"
+
 #include "UStockParser.h"
 #include "UStockTools.h"
 
@@ -16,9 +18,11 @@
 #define MAX_LOADSTRING 100
 
 // Global Variables:
-HINSTANCE hInst;								// current instance
-TCHAR szTitle[MAX_LOADSTRING];					// The title bar text
-TCHAR szWindowClass[MAX_LOADSTRING];			// the main window class name
+HINSTANCE		g_hInst;								// current instance
+TCHAR			g_szTitle[MAX_LOADSTRING];					// The title bar text
+TCHAR			g_szWindowClass[MAX_LOADSTRING];			// the main window class name
+HBRUSH			g_hBrushBG = NULL;
+CWndGrpMng *	g_pWndMng = NULL;
 
 // Forward declarations of functions included in this code module:
 ATOM				MyRegisterClass(HINSTANCE hInstance);
@@ -26,8 +30,6 @@ BOOL				InitInstance(HINSTANCE, int);
 LRESULT CALLBACK	WndProc(HWND, UINT, WPARAM, LPARAM);
 INT_PTR CALLBACK	About(HWND, UINT, WPARAM, LPARAM);
 
-
-CPngDec pngDec;
 
 int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -42,15 +44,13 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 	HACCEL hAccelTable;
 
 	// Initialize global strings
-	LoadString(hInstance, IDS_APP_TITLE, szTitle, MAX_LOADSTRING);
-	LoadString(hInstance, IDC_YYSTOCK, szWindowClass, MAX_LOADSTRING);
+	LoadString(hInstance, IDS_APP_TITLE, g_szTitle, MAX_LOADSTRING);
+	LoadString(hInstance, IDC_YYSTOCK, g_szWindowClass, MAX_LOADSTRING);
 	MyRegisterClass(hInstance);
 
 	// Perform application initialization:
 	if (!InitInstance (hInstance, nCmdShow))
-	{
 		return FALSE;
-	}
 
 	hAccelTable = LoadAccelerators(hInstance, MAKEINTRESOURCE(IDC_YYSTOCK));
 
@@ -70,6 +70,7 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 ATOM MyRegisterClass(HINSTANCE hInstance)
 {
 	WNDCLASSEX wcex;
+	g_hBrushBG = CreateSolidBrush(RGB(0, 0, 0));
 
 	wcex.cbSize = sizeof(WNDCLASSEX);
 
@@ -80,9 +81,9 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 	wcex.hInstance		= hInstance;
 	wcex.hIcon			= LoadIcon(hInstance, MAKEINTRESOURCE(IDI_YYSTOCK));
 	wcex.hCursor		= LoadCursor(NULL, IDC_ARROW);
-	wcex.hbrBackground	= (HBRUSH)(COLOR_WINDOW+1);
+	wcex.hbrBackground = g_hBrushBG;// (HBRUSH)(COLOR_GRAYTEXT);
 	wcex.lpszMenuName	= MAKEINTRESOURCE(IDC_YYSTOCK);
-	wcex.lpszClassName	= szWindowClass;
+	wcex.lpszClassName	= g_szWindowClass;
 	wcex.hIconSm		= LoadIcon(wcex.hInstance, MAKEINTRESOURCE(IDI_SMALL));
 
 	return RegisterClassEx(&wcex);
@@ -90,29 +91,31 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
+   int	nScreenX = GetSystemMetrics(SM_CXSCREEN);
+   int	nScreenY = GetSystemMetrics(SM_CYSCREEN);
    HWND hWnd;
-
-   hInst = hInstance; // Store instance handle in our global variable
-
-   hWnd = CreateWindow(szWindowClass, szTitle, WS_OVERLAPPEDWINDOW,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, NULL, NULL, hInstance, NULL);
-
+   g_hInst = hInstance; // Store instance handle in our global variable
+   hWnd = CreateWindow(g_szWindowClass, g_szTitle, WS_OVERLAPPEDWINDOW,
+						//nScreenX / 4, 200, nScreenX / 2, nScreenY / 2, NULL, NULL, hInstance, NULL);
+						0, 0, nScreenX, nScreenY, NULL, NULL, hInstance, NULL);
    if (!hWnd)
-   {
       return FALSE;
-   }
-
-   pngDec.OpenSource("http://img1.money.126.net/chart/hs/time/540x360/1300316.png");
-//	CIOcurl ioURL;
-//	ioURL.Open("http://quotes.money.163.com/service/chddata.html?code=1300316&start=20170901&end=20170917", 0, 0);
-//	ioURL.Open("http://api.money.126.net/data/feed/0601398", 0, 0);
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
+
+   g_pWndMng = new CWndGrpMng(g_hInst);
+   g_pWndMng->CreateWnd(hWnd);
+
+ /*
+   pngDec.OpenSource("http://img1.money.126.net/chart/hs/time/540x360/0600895.png");
+//	CIOcurl ioURL;
+//	ioURL.Open("http://quotes.money.163.com/service/chddata.html?code=1300316&start=20170901&end=20170917", 0, 0);
+//	ioURL.Open("http://api.money.126.net/data/feed/0601398", 0, 0);
   
    int nStart = qcGetSysTime();
 
-//   SetTimer(hWnd, 1001, 500, NULL);
+   SetTimer(hWnd, 1001, 1000, NULL);
      CStockItemList stockList;
 	 stockList.OpenFileList();
 	 
@@ -131,13 +134,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 		pItem = stockList.m_lstStock.GetNext(pos);
 		qcStock_DownLoadHistoryData(pItem->m_szCode);
 	 }
-*/
 
-//	 CObjectList<qcStockKXTInfoItem> lstHistory;
-//	 qcStock_ParseHistoryData("000001", &lstHistory);
-	 
+
+	 CObjectList<qcStockKXTInfoItem> lstHistory;
+	 qcStock_ParseHistoryData("600895", &lstHistory);
+
+//	 qcStock_DownLoadHistoryData("600895");
+
 	 nUsed = qcGetSysTime() - nStart;
-
+*/
    return TRUE;
 }
 
@@ -156,7 +161,7 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		switch (wmId)
 		{
 		case IDM_ABOUT:
-			DialogBox(hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
+			DialogBox(g_hInst, MAKEINTRESOURCE(IDD_ABOUTBOX), hWnd, About);
 			break;
 		case IDM_EXIT:
 			DestroyWindow(hWnd);
@@ -166,14 +171,45 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 
+	case WM_SIZE:
+		if (g_pWndMng != NULL)
+			g_pWndMng->OnResize(hWnd, message, wParam, lParam);
+		break;
+
+	case WM_KEYUP:
+		if (g_pWndMng != NULL)
+			g_pWndMng->OnKeyUp(hWnd, message, wParam, lParam);
+		break;
+
+	case WM_KEYDOWN:
+		if (g_pWndMng != NULL)
+			g_pWndMng->OnKeyDown(hWnd, message, wParam, lParam);
+		break;
+
+	case WM_MOUSEMOVE:
+		if (g_pWndMng != NULL)
+			g_pWndMng->OnMouseMove(hWnd, message, wParam, lParam);
+		break;
+
+	case WM_LBUTTONUP:
+		if (g_pWndMng != NULL)
+			g_pWndMng->OnMouseUp(hWnd, message, wParam, lParam);
+		break;
+
+	case WM_LBUTTONDOWN:
+		if (g_pWndMng != NULL)
+			g_pWndMng->OnMouseDown(hWnd, message, wParam, lParam);
+		break;
+
 	case WM_TIMER:
-		pngDec.OpenSource("http://img1.money.126.net/chart/hs/time/540x360/0600895.png");
+//		pngDec.OpenSource("http://img1.money.126.net/chart/hs/time/540x360/0600895.png");
 		InvalidateRect(hWnd, NULL, FALSE);
 		break;
 
 	case WM_PAINT:
 	{
 		hdc = BeginPaint(hWnd, &ps);
+/*
 		HBITMAP hBmp = pngDec.GetBmp();
 		if (hBmp != NULL)
 		{
@@ -182,16 +218,22 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			HDC hMemDC = CreateCompatibleDC(hdc);
 			HBITMAP hOld = (HBITMAP)SelectObject(hMemDC, hBmp);
 			//BitBlt(hdc, 0, 0, pngDec.GetWidth (), pngDec.GetHeight (), hMemDC, 0, 0, SRCCOPY);
-			StretchBlt(hdc, 0, 0, rcView.right, rcView.bottom, hMemDC, 0, 0, pngDec.GetWidth(), pngDec.GetHeight(), SRCCOPY);
+//			StretchBlt(hdc, 0, 0, rcView.right, rcView.bottom, hMemDC, 0, 0, pngDec.GetWidth(), pngDec.GetHeight(), SRCCOPY);
 			SelectObject(hMemDC, hOld);
 			DeleteDC(hMemDC);
 		}
-
+*/
 		EndPaint(hWnd, &ps);
 	}
 		break;
+
 	case WM_DESTROY:
+		if (g_pWndMng != NULL)
+			delete g_pWndMng;
+		g_pWndMng = NULL;
 		PostQuitMessage(0);
+		if (g_hBrushBG != NULL)
+			DeleteObject(g_hBrushBG);
 		break;
 	default:
 		return DefWindowProc(hWnd, message, wParam, lParam);
