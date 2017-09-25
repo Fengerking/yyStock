@@ -31,10 +31,10 @@ public:
 	CViewRTInfo(HINSTANCE hInst);
 	virtual ~CViewRTInfo(void);
 
-	virtual int		GetWndWidth (void) {return m_nWndWidth;}
-
 	virtual bool	CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG);
-	virtual LRESULT	OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT	OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+
+	virtual int		GetWndWidth (void) {return m_nWndWidth;}
 
 protected:
 	virtual int		UpdateView(HDC hDC);

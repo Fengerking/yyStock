@@ -16,10 +16,13 @@
 #include "CNodeList.h"
 
 
-int		qcStock_ParseRealTimeInfo(const char * pCode, qcStockRealTimeItem * pStockInfo);
+int		qcStock_ParseRTItemInfo(const char * pCode, qcStockRealTimeItem * pStockInfo);
+int		qcStock_ParseRTListInfo(const char ** ppCode, int nNum, qcStockRealTimeItem ** ppStockInfo);
 
 int		qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem> * pList);
+int		qcStock_CreateDayLineMACD(CObjectList<qcStockKXTInfoItem> * pList);
 
+int		qcStock_ParseRTItem(char * pItemInfo, qcStockRealTimeItem * pStockInfo);
 int		qcStock_ParseValue(char * pText, char * pItem, void * pValue, int nType);
 
 

@@ -36,32 +36,32 @@ int	CGroupBase::CreateWnd (HWND hWnd)
 }
 
 
-LRESULT CGroupBase::OnResize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CGroupBase::OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_OK;
 }
 
-LRESULT CGroupBase::OnKeyUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CGroupBase::OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_OK;
 }
 
-LRESULT CGroupBase::OnKeyDown(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CGroupBase::OnKeyDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_OK;
 }
 
-LRESULT CGroupBase::OnMouseDown(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CGroupBase::OnMouseDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_OK;
 }
 
-LRESULT CGroupBase::OnMouseUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CGroupBase::OnMouseUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_OK;
 }
 
-LRESULT CGroupBase::OnMouseMove(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CGroupBase::OnMouseMove(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_OK;
 }

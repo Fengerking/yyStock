@@ -24,16 +24,16 @@ public:
 
 
 	virtual bool	CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG);
-	virtual LRESULT	OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT	OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
 	virtual int		UpdateList (void);
-	virtual int		UpdateInfo(void);
+	virtual int		UpdateInfo (void);
 
 	virtual int		UpdateView (HDC hDC);
 
 protected:
-	char					m_szCodeList[256][32];
+	char *					m_szCodeList[256];
 	int						m_nCodeNum;
 
 	qcStockRealTimeItem *	m_pRTInfo[256];

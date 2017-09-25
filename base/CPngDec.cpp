@@ -94,8 +94,6 @@ int	CPngDec::OpenSource(const char * pURL)
 				//QCLOGI("Y   X  R  G  B %d  %d  %d  %d  %d", y, x, m_pData[y][x], m_pData[y][x+1], m_pData[y][x+2])
 				if (x > 456 * nBytesPixel && x < 498 * nBytesPixel && y > 18 && y < 27)
 				{
-					QCLOGI("Y   X  R  G  B %d  %d  %d  %d  %d", y, x, m_pData[y][x], m_pData[y][x + 1], m_pData[y][x + 2])
-
 					if (m_pData[y][x] == 204 && m_pData[y][x + 1] == 204 && m_pData[y][x + 2] == 204)
 					{
 						*pBmpBuff++ = 0; // blue

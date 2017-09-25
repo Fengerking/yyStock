@@ -34,12 +34,11 @@ CViewSelList::CViewSelList(HINSTANCE hInst)
 
 CViewSelList::~CViewSelList(void)
 {
-	for (int i = 0; i < m_nCodeNum; i++)
+	for (int i = 0; i < 256; i++)
 	{
 		if (m_pRTInfo[i] != NULL)
 			delete m_pRTInfo[i];
-		else
-			break;
+		delete[] m_szCodeList[i];
 	}
 }
 
@@ -70,22 +69,28 @@ int CViewSelList::UpdateView (HDC hDC)
 	int i = 0;
 	for (i = 0; i < m_nCodeNum; i++)
 	{
+		m_dClosePrice = m_pRTInfo[i]->m_dClosePrice;
 		DrawWtrText(m_hMemDC, m_pRTInfo[i]->m_wzName, m_hFntBig, nX + 10, nY, MSC_GRAY_3, 0);
-		DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice, m_hFntBig, nX + 360, nY, "", -1, false, 1);
-		DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dDiffRate, m_hFntBig, nX + 540, nY, "", -2, true, 1);
-		DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice - m_pRTInfo[i]->m_dLastPrice, m_hFntBig, nX + 720, nY, "", -1, false, 1);
+		DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice, m_hFntBig, nX + 400, nY, "", -1, false, 1);
+		if (nX + 580 < m_rcWnd.right)
+			DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dDiffRate, m_hFntBig, nX + 580, nY, "", -2, true, 1);
+		if (nX + 730 < m_rcWnd.right)
+			DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice - m_pRTInfo[i]->m_dLastPrice, m_hFntBig, nX + 730, nY, "", -2, false, 1);
 		nY += m_nFntBigHeight;
 		if (nY > m_rcDraw.bottom - m_nFntBigHeight)
 			break;
 	}
 	nY = m_rcDraw.top;
 	nX = m_rcDraw.right / 2 + 8;
-	for (i = i; i < m_nCodeNum; i++)
+	for (i = i+1; i < m_nCodeNum; i++)
 	{
+		m_dClosePrice = m_pRTInfo[i]->m_dClosePrice;
 		DrawWtrText(m_hMemDC, m_pRTInfo[i]->m_wzName, m_hFntBig, nX + 10, nY, MSC_GRAY_3, 0);
-		DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice, m_hFntBig, nX + 360, nY, "", -1, false, 1);
-		DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dDiffRate, m_hFntBig, nX + 540, nY, "", -2, true, 1);
-		DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice - m_pRTInfo[i]->m_dLastPrice, m_hFntBig, nX + 720, nY, "", -1, false, 1);
+		DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice, m_hFntBig, nX + 400, nY, "", -1, false, 1);
+		if (nX + 580 < m_rcWnd.right)
+			DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dDiffRate, m_hFntBig, nX + 580, nY, "", -2, true, 1);
+		if (nX + 730 < m_rcWnd.right)
+			DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice - m_pRTInfo[i]->m_dLastPrice, m_hFntBig, nX + 730, nY, "", -2, false, 1);
 		nY += m_nFntBigHeight;
 		if (nY > m_rcDraw.bottom - m_nFntBigHeight)
 			break;
@@ -102,6 +107,7 @@ int	CViewSelList::UpdateList(void)
 	for (i = 0; i < 256; i++)
 	{
 		m_pRTInfo[i] = NULL;
+		m_szCodeList[i] = new char[32];
 		strcpy(m_szCodeList[i], "");
 	}
 
@@ -120,7 +126,10 @@ int	CViewSelList::UpdateList(void)
 	while (nRestSize > 0)
 	{
 		nLen = qcReadTextLine(pFileData, nRestSize, m_szCodeList[m_nCodeNum], 32);
-		m_szCodeList[m_nCodeNum][6] = 0;
+		if (m_szCodeList[m_nCodeNum][6] == '\r' || m_szCodeList[m_nCodeNum][6] == '\n')
+			m_szCodeList[m_nCodeNum][6] = 0;
+		else if (m_szCodeList[m_nCodeNum][7] == '\r' || m_szCodeList[m_nCodeNum][7] == '\n')
+			m_szCodeList[m_nCodeNum][7] = 0;
 		nRestSize -= nLen;
 		pFileData += nLen;
 		m_nCodeNum++;
@@ -139,14 +148,18 @@ int CViewSelList::UpdateInfo(void)
 {
 	int nStart = qcGetSysTime();
 	int nRC = 0;
+
+	qcStock_ParseRTListInfo((const char **)&m_szCodeList[0], m_nCodeNum, &m_pRTInfo[0]);
+/*
 	for (int i = 0; i < m_nCodeNum; i++)
 	{
 		//memset(m_pRTInfo[i], 0, sizeof(qcStockRealTimeItem));
 		m_pRTInfo[i]->m_dLastPrice = m_pRTInfo[i]->m_dNowPrice;
-		nRC = qcStock_ParseRealTimeInfo(m_szCodeList[i], m_pRTInfo[i]);
+		nRC = qcStock_ParseRTItemInfo(m_szCodeList[i], m_pRTInfo[i]);
 		if (m_pRTInfo[i]->m_dLastPrice == 0)
 			m_pRTInfo[i]->m_dLastPrice = m_pRTInfo[i]->m_dNowPrice;
 	}
+*/
 	int nUsed = qcGetSysTime() - nStart;
 	return nRC;
 }
@@ -158,12 +171,12 @@ bool CViewSelList::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
 
 	CBaseGraphics::OnCreateWnd (m_hWnd);
 
-//	SetTimer(m_hWnd, WM_TIMER_UPDATE, m_nUpdateTime, NULL);
+	SetTimer(m_hWnd, WM_TIMER_UPDATE, m_nUpdateTime * 2, NULL);
 
 	return true;
 }
 
-LRESULT CViewSelList::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CViewSelList::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
@@ -175,12 +188,30 @@ LRESULT CViewSelList::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 		}
 		break;
 
+	case WM_LBUTTONUP:
+	{
+		int nXPos = LOWORD(lParam);
+		int nYPos = HIWORD(lParam);
+		int	nX = 0;
+		if (nXPos > m_rcWnd.right / 2)
+			nX = 1;
+		int nY = nYPos / m_nFntBigHeight;
+		int nYCount = m_rcWnd.bottom / m_nFntBigHeight;
+		int nIndex = nX * nYCount + nY;
+		if (m_szCodeList[nIndex] == NULL)
+			return S_OK;
+		if (strlen(m_szCodeList[nIndex]) < 6)
+			return S_OK;
+		PostMessage(m_hParent, WM_MSG_CODE_CHANGE, (WPARAM)m_szCodeList[nIndex], 0);
+	}
+		break;
+
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(hwnd, &ps);
+		HDC hdc = BeginPaint(hWnd, &ps);
 		UpdateView (hdc);
-		EndPaint(hwnd, &ps);
+		EndPaint(hWnd, &ps);
 	}
 		break;
 
@@ -194,6 +225,6 @@ LRESULT CViewSelList::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPA
 		break;
 	}
 
-	return	CWndBase::OnReceiveMessage(hwnd, uMsg, wParam, lParam);
+	return	CWndBase::OnReceiveMessage(hWnd, uMsg, wParam, lParam);
 }
 

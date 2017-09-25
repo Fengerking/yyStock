@@ -96,8 +96,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    HWND hWnd;
    g_hInst = hInstance; // Store instance handle in our global variable
    hWnd = CreateWindow(g_szWindowClass, g_szTitle, WS_OVERLAPPEDWINDOW,
-						//nScreenX / 4, 200, nScreenX / 2, nScreenY / 2, NULL, NULL, hInstance, NULL);
-						0, 0, nScreenX, nScreenY, NULL, NULL, hInstance, NULL);
+						nScreenX / 4, 200, nScreenX / 2, nScreenY / 2, NULL, NULL, hInstance, NULL);
+						//0, 0, nScreenX, nScreenY, NULL, NULL, hInstance, NULL);
    if (!hWnd)
       return FALSE;
 
@@ -171,60 +171,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 
-	case WM_SIZE:
-		if (g_pWndMng != NULL)
-			g_pWndMng->OnResize(hWnd, message, wParam, lParam);
-		break;
-
-	case WM_KEYUP:
-		if (g_pWndMng != NULL)
-			g_pWndMng->OnKeyUp(hWnd, message, wParam, lParam);
-		break;
-
-	case WM_KEYDOWN:
-		if (g_pWndMng != NULL)
-			g_pWndMng->OnKeyDown(hWnd, message, wParam, lParam);
-		break;
-
-	case WM_MOUSEMOVE:
-		if (g_pWndMng != NULL)
-			g_pWndMng->OnMouseMove(hWnd, message, wParam, lParam);
-		break;
-
-	case WM_LBUTTONUP:
-		if (g_pWndMng != NULL)
-			g_pWndMng->OnMouseUp(hWnd, message, wParam, lParam);
-		break;
-
-	case WM_LBUTTONDOWN:
-		if (g_pWndMng != NULL)
-			g_pWndMng->OnMouseDown(hWnd, message, wParam, lParam);
-		break;
-
-	case WM_TIMER:
-//		pngDec.OpenSource("http://img1.money.126.net/chart/hs/time/540x360/0600895.png");
-		InvalidateRect(hWnd, NULL, FALSE);
-		break;
-
 	case WM_PAINT:
-	{
 		hdc = BeginPaint(hWnd, &ps);
-/*
-		HBITMAP hBmp = pngDec.GetBmp();
-		if (hBmp != NULL)
-		{
-			RECT rcView;
-			GetClientRect(hWnd, &rcView);
-			HDC hMemDC = CreateCompatibleDC(hdc);
-			HBITMAP hOld = (HBITMAP)SelectObject(hMemDC, hBmp);
-			//BitBlt(hdc, 0, 0, pngDec.GetWidth (), pngDec.GetHeight (), hMemDC, 0, 0, SRCCOPY);
-//			StretchBlt(hdc, 0, 0, rcView.right, rcView.bottom, hMemDC, 0, 0, pngDec.GetWidth(), pngDec.GetHeight(), SRCCOPY);
-			SelectObject(hMemDC, hOld);
-			DeleteDC(hMemDC);
-		}
-*/
 		EndPaint(hWnd, &ps);
-	}
 		break;
 
 	case WM_DESTROY:
@@ -235,9 +184,16 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		if (g_hBrushBG != NULL)
 			DeleteObject(g_hBrushBG);
 		break;
+
 	default:
+		if (g_pWndMng != NULL)
+		{
+			if (g_pWndMng->OnReceiveMessage(hWnd, message, wParam, lParam) == S_OK)
+				return 0;
+		}
 		return DefWindowProc(hWnd, message, wParam, lParam);
 	}
+
 	return 0;
 }
 

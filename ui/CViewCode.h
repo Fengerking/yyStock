@@ -28,16 +28,17 @@ public:
 	virtual ~CViewCode(void);
 
 	virtual bool	CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG);
-	virtual LRESULT	OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT	OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	virtual LRESULT	OnResize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	virtual LRESULT	OnKeyUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT	OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT	OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	virtual int		RegistWindow(CWndBase * pWnd);
 	virtual int		RemoveWindow(CWndBase * pWnd);
 
 protected:
 	int				UpdateView(HDC hDC);
+	int				NotifyCode(void);
 
 protected:
 	char				m_szKeyCode[32];

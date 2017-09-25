@@ -59,7 +59,10 @@ int	qcStock_DownLoadHistoryData(const char * pCode)
 		ioFile.Close();
 	}
 
-	if (pCode[0] == '6')
+	if (strlen(pCode) == 7)
+		sprintf(szHttpName, "http://quotes.money.163.com/service/chddata.html?code=%s&start=%d%02d%02d&end=%d%02d%02d",
+							pCode, tmStart.wYear, tmStart.wMonth, tmStart.wDay, tmEnd.wYear, tmEnd.wMonth, tmEnd.wDay);
+	else if (pCode[0] == '6')
 		sprintf(szHttpName, "http://quotes.money.163.com/service/chddata.html?code=0%s&start=%d%02d%02d&end=%d%02d%02d", 
 							pCode, tmStart.wYear, tmStart.wMonth, tmStart.wDay, tmEnd.wYear, tmEnd.wMonth, tmEnd.wDay);
 	else
@@ -88,3 +91,4 @@ int	qcStock_DownLoadHistoryData(const char * pCode)
 
 	return QC_ERR_NONE;
 }
+

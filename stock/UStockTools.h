@@ -13,6 +13,7 @@
 #define __UStockTools_H__
 
 #include "qcStock.h"
+#include "CNodeList.h"
 
 int		qcStock_DownLoadHistoryData (const char * pCode);
 

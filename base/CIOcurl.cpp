@@ -20,30 +20,32 @@
 #define		SKIP_PEER_VERIFICATION		1  
 //#define	SKIP_HOSTNAME_VERFICATION	1  
 
-int	qcg_curl_read_times = 0;
+int		qcg_curl_read_times = 0;
+CURL *	CIOcurl::m_pCURL = NULL;
 
 CIOcurl::CIOcurl(void)
 	: CIOBase()
-	, m_pCURL (NULL)
 {
 	SetObjectName ("CIOcurl");
 
-	curl_global_init(CURL_GLOBAL_ALL);  
-	m_lstHeader.data = new char[256];
-	strcpy(m_lstHeader.data, "");// "Authorization:APPCODE 4779d46346404086ae4d077b9bfe9177");
-	m_lstHeader.next = NULL;
+//	m_lstHeader.data = new char[256];
+//	strcpy(m_lstHeader.data, "");// "Authorization:APPCODE 4779d46346404086ae4d077b9bfe9177");
+//	m_lstHeader.next = NULL;
 }
 
 CIOcurl::~CIOcurl(void)
 {
 	Close();
-    curl_global_cleanup();  
+ //   curl_global_cleanup();  
 }
 
 int CIOcurl::Open(const char * pURL, long long llOffset, int nFlag)
 {
 	if (m_pCURL == NULL)
+	{
+		curl_global_init(CURL_GLOBAL_ALL);
 		m_pCURL = curl_easy_init();
+	}
 	if (m_pCURL == NULL)
 		return QC_ERR_STATUS;
 
@@ -71,8 +73,8 @@ int CIOcurl::Close(void)
 {
 	if (m_pCURL != NULL)
 	{
-		curl_easy_cleanup(m_pCURL);
-		m_pCURL = NULL;
+//		curl_easy_cleanup(m_pCURL);
+//		m_pCURL = NULL;
 	}
 	return CIOBase::Close();
 }

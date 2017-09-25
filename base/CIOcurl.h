@@ -32,7 +32,6 @@ protected:
 	virtual int			Request(const char * pURL);
 
 protected:
-	CURL *			m_pCURL;
 	curl_slist		m_lstHeader;
 
     std::string		m_szBufferData;  
@@ -42,6 +41,7 @@ protected:
 	double			m_dDownSpeed;
 
 public:
+	static CURL *	m_pCURL;
 	static size_t	CURL_CallWriteHead (const char * pData, size_t nBlock, size_t nSize, std::string * strStream);
 	static size_t	CURL_CallWriteData (const char * pData, size_t nBlock, size_t nSize, std::string * strStream);
 };

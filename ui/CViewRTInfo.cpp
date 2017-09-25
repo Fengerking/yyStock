@@ -34,6 +34,8 @@ CViewRTInfo::CViewRTInfo(HINSTANCE hInst)
 
 CViewRTInfo::~CViewRTInfo(void)
 {
+	SendMessage(m_hParent, WM_MSG_CODE_REMOVE, (WPARAM)this, 0);
+
 	ReleaseHistory ();
 }
 
@@ -172,9 +174,10 @@ int CViewRTInfo::UpdateView (HDC hDC)
 int CViewRTInfo::UpdateInfo(void)
 {
 	memset(&m_stkRTInfo, 0, sizeof(qcStockRealTimeItem));
-	int nRC = qcStock_ParseRealTimeInfo(m_szCode, &m_stkRTInfo);
+	int nRC = qcStock_ParseRTItemInfo(m_szCode, &m_stkRTInfo);
 	if (nRC == QC_ERR_NONE)
 	{
+		m_dClosePrice = m_stkRTInfo.m_dClosePrice;
 		sTradeHistory * pItem = new sTradeHistory();
 		GetLocalTime(&pItem->sTime);
 		pItem->dPrice = m_stkRTInfo.m_dNowPrice;
@@ -184,7 +187,7 @@ int CViewRTInfo::UpdateInfo(void)
 			m_lstHistory.AddHead(pItem);
 		else
 			delete pItem;
-		//SendMessage(m_hParent, WM_MSG_NEW_PRICE, (WPARAM)&m_stkRTInfo, NULL);
+		InvalidateRect(m_hWnd, NULL, FALSE);
 	}
 	return nRC;
 }
@@ -207,6 +210,8 @@ bool CViewRTInfo::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
 
 	CBaseGraphics::OnCreateWnd (m_hWnd);
 
+	SendMessage(m_hParent, WM_MSG_CODE_REGIST, (WPARAM)this, 0);
+
 	UpdateInfo();
 
 	SetTimer(m_hWnd, WM_TIMER_UPDATE, m_nUpdateTime, NULL);
@@ -214,10 +219,15 @@ bool CViewRTInfo::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
 	return true;
 }
 
-LRESULT CViewRTInfo::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CViewRTInfo::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
+	case WM_MSG_CODE_CHANGE:
+		strcpy(m_szCode, (char *)wParam);
+		UpdateInfo();
+		return S_OK;
+
 	case WM_TIMER:
 		if (qcIsTradeTime())
 		{
@@ -227,8 +237,8 @@ LRESULT CViewRTInfo::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 		break;
 
 	case WM_SIZE:
-		GetClientRect (hwnd, &m_rcWnd);
-		GetClientRect (hwnd, &m_rcDraw);
+		GetClientRect (hWnd, &m_rcWnd);
+		GetClientRect (hWnd, &m_rcDraw);
 		m_rcDraw.left += 8;
 		m_rcDraw.top += 8;
 		m_rcDraw.bottom -= 8;
@@ -243,9 +253,9 @@ LRESULT CViewRTInfo::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(hwnd, &ps);
+		HDC hdc = BeginPaint(hWnd, &ps);
 		UpdateView (hdc);
-		EndPaint(hwnd, &ps);
+		EndPaint(hWnd, &ps);
 	}
 		break;
 
@@ -259,6 +269,6 @@ LRESULT CViewRTInfo::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPAR
 		break;
 	}
 
-	return	CWndBase::OnReceiveMessage(hwnd, uMsg, wParam, lParam);
+	return	CWndBase::OnReceiveMessage(hWnd, uMsg, wParam, lParam);
 }
 

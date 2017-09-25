@@ -18,15 +18,16 @@
 #define		WM_TIMER_UPDATE			102
 #define		WM_TIMER_LBUTTONCLICK	103
 
-#define		WM_MSG_CODE_CHANGE	WM_USER + 101
-#define		WM_MSG_NEW_PRICE	WM_USER + 102
-
+#define		WM_MSG_CODE_REGIST	WM_USER + 101   // CWndBase
+#define		WM_MSG_CODE_REMOVE	WM_USER + 102   // CWndBase
+#define		WM_MSG_CODE_CHANGE	WM_USER + 103	// char *
+#define		WM_MSG_CODE_REQUEST	WM_USER + 104	// char *
 
 class CWndBase : public CBaseGraphics
 {
 public:
-	static LRESULT CALLBACK ViewWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	virtual LRESULT	OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	static LRESULT CALLBACK ViewWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT	OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 public:
 	CWndBase(HINSTANCE hInst);
@@ -42,13 +43,14 @@ public:
 
 	virtual void	SetText (TCHAR * pText);
 	virtual int		SetCode (char * pCode) {strcpy (m_szCode, pCode); return 0;}
+	virtual char *	GetCode (void) { return m_szCode; }
 
-	virtual LRESULT	OnResize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	virtual LRESULT	OnKeyUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	virtual LRESULT	OnKeyDown(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	virtual LRESULT	OnMouseDown(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	virtual LRESULT	OnMouseUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-	virtual LRESULT	OnMouseMove(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT	OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT	OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT	OnKeyDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT	OnMouseDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT	OnMouseUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT	OnMouseMove(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
 	HINSTANCE		m_hInst;

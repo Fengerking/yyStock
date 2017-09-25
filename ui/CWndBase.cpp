@@ -14,13 +14,13 @@
 
 #include "CWndBase.h"
 
-LRESULT CALLBACK CWndBase::ViewWindowProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK CWndBase::ViewWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	CWndBase * pViewWindow = (CWndBase *)GetWindowLong (hwnd, GWL_USERDATA);
+	CWndBase * pViewWindow = (CWndBase *)GetWindowLong (hWnd, GWL_USERDATA);
 	if (pViewWindow == NULL)
-		return(DefWindowProc(hwnd, uMsg, wParam, lParam));
+		return(DefWindowProc(hWnd, uMsg, wParam, lParam));
 	else
-		return pViewWindow->OnReceiveMessage(hwnd,uMsg,wParam,lParam);
+		return pViewWindow->OnReceiveMessage(hWnd,uMsg,wParam,lParam);
 }
 
 CWndBase::CWndBase(HINSTANCE hInst)
@@ -119,37 +119,37 @@ void CWndBase::SetText (TCHAR * pText)
 	::InvalidateRect (m_hWnd, NULL, TRUE);
 }
 
-LRESULT CWndBase::OnResize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CWndBase::OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_FALSE;
 }
 
-LRESULT CWndBase::OnKeyUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CWndBase::OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_FALSE;
 }
 
-LRESULT CWndBase::OnKeyDown(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CWndBase::OnKeyDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_FALSE;
 }
 
-LRESULT CWndBase::OnMouseDown(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CWndBase::OnMouseDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_FALSE;
 }
 
-LRESULT CWndBase::OnMouseUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CWndBase::OnMouseUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_FALSE;
 }
 
-LRESULT CWndBase::OnMouseMove(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CWndBase::OnMouseMove(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_FALSE;
 }
 
-LRESULT CWndBase::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CWndBase::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
@@ -184,7 +184,7 @@ LRESULT CWndBase::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(hwnd, &ps);
+		HDC hdc = BeginPaint(hWnd, &ps);
 		if (_tcslen (m_szText) > 0)
 		{
 			RECT rcView;
@@ -194,7 +194,7 @@ LRESULT CWndBase::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 			DrawText (hdc, m_szText, _tcslen (m_szText), &rcView, DT_CENTER | DT_VCENTER);
 		}
 
-		EndPaint(hwnd, &ps);
+		EndPaint(hWnd, &ps);
 	}
 		break;
 
@@ -217,7 +217,7 @@ LRESULT CWndBase::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 		break;
 	}
 
-	return	DefWindowProc(hwnd, uMsg, wParam, lParam);
+	return	DefWindowProc(hWnd, uMsg, wParam, lParam);
 }
 
 

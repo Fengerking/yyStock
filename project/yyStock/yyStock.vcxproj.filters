@@ -132,6 +132,9 @@
     <ClInclude Include="..\..\ui\CViewCode.h">
       <Filter>UI Files\View</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\ui\CViewKXT.h">
+      <Filter>UI Files\View</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -204,6 +207,9 @@
       <Filter>UI Files\View</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ui\CViewCode.cpp">
+      <Filter>UI Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CViewKXT.cpp">
       <Filter>UI Files\View</Filter>
     </ClCompile>
   </ItemGroup>

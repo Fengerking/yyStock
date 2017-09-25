@@ -16,6 +16,7 @@
 
 #include "CViewCode.h"
 
+#include "CRegMng.h"
 #include "ULogFunc.h"
 #include "USystemFunc.h"
 
@@ -27,23 +28,39 @@ CViewCode::CViewCode(HINSTANCE hInst)
 	_tcscpy (m_szWindowName, _T("yyStockViewCode"));
 
 	memset(m_szKeyCode, 0, sizeof(m_szKeyCode));
-	strcpy(m_szKeyCode, "600895");
+	strcpy(m_szCode, "600895");
+	char * pCode = CRegMng::g_pRegMng->GetTextValue("LastCode");
+	if (strlen(pCode) > 0)
+		strcpy(m_szCode, pCode);
 }
 
 CViewCode::~CViewCode(void)
 {
+	CRegMng::g_pRegMng->SetTextValue("LastCode", m_szCode);
 }
 
 int CViewCode::UpdateView (HDC hDC)
 {
+	DrawRect(hDC, &m_rcWnd, 5, MSC_GRAY_4);
+
 	if (strlen(m_szKeyCode) <= 0)
 		return QC_ERR_NONE;
-
-	DrawRect(hDC, &m_rcWnd, 5, MSC_GRAY_4);
 
 	SetBkMode(hDC, TRANSPARENT);
 	DrawStrText(hDC, m_szKeyCode, m_hFntLrg, yyViewCode_Width / 2, 0, MSC_WHITE, 2);
 
+	return QC_ERR_NONE;
+}
+
+int	CViewCode::NotifyCode(void)
+{
+	CWndBase * pWnd = NULL;
+	NODEPOS pos = m_lstWnds.GetHeadPosition();
+	while (pos != NULL)
+	{
+		pWnd = m_lstWnds.GetNext(pos);
+		PostMessage(pWnd->GetWnd(), WM_MSG_CODE_CHANGE, (WPARAM)m_szCode, 0);
+	}
 	return QC_ERR_NONE;
 }
 
@@ -67,23 +84,29 @@ bool CViewCode::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
 	return true;
 }
 
-LRESULT CViewCode::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CViewCode::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
+	case WM_MSG_CODE_CHANGE:
+		strcpy(m_szCode, (char *)wParam);
+		NotifyCode();
+		return S_OK;
+
 	case WM_TIMER:
 		if (m_nTimerHide != 0)
 			KillTimer(m_hWnd, m_nTimerHide);
 		m_nTimerHide = 0;
 		ShowWindow(m_hWnd, SW_HIDE);
+		strcpy(m_szKeyCode, "");
 		break;
 
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(hwnd, &ps);
+		HDC hdc = BeginPaint(hWnd, &ps);
 		UpdateView (hdc);
-		EndPaint(hwnd, &ps);
+		EndPaint(hWnd, &ps);
 	}
 		break;
 
@@ -94,7 +117,7 @@ LRESULT CViewCode::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM
 		break;
 	}
 
-	return	CWndBase::OnReceiveMessage(hwnd, uMsg, wParam, lParam);
+	return	CWndBase::OnReceiveMessage(hWnd, uMsg, wParam, lParam);
 }
 
 int CViewCode::RegistWindow(CWndBase * pWnd)
@@ -109,12 +132,20 @@ int	CViewCode::RemoveWindow(CWndBase * pWnd)
 	return QC_ERR_NONE;
 }
 
-LRESULT CViewCode::OnResize(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CViewCode::OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	RECT	rcView;
+	RECT	rcWnd;
+	GetClientRect(m_hParent, &rcWnd);
+
+	rcView.left = (rcWnd.right - yyViewCode_Width) - 72;
+	rcView.top = (rcWnd.bottom - yyViewCode_Height) - 36;
+	SetWindowPos(m_hWnd, HWND_TOP, rcView.left, rcView.top, yyViewCode_Width, yyViewCode_Height, 0);
+
 	return S_FALSE;
 }
 
-LRESULT CViewCode::OnKeyUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CViewCode::OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	long	nLen = strlen(m_szKeyCode);
 	if ((wParam == VK_DELETE || wParam == VK_BACK) && nLen > 0)
@@ -149,13 +180,7 @@ LRESULT CViewCode::OnKeyUp(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	if (nLen + 1 == 6)
 	{
 		strcpy(m_szCode, m_szKeyCode);
-		CWndBase * pWnd = NULL;
-		NODEPOS pos = m_lstWnds.GetHeadPosition();
-		while (pos != NULL)
-		{
-			pWnd = m_lstWnds.GetNext(pos);
-			PostMessage(pWnd->GetWnd(), WM_MSG_CODE_CHANGE, (WPARAM)m_szCode, 0);
-		}
+		NotifyCode();
 		m_nTimerHide = SetTimer(m_hWnd, WM_TIMER_VC_HIDE, 1000, NULL);
 	}
 	else

@@ -29,6 +29,8 @@ CViewFST::CViewFST(HINSTANCE hInst)
 
 CViewFST::~CViewFST(void)
 {
+	SendMessage(m_hParent, WM_MSG_CODE_REMOVE, (WPARAM)this, 0);
+
 	QC_DEL_P(m_pPngDec);
 }
 
@@ -55,7 +57,9 @@ int CViewFST::UpdateView (HDC hDC)
 int CViewFST::UpdateInfo(void)
 {
 	char szURL[256];
-	if (m_szCode[0] == '6')
+	if (strlen(m_szCode) == 7)
+		sprintf(szURL, "http://img1.money.126.net/chart/hs/time/540x360/%s.png", m_szCode);
+	else if (m_szCode[0] == '6')
 		sprintf(szURL, "http://img1.money.126.net/chart/hs/time/540x360/0%s.png", m_szCode);
 	else
 		sprintf(szURL, "http://img1.money.126.net/chart/hs/time/540x360/1%s.png", m_szCode);
@@ -64,7 +68,7 @@ int CViewFST::UpdateInfo(void)
 		m_pPngDec = new CPngDec();
 	if (m_pPngDec->OpenSource(szURL) != QC_ERR_NONE)
 		return QC_ERR_FAILED;
-
+	InvalidateRect(m_hWnd, NULL, FALSE);
 	return QC_ERR_NONE;
 }
 
@@ -73,17 +77,24 @@ bool CViewFST::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
 	if (!CWndBase::CreateWnd (hParent, rcView, clrBG))
 		return false;
 
+	SendMessage(m_hParent, WM_MSG_CODE_REGIST, (WPARAM)this, 0);
+
 	UpdateInfo();
 
-//	SetTimer(m_hWnd, WM_TIMER_UPDATE, m_nUpdateTime, NULL);
+	SetTimer(m_hWnd, WM_TIMER_UPDATE, m_nUpdateTime, NULL);
 
 	return true;
 }
 
-LRESULT CViewFST::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CViewFST::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	switch (uMsg)
 	{
+	case WM_MSG_CODE_CHANGE:
+		strcpy(m_szCode, (char *)wParam);
+		UpdateInfo();
+		return S_OK;
+
 	case WM_TIMER:
 		if (qcIsTradeTime())
 		{
@@ -95,9 +106,9 @@ LRESULT CViewFST::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 	case WM_PAINT:
 	{
 		PAINTSTRUCT ps;
-		HDC hdc = BeginPaint(hwnd, &ps);
+		HDC hdc = BeginPaint(hWnd, &ps);
 		UpdateView (hdc);
-		EndPaint(hwnd, &ps);
+		EndPaint(hWnd, &ps);
 	}
 		break;
 
@@ -111,6 +122,6 @@ LRESULT CViewFST::OnReceiveMessage (HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM 
 		break;
 	}
 
-	return	CWndBase::OnReceiveMessage(hwnd, uMsg, wParam, lParam);
+	return	CWndBase::OnReceiveMessage(hWnd, uMsg, wParam, lParam);
 }
 
