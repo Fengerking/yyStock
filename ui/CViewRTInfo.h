@@ -15,6 +15,7 @@
 
 #include "CWndBase.h"
 #include "CNodeList.h"
+#include "CIOcurl.h"
 
 #define	 MAX_DOUBLE_VALUE	0XFFFFFFFF
 
@@ -45,6 +46,7 @@ protected:
 protected:
 	int							m_nWndWidth;
 
+	CIOcurl	*					m_pIO;
 	qcStockRealTimeItem			m_stkRTInfo;
 	CObjectList <sTradeHistory>	m_lstHistory;
 	int							m_nLastValume;

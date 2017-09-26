@@ -13,6 +13,8 @@
 #define __CWndBase_H__
 
 #include "CBaseGraphics.h"
+#include "CThreadWork.h"
+#include "CMutexLock.h"
 
 #define		WM_TIMER_FIRST			101
 #define		WM_TIMER_UPDATE			102
@@ -23,7 +25,9 @@
 #define		WM_MSG_CODE_CHANGE	WM_USER + 103	// char *
 #define		WM_MSG_CODE_REQUEST	WM_USER + 104	// char *
 
-class CWndBase : public CBaseGraphics
+#define		QC_THREAD_EVENT_UPDATE	1001
+
+class CWndBase : public CBaseGraphics, public CThreadFunc
 {
 public:
 	static LRESULT CALLBACK ViewWindowProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -53,6 +57,13 @@ public:
 	virtual LRESULT	OnMouseMove(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
+	virtual int		UpdateView(HDC hDC);
+	virtual int		UpdateInfo(void);
+
+	virtual int		ThreadStart(void);
+	virtual int		ThreadStop(void);
+
+protected:
 	HINSTANCE		m_hInst;
 	HWND			m_hParent;
 	HWND			m_hWnd;
@@ -73,6 +84,11 @@ protected:
 	int				m_nTimerLBClick;
 
 	int				m_nUpdateTime;
+
+protected:
+	virtual int			OnHandleEvent(CThreadEvent * pEvent);
+	CThreadWork	*		m_pThreadWork;
+	CMutexLock			m_mtLock;
 };
 
 #endif //__CWndBase_H__

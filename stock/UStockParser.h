@@ -14,12 +14,12 @@
 
 #include "qcStock.h"
 #include "CNodeList.h"
+#include "CIOcurl.h"
 
+int		qcStock_ParseRTItemInfo(CIOcurl * pIO, const char * pCode, qcStockRealTimeItem * pStockInfo);
+int		qcStock_ParseRTListInfo(CIOcurl * pIO, const char ** ppCode, int nNum, qcStockRealTimeItem ** ppStockInfo);
 
-int		qcStock_ParseRTItemInfo(const char * pCode, qcStockRealTimeItem * pStockInfo);
-int		qcStock_ParseRTListInfo(const char ** ppCode, int nNum, qcStockRealTimeItem ** ppStockInfo);
-
-int		qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem> * pList);
+int		qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem> * pList, int nNum);
 int		qcStock_CreateDayLineMACD(CObjectList<qcStockKXTInfoItem> * pList);
 
 int		qcStock_ParseRTItem(char * pItemInfo, qcStockRealTimeItem * pStockInfo);

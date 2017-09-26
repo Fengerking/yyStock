@@ -15,6 +15,10 @@
 #include "CWndGrpMng.h"
 
 #include "CIOcurl.h"
+#include "CDlgConfig.h"
+#include "CDlgDownLoad.h"
+
+#include "resource.h"
 
 #include "USystemFunc.h"
 #include "ULogFunc.h"
@@ -22,11 +26,16 @@
 CWndGrpMng::CWndGrpMng(HINSTANCE hInst)
 	: m_hInst (hInst)
 	, m_hMainWnd (NULL)
+	, m_pLstStock(NULL)
 	, m_pGrpMain(NULL)
 	, m_pViewKXT(NULL)
 	, m_pViewCode(NULL)
 {
+	SetObjectName("CWndGrpMng");
+
 	m_pRegMng = new CRegMng("Setting");
+	m_pLstStock = new CStockItemList();
+	m_pLstStock->OpenFileList();
 }
 
 CWndGrpMng::~CWndGrpMng(void)
@@ -36,31 +45,27 @@ CWndGrpMng::~CWndGrpMng(void)
 
 	QC_DEL_P(m_pViewCode);
 
-	if (CIOcurl::m_pCURL != NULL)
-	{
-		curl_easy_cleanup(CIOcurl::m_pCURL);
-		curl_global_cleanup();  
-	}
-
 	QC_DEL_P(m_pRegMng);
+	QC_DEL_P(m_pLstStock);
 }
 
 int	CWndGrpMng::CreateWnd (HWND hWnd)
 {
 	m_hMainWnd = hWnd;
+	SetWindowText(m_hMainWnd, "ÑôÑôÖ¤È¯");
 
 	RECT	rcWnd;
 	GetClientRect(m_hMainWnd, &rcWnd);
 	if (m_pViewCode == NULL)
 		m_pViewCode = new CViewCode(m_hInst);
 
-//	if (m_pGrpMain == NULL)
-//		m_pGrpMain = new CGroupMain(m_hInst);
-//	m_pGrpMain->CreateWnd(m_hMainWnd);
+	if (m_pGrpMain == NULL)
+		m_pGrpMain = new CGroupMain(m_hInst);
+	m_pGrpMain->CreateWnd(m_hMainWnd);
 
 	if (m_pViewKXT == NULL)
 		m_pViewKXT = new CViewKXT(m_hInst);
-	m_pViewKXT->CreateWnd(m_hMainWnd, rcWnd, MSC_BLACK);
+//	m_pViewKXT->CreateWnd(m_hMainWnd, rcWnd, MSC_BLACK);
 
 	m_pViewCode->CreateWnd(m_hMainWnd, rcWnd, MSC_BLACK);
 
@@ -72,8 +77,38 @@ int	CWndGrpMng::CreateWnd (HWND hWnd)
 LRESULT CWndGrpMng::OnReceiveMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	LRESULT	nRC = S_FALSE;
+	int wmId, wmEvent;
 	switch (uMsg)
 	{
+	case WM_COMMAND:
+		wmId = LOWORD(wParam);
+		wmEvent = HIWORD(wParam);
+		// Parse the menu selections:
+		switch (wmId)
+		{
+		case ID_FILE_CONFIG:
+		{
+			CDlgConfig	dlgConfig(m_hInst, m_hMainWnd);
+			if (dlgConfig.OpenDlg() == IDOK)
+			{
+				if (m_pViewCode != NULL)
+				{
+					PostMessage(m_pViewCode->GetWnd(), WM_MSG_CODE_CHANGE, (WPARAM)m_pViewCode->GetCode(), 0);
+				}
+			}
+			break;
+		}
+		case ID_FILE_DOWNLOAD:
+		{
+			CDlgDownLoad dlgDownLoad(m_hInst, m_hMainWnd);
+			dlgDownLoad.OpenDlg();
+			break;
+		}
+		default:
+			break;
+		}
+		break;
+
 	case WM_MSG_CODE_REGIST:
 		if (m_pViewCode != NULL)
 			m_pViewCode->RegistWindow((CWndBase *)wParam);
@@ -132,6 +167,10 @@ LRESULT CWndGrpMng::OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		SetWindowPos(m_pViewKXT->GetWnd(), HWND_BOTTOM, rcWnd.left, rcWnd.top, rcWnd.right, rcWnd.bottom, 0);
 		m_pViewKXT->OnResize(hWnd, uMsg, wParam, lParam);
+	}
+	if (m_pGrpMain != NULL)
+	{
+		m_pGrpMain->OnResize(hWnd, uMsg, wParam, lParam);
 	}
 	if (m_pViewCode != NULL)
 	{

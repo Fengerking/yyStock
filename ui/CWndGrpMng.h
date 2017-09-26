@@ -15,15 +15,16 @@
 #include "windows.h"
 #include "string.h"
 
-#include "CRegMng.h"
+#include "CBaseObject.h"
+#include "CStockItemList.h"
+
 #include "CGroupMain.h"
 #include "CViewKXT.h"
-
 #include "CViewCode.h"
 
 #include "CRegMng.h"
 
-class CWndGrpMng
+class CWndGrpMng : public CBaseObject
 {
 public:
 	CWndGrpMng(HINSTANCE hInst);
@@ -43,6 +44,8 @@ public:
 protected:
 	HINSTANCE			m_hInst;
 	HWND				m_hMainWnd;
+
+	CStockItemList *	m_pLstStock;
 
 	CGroupMain *		m_pGrpMain;
 	CViewKXT *			m_pViewKXT;

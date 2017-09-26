@@ -37,6 +37,9 @@
     <Filter Include="UI Files\View">
       <UniqueIdentifier>{9b3b7bde-5987-421e-b9ea-0636e9b4e275}</UniqueIdentifier>
     </Filter>
+    <Filter Include="UI Files\Dialog">
+      <UniqueIdentifier>{4042d2b4-618a-4850-a88b-4c58f742f2a2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -135,6 +138,21 @@
     <ClInclude Include="..\..\ui\CViewKXT.h">
       <Filter>UI Files\View</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\base\CMutexLock.h">
+      <Filter>Base Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\base\CThreadWork.h">
+      <Filter>Base Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\CDlgBase.h">
+      <Filter>UI Files\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\CDlgConfig.h">
+      <Filter>UI Files\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\CDlgDownLoad.h">
+      <Filter>UI Files\Dialog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -211,6 +229,21 @@
     </ClCompile>
     <ClCompile Include="..\..\ui\CViewKXT.cpp">
       <Filter>UI Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CMutexLock.cpp">
+      <Filter>Base Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\base\CThreadWork.cpp">
+      <Filter>Base Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CDlgBase.cpp">
+      <Filter>UI Files\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CDlgConfig.cpp">
+      <Filter>UI Files\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CDlgDownLoad.cpp">
+      <Filter>UI Files\Dialog</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

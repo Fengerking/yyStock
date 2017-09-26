@@ -96,8 +96,8 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    HWND hWnd;
    g_hInst = hInstance; // Store instance handle in our global variable
    hWnd = CreateWindow(g_szWindowClass, g_szTitle, WS_OVERLAPPEDWINDOW,
-						nScreenX / 4, 200, nScreenX / 2, nScreenY / 2, NULL, NULL, hInstance, NULL);
-						//0, 0, nScreenX, nScreenY, NULL, NULL, hInstance, NULL);
+						//nScreenX / 4, 200, nScreenX / 2, nScreenY / 2, NULL, NULL, hInstance, NULL);
+						0, 0, nScreenX, nScreenY, NULL, NULL, hInstance, NULL);
    if (!hWnd)
       return FALSE;
 
@@ -167,6 +167,8 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 			DestroyWindow(hWnd);
 			break;
 		default:
+			if (g_pWndMng != NULL)
+				g_pWndMng->OnReceiveMessage(hWnd, message, wParam, lParam);
 			return DefWindowProc(hWnd, message, wParam, lParam);
 		}
 		break;

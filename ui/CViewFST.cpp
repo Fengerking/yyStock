@@ -23,12 +23,16 @@ CViewFST::CViewFST(HINSTANCE hInst)
 	: CWndBase (hInst)
 	, m_pPngDec(NULL)
 {
+	SetObjectName("CViewFST");
+
 	_tcscpy (m_szClassName, _T("yyStockViewFST"));
 	_tcscpy (m_szWindowName, _T("yyStockViewFST"));
 }
 
 CViewFST::~CViewFST(void)
 {
+	ThreadStop();
+
 	SendMessage(m_hParent, WM_MSG_CODE_REMOVE, (WPARAM)this, 0);
 
 	QC_DEL_P(m_pPngDec);
@@ -56,6 +60,12 @@ int CViewFST::UpdateView (HDC hDC)
 
 int CViewFST::UpdateInfo(void)
 {
+	if (!qcIsTradeTime())
+	{
+		if (m_pPngDec != NULL && m_pPngDec->GetBmp() != NULL)
+			return QC_ERR_FAILED;
+	}
+
 	char szURL[256];
 	if (strlen(m_szCode) == 7)
 		sprintf(szURL, "http://img1.money.126.net/chart/hs/time/540x360/%s.png", m_szCode);
@@ -79,9 +89,15 @@ bool CViewFST::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
 
 	SendMessage(m_hParent, WM_MSG_CODE_REGIST, (WPARAM)this, 0);
 
-	UpdateInfo();
-
-	SetTimer(m_hWnd, WM_TIMER_UPDATE, m_nUpdateTime, NULL);
+	if (1)
+	{
+		ThreadStart();
+	}
+	else
+	{
+		UpdateInfo();
+		SetTimer(m_hWnd, WM_TIMER_UPDATE, m_nUpdateTime, NULL);
+	}
 
 	return true;
 }
@@ -92,15 +108,13 @@ LRESULT CViewFST::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 	{
 	case WM_MSG_CODE_CHANGE:
 		strcpy(m_szCode, (char *)wParam);
+		if (m_pPngDec != NULL)
+			m_pPngDec->Close();
 		UpdateInfo();
 		return S_OK;
 
 	case WM_TIMER:
-		if (qcIsTradeTime())
-		{
-			if (UpdateInfo() == QC_ERR_NONE)
-				InvalidateRect(m_hWnd, NULL, FALSE);
-		}
+		UpdateInfo();
 		break;
 
 	case WM_PAINT:

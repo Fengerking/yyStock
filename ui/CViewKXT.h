@@ -79,8 +79,6 @@ protected:
 	int				m_nXPos;
 	int				m_nYPos;
 
-	int				m_nShowDayLine;
-
 	SYSTEMTIME		m_tmBuyTime;
 	SYSTEMTIME		m_tmSellTime;
 };

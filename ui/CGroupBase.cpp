@@ -35,33 +35,37 @@ int	CGroupBase::CreateWnd (HWND hWnd)
 	return QC_ERR_NONE;
 }
 
+int	CGroupBase::ShowViews(int nShow)
+{
+	return QC_ERR_NONE;
+}
 
 LRESULT CGroupBase::OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	return S_OK;
+	return S_FALSE;
 }
 
 LRESULT CGroupBase::OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	return S_OK;
+	return S_FALSE;
 }
 
 LRESULT CGroupBase::OnKeyDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	return S_OK;
+	return S_FALSE;
 }
 
 LRESULT CGroupBase::OnMouseDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	return S_OK;
+	return S_FALSE;
 }
 
 LRESULT CGroupBase::OnMouseUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	return S_OK;
+	return S_FALSE;
 }
 
 LRESULT CGroupBase::OnMouseMove(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	return S_OK;
+	return S_FALSE;
 }

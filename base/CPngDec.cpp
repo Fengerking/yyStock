@@ -14,8 +14,6 @@
 #include "qcErr.h"
 #include "CPngDec.h"
 
-#include "CIOcurl.h"
-
 #include "USystemFunc.h"
 #include "ULogFunc.h"
 
@@ -23,6 +21,7 @@
 
 CPngDec::CPngDec(void)
 	: CBaseObject ()
+	, m_pIO(NULL)
 	, m_hHandle(NULL)
 	, m_hInfo(NULL)
 	, m_pData(NULL)
@@ -37,22 +36,23 @@ CPngDec::CPngDec(void)
 CPngDec::~CPngDec(void)
 {
 	Close();
-
 	QC_DEL_A(m_pBmpBuff);
 	if (m_hBmpImage != NULL)
 	{
 		DeleteObject(m_hBmpImage);
 		m_hBmpImage = NULL;
 	}
+	QC_DEL_P(m_pIO);
 }
 
 int	CPngDec::OpenSource(const char * pURL)
 {
-	CIOcurl ioURL;
-	if (ioURL.Open(pURL, 0, 0) != QC_ERR_NONE)
+	if (m_pIO == NULL)
+		m_pIO = new CIOcurl();
+	if (m_pIO->Open(pURL, 0, 0) != QC_ERR_NONE)
 		return QC_ERR_FAILED;
-	m_pBuffData = (unsigned char *)ioURL.GetData();
-	m_nBuffSize = (int)ioURL.GetSize();
+	m_pBuffData = (unsigned char *)m_pIO->GetData();
+	m_nBuffSize = (int)m_pIO->GetSize();
 	m_nBuffRead = 0;
 
 	Close();

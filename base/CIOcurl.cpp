@@ -21,7 +21,6 @@
 //#define	SKIP_HOSTNAME_VERFICATION	1  
 
 int		qcg_curl_read_times = 0;
-CURL *	CIOcurl::m_pCURL = NULL;
 
 CIOcurl::CIOcurl(void)
 	: CIOBase()
@@ -36,7 +35,7 @@ CIOcurl::CIOcurl(void)
 CIOcurl::~CIOcurl(void)
 {
 	Close();
- //   curl_global_cleanup();  
+    curl_global_cleanup();  
 }
 
 int CIOcurl::Open(const char * pURL, long long llOffset, int nFlag)
@@ -73,8 +72,8 @@ int CIOcurl::Close(void)
 {
 	if (m_pCURL != NULL)
 	{
-//		curl_easy_cleanup(m_pCURL);
-//		m_pCURL = NULL;
+		curl_easy_cleanup(m_pCURL);
+		m_pCURL = NULL;
 	}
 	return CIOBase::Close();
 }

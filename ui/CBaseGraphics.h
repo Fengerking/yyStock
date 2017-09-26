@@ -14,6 +14,7 @@
 
 #include "windows.h"
 #include "string.h"
+#include "CBaseObject.h"
 
 #define	MSC_BLACK	RGB (0, 0, 0)
 #define	MSC_WHITE	RGB (255, 255, 255)
@@ -38,7 +39,7 @@
 		DeleteObject (p);   \
 		p = NULL; }			\
 
-class CBaseGraphics
+class CBaseGraphics : public CBaseObject
 {
 public:
 	CBaseGraphics(void);

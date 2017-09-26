@@ -68,7 +68,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__QC_OS_WIN32__;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\..\include;..\..\base;..\..\ext\libpng;..\..\stock;..\..\lib\include;..\..\ui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\include;..\..\base;..\..\ext\libpng;..\..\stock;..\..\lib\include;..\..\ui;.\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DisableSpecificWarnings>4996</DisableSpecificWarnings>
     </ClCompile>
     <Link>
@@ -88,9 +88,11 @@
     <ClInclude Include="..\..\base\CIOBase.h" />
     <ClInclude Include="..\..\base\CIOcurl.h" />
     <ClInclude Include="..\..\base\CIOFile.h" />
+    <ClInclude Include="..\..\base\CMutexLock.h" />
     <ClInclude Include="..\..\base\CNodeList.h" />
     <ClInclude Include="..\..\base\CPngDec.h" />
     <ClInclude Include="..\..\base\CRegMng.h" />
+    <ClInclude Include="..\..\base\CThreadWork.h" />
     <ClInclude Include="..\..\base\ULogFunc.h" />
     <ClInclude Include="..\..\base\USystemFunc.h" />
     <ClInclude Include="..\..\base\UThreadFunc.h" />
@@ -102,6 +104,9 @@
     <ClInclude Include="..\..\stock\UStockParser.h" />
     <ClInclude Include="..\..\stock\UStockTools.h" />
     <ClInclude Include="..\..\ui\CBaseGraphics.h" />
+    <ClInclude Include="..\..\ui\CDlgBase.h" />
+    <ClInclude Include="..\..\ui\CDlgConfig.h" />
+    <ClInclude Include="..\..\ui\CDlgDownLoad.h" />
     <ClInclude Include="..\..\ui\CGroupBase.h" />
     <ClInclude Include="..\..\ui\CGroupMain.h" />
     <ClInclude Include="..\..\ui\CViewCode.h" />
@@ -121,9 +126,11 @@
     <ClCompile Include="..\..\base\CIOBase.cpp" />
     <ClCompile Include="..\..\base\CIOcurl.cpp" />
     <ClCompile Include="..\..\base\CIOFile.cpp" />
+    <ClCompile Include="..\..\base\CMutexLock.cpp" />
     <ClCompile Include="..\..\base\CNodeList.cpp" />
     <ClCompile Include="..\..\base\CPngDec.cpp" />
     <ClCompile Include="..\..\base\CRegMng.cpp" />
+    <ClCompile Include="..\..\base\CThreadWork.cpp" />
     <ClCompile Include="..\..\base\ULogFunc.c" />
     <ClCompile Include="..\..\base\USystemFunc.cpp" />
     <ClCompile Include="..\..\base\UThreadFunc.cpp" />
@@ -131,6 +138,9 @@
     <ClCompile Include="..\..\stock\UStockParser.cpp" />
     <ClCompile Include="..\..\stock\UStockTools.cpp" />
     <ClCompile Include="..\..\ui\CBaseGraphics.cpp" />
+    <ClCompile Include="..\..\ui\CDlgBase.cpp" />
+    <ClCompile Include="..\..\ui\CDlgConfig.cpp" />
+    <ClCompile Include="..\..\ui\CDlgDownLoad.cpp" />
     <ClCompile Include="..\..\ui\CGroupBase.cpp" />
     <ClCompile Include="..\..\ui\CGroupMain.cpp" />
     <ClCompile Include="..\..\ui\CViewCode.cpp" />

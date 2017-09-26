@@ -15,6 +15,7 @@
 
 #include "CWndBase.h"
 #include "CNodeList.h"
+#include "CIOcurl.h"
 
 class CViewSelList : public CWndBase
 {
@@ -36,6 +37,7 @@ protected:
 	char *					m_szCodeList[256];
 	int						m_nCodeNum;
 
+	CIOcurl	*				m_pIO;
 	qcStockRealTimeItem *	m_pRTInfo[256];
 
 };

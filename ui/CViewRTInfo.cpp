@@ -24,19 +24,26 @@
 CViewRTInfo::CViewRTInfo(HINSTANCE hInst)
 	: CWndBase (hInst)
 	, m_nWndWidth (398)
+	, m_pIO(NULL)
 	, m_nLastValume (0)
 {
+	SetObjectName("CViewRTInfo");
+
 	_tcscpy (m_szClassName, _T("yyStockViewRTInfo"));
 	_tcscpy (m_szWindowName, _T("yyStockViewRTInfo"));
 
-	strcpy(m_szCode, "600895");
+	memset(&m_stkRTInfo, 0, sizeof(qcStockRealTimeItem));
 }
 
 CViewRTInfo::~CViewRTInfo(void)
 {
+	ThreadStop();
+
 	SendMessage(m_hParent, WM_MSG_CODE_REMOVE, (WPARAM)this, 0);
 
 	ReleaseHistory ();
+
+	QC_DEL_P(m_pIO);
 }
 
 int CViewRTInfo::UpdateView (HDC hDC)
@@ -173,8 +180,13 @@ int CViewRTInfo::UpdateView (HDC hDC)
 
 int CViewRTInfo::UpdateInfo(void)
 {
+	if (!qcIsTradeTime())
+	{
+		if (m_stkRTInfo.m_dNowPrice != 0)
+			return QC_ERR_FAILED;
+	}
 	memset(&m_stkRTInfo, 0, sizeof(qcStockRealTimeItem));
-	int nRC = qcStock_ParseRTItemInfo(m_szCode, &m_stkRTInfo);
+	int nRC = qcStock_ParseRTItemInfo(m_pIO, m_szCode, &m_stkRTInfo);
 	if (nRC == QC_ERR_NONE)
 	{
 		m_dClosePrice = m_stkRTInfo.m_dClosePrice;
@@ -200,6 +212,7 @@ bool CViewRTInfo::ReleaseHistory (void)
 		delete pItem;
 		pItem = m_lstHistory.RemoveHead ();
 	}
+	m_nLastValume = 0;
 	return true;
 }
 
@@ -210,11 +223,20 @@ bool CViewRTInfo::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
 
 	CBaseGraphics::OnCreateWnd (m_hWnd);
 
+	if (m_pIO == NULL)
+		m_pIO = new CIOcurl();
+
 	SendMessage(m_hParent, WM_MSG_CODE_REGIST, (WPARAM)this, 0);
 
-	UpdateInfo();
-
-	SetTimer(m_hWnd, WM_TIMER_UPDATE, m_nUpdateTime, NULL);
+	if (1)
+	{
+		ThreadStart();
+	}
+	else
+	{
+		UpdateInfo();
+		SetTimer(m_hWnd, WM_TIMER_UPDATE, m_nUpdateTime, NULL);
+	}
 
 	return true;
 }
@@ -224,16 +246,14 @@ LRESULT CViewRTInfo::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	switch (uMsg)
 	{
 	case WM_MSG_CODE_CHANGE:
+		ReleaseHistory();
+		memset(&m_stkRTInfo, 0, sizeof(qcStockRealTimeItem));
 		strcpy(m_szCode, (char *)wParam);
 		UpdateInfo();
 		return S_OK;
 
 	case WM_TIMER:
-		if (qcIsTradeTime())
-		{
-			if (UpdateInfo() == QC_ERR_NONE)
-				InvalidateRect(m_hWnd, NULL, FALSE);
-		}
+		UpdateInfo();
 		break;
 
 	case WM_SIZE:

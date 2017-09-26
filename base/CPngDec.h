@@ -17,6 +17,8 @@
 #include "CBaseObject.h"
 #include "png.h"
 
+#include "CIOcurl.h"
+
 class CPngDec : public CBaseObject
 {
 public:
@@ -31,6 +33,7 @@ public:
 	virtual HBITMAP GetBmp(void) { return m_hBmpImage; }
 
 protected:
+	CIOcurl	*		m_pIO;
 	png_structp		m_hHandle;
 	png_infop		m_hInfo;
 	png_bytep *		m_pData;

@@ -34,7 +34,10 @@ CWndBase::CWndBase(HINSTANCE hInst)
 	, m_bLButtonClick (false)
 	, m_nTimerLBClick (0)
 	, m_nUpdateTime(1000)
+	, m_pThreadWork(NULL)
 {
+	SetObjectName("CWndBase");
+
 	_tcscpy (m_szClassName, _T("bangViewWidnow"));
 	_tcscpy (m_szWindowName, _T("bangViewWidnow"));
 
@@ -43,6 +46,12 @@ CWndBase::CWndBase(HINSTANCE hInst)
 
 CWndBase::~CWndBase(void)
 {
+	if (m_pThreadWork != NULL)
+	{
+		m_pThreadWork->Stop();
+		delete m_pThreadWork;
+	}
+
 	if (m_hWnd != NULL)
 		Close ();
 }
@@ -147,6 +156,60 @@ LRESULT CWndBase::OnMouseUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 LRESULT CWndBase::OnMouseMove(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_FALSE;
+}
+
+int	CWndBase::UpdateView(HDC hDC)
+{
+	return QC_ERR_NONE;
+}
+
+int	CWndBase::UpdateInfo(void)
+{
+	return QC_ERR_NONE;
+}
+
+int	CWndBase::ThreadStart(void)
+{
+	if (m_pThreadWork == NULL)
+	{
+		m_pThreadWork = new CThreadWork();
+		m_pThreadWork->SetOwner(m_szObjName);
+		m_pThreadWork->Start();
+	}
+
+	CThreadEvent * pEvent = new CThreadEvent(QC_THREAD_EVENT_UPDATE, 0, 0, NULL);
+	pEvent->SetEventFunc(this, &CThreadFunc::OnEvent);
+	m_pThreadWork->PostEvent(pEvent, 10);
+
+	return QC_ERR_NONE;
+}
+
+int	CWndBase::ThreadStop(void)
+{
+	if (m_pThreadWork != NULL)
+	{
+		m_pThreadWork->Stop();
+	}
+	return QC_ERR_NONE;
+}
+
+int	CWndBase::OnHandleEvent(CThreadEvent * pEvent)
+{
+	UpdateInfo();
+
+	CThreadEvent * pNewEvent = m_pThreadWork->GetFree();
+	if (pNewEvent == NULL)
+	{
+		pNewEvent = new CThreadEvent(QC_THREAD_EVENT_UPDATE, 0, 0, NULL);
+		pNewEvent->SetEventFunc(this, &CThreadFunc::OnEvent);
+	}
+	else
+	{
+		pNewEvent->m_nID = QC_THREAD_EVENT_UPDATE;
+	}
+	m_pThreadWork->PostEvent(pNewEvent, m_nUpdateTime);
+
+	return QC_ERR_NONE;
 }
 
 LRESULT CWndBase::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

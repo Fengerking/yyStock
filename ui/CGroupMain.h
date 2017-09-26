@@ -18,6 +18,7 @@
 #include "CRegMng.h"
 
 #include "CViewFST.h"
+#include "CViewKXT.h"
 #include "CViewSelList.h"
 #include "CViewRTInfo.h"
 
@@ -28,12 +29,16 @@ public:
 	virtual ~CGroupMain(void);
 
 	virtual int			CreateWnd (HWND hWnd);
+	virtual int			ShowViews(int nShow);
+
+	virtual LRESULT		OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
 	HINSTANCE			m_hInst;
 	HWND				m_hMainWnd;
 
 	CViewFST *			m_pViewFST;
+	CViewKXT *			m_pViewKXT;
 	CViewSelList *		m_pViewSEL;
 	CViewRTInfo *		m_pViewRTI;
 

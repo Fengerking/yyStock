@@ -12,7 +12,6 @@
 #include "qcType.h"
 #include "qcErr.h"
 
-#include "CIOcurl.h"
 #include "CIOFile.h"
 
 #include "CRegMng.h"
@@ -24,7 +23,7 @@
 #define QCSTOCK_VALUE_DOUBLE	1
 #define QCSTOCK_VALUE_INT		2
 
-int	qcStock_ParseRTItemInfo(const char * pCode, qcStockRealTimeItem * pStockInfo)
+int	qcStock_ParseRTItemInfo(CIOcurl * pIO, const char * pCode, qcStockRealTimeItem * pStockInfo)
 {
 	if (pCode == NULL || pStockInfo == NULL)
 		return QC_ERR_ARG;
@@ -39,12 +38,11 @@ int	qcStock_ParseRTItemInfo(const char * pCode, qcStockRealTimeItem * pStockInfo
 		sprintf(szCode, "1%s", pCode);
 	sprintf(szURL, "http://api.money.126.net/data/feed/%s", szCode);
 
-	CIOcurl ioURL;
-	if (ioURL.Open(szURL, 0, 0) != QC_ERR_NONE)
+	if (pIO->Open(szURL, 0, 0) != QC_ERR_NONE)
 		return QC_ERR_FAILED;
 
-	char *	pTextInfo = ioURL.GetData();
-	int		nTextSize = (int)ioURL.GetSize();
+	char *	pTextInfo = pIO->GetData();
+	int		nTextSize = (int)pIO->GetSize();
 	if (pTextInfo == NULL || nTextSize <= 0)
 		return QC_ERR_FAILED;
 
@@ -61,7 +59,7 @@ int	qcStock_ParseRTItemInfo(const char * pCode, qcStockRealTimeItem * pStockInfo
 	return qcStock_ParseRTItem(szItemInfo, pStockInfo);
 }
 
-int	qcStock_ParseRTListInfo(const char ** ppCode, int nNum, qcStockRealTimeItem ** ppStockInfo)
+int	qcStock_ParseRTListInfo(CIOcurl * pIO, const char ** ppCode, int nNum, qcStockRealTimeItem ** ppStockInfo)
 {
 	if (ppCode == NULL || ppStockInfo == NULL || nNum <= 0)
 		return QC_ERR_ARG;
@@ -90,12 +88,11 @@ int	qcStock_ParseRTListInfo(const char ** ppCode, int nNum, qcStockRealTimeItem 
 	}
 	sprintf(szURL, "http://api.money.126.net/data/feed/%s", szCode);
 
-	CIOcurl ioURL;
-	if (ioURL.Open(szURL, 0, 0) != QC_ERR_NONE)
+	if (pIO->Open(szURL, 0, 0) != QC_ERR_NONE)
 		return QC_ERR_FAILED;
 
-	char *	pTextInfo = ioURL.GetData();
-	int		nTextSize = (int)ioURL.GetSize();
+	char *	pTextInfo = pIO->GetData();
+	int		nTextSize = (int)pIO->GetSize();
 	if (pTextInfo == NULL || nTextSize <= 0)
 		return QC_ERR_FAILED;
 
@@ -120,7 +117,10 @@ int	qcStock_ParseRTListInfo(const char ** ppCode, int nNum, qcStockRealTimeItem 
 		memset(szItemInfo, 0, sizeof(szItemInfo));
 		strncpy(szItemInfo, pItemStart, (pItemEnd - pItemStart) + 1);
 
-		ppStockInfo[i]->m_dLastPrice = ppStockInfo[i]->m_dNowPrice;
+		SYSTEMTIME tmSys;
+		GetLocalTime(&tmSys);
+		if (tmSys.wSecond % 5 == 0)
+			ppStockInfo[i]->m_dLastPrice = ppStockInfo[i]->m_dNowPrice;
 
 		if (qcStock_ParseRTItem(szItemInfo, ppStockInfo[i]) != QC_ERR_NONE)
 			return QC_ERR_FAILED;
@@ -132,7 +132,7 @@ int	qcStock_ParseRTListInfo(const char ** ppCode, int nNum, qcStockRealTimeItem 
 	return QC_ERR_NONE;
 }
 
-int	qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem> * pList)
+int	qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem> * pList, int nNum)
 {
 	if (pCode == NULL || pList == NULL)
 		return QC_ERR_ARG;
@@ -190,6 +190,9 @@ int	qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem>
 			pList->AddHead(pItem);
 		else
 			delete pItem;
+
+		if (nNum > 0 && pList->GetCount() >= nNum)
+			break;
 	}
 
 	return QC_ERR_NONE;

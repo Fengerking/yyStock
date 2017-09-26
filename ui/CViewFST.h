@@ -26,10 +26,11 @@ public:
 	virtual LRESULT	OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
-	int				UpdateView(HDC hDC);
-	int				UpdateInfo(void);
+	virtual int		UpdateView(HDC hDC);
+	virtual int		UpdateInfo(void);
 
 protected:
 	CPngDec *		m_pPngDec;
+
 };
 #endif //__CViewFST_H__

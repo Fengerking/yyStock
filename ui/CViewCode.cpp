@@ -24,6 +24,8 @@ CViewCode::CViewCode(HINSTANCE hInst)
 	: CWndBase (hInst)
 	, m_nTimerHide(0)
 {
+	SetObjectName("CViewCode");
+
 	_tcscpy (m_szClassName, _T("yyStockViewCode"));
 	_tcscpy (m_szWindowName, _T("yyStockViewCode"));
 

@@ -25,6 +25,7 @@ public:
 	virtual ~CGroupBase(void);
 
 	virtual int			CreateWnd (HWND hWnd);
+	virtual int			ShowViews(int nShow);
 
 	virtual LRESULT		OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT		OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

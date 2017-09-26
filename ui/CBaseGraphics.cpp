@@ -16,7 +16,8 @@
 #include "CBaseGraphics.h"
 
 CBaseGraphics::CBaseGraphics(void)
-	: m_dClosePrice (0)
+	: CBaseObject()
+	, m_dClosePrice (0)
 	, m_hMemDC (NULL)
 	, m_hBmpInfo (NULL)
 	, m_hBmpBack (NULL)
@@ -50,6 +51,7 @@ CBaseGraphics::CBaseGraphics(void)
 	, m_hBrushOrange (NULL)
 	, m_hBrushGray (NULL)
 {
+	SetObjectName("CBaseGraphics");
 	strcpy (m_szCode, "600895");
 }
 

@@ -19,13 +19,6 @@
 #include "UStockParser.h"
 #include "ULogFunc.h"
 
-#define KXT_SHOW_DL5		0X01
-#define KXT_SHOW_DL10		0X02
-#define KXT_SHOW_DL20		0X04
-#define KXT_SHOW_DL30		0X08
-#define KXT_SHOW_DL60		0X10
-#define KXT_SHOW_DL120		0X20
-
 CViewKXT::CViewKXT(HINSTANCE hInst)
 	: CWndBase (hInst)
 	, m_nItemStart (-1)
@@ -38,10 +31,11 @@ CViewKXT::CViewKXT(HINSTANCE hInst)
 	, m_bMouseDown(false)
 	, m_nXPos (-1)
 	, m_nYPos (-1)
-	, m_nShowDayLine (0XFFFFFFFF)
 {
-	_tcscpy (m_szClassName, _T("bangStockKXTWindow"));
-	_tcscpy (m_szWindowName, _T("bangStockKXTWindow"));
+	SetObjectName("CViewKXT");
+
+	_tcscpy (m_szClassName, _T("yyStockViewKXT"));
+	_tcscpy (m_szWindowName, _T("yyStockViewKXT"));
 
 	memset (&m_tmBuyTime, 0, sizeof (m_tmBuyTime));
 	memset (&m_tmSellTime, 0, sizeof (m_tmSellTime));
@@ -58,7 +52,7 @@ int CViewKXT::UpdateInfo(void)
 {
 	ReleaseData();
 	m_nItemStart = -1;
-	if (qcStock_ParseHistoryData(m_szCode, &m_lstData) == QC_ERR_NONE)
+	if (qcStock_ParseHistoryData(m_szCode, &m_lstData, -1) == QC_ERR_NONE)
 	{
 		qcStock_CreateDayLineMACD(&m_lstData);
 		InvalidateRect(m_hWnd, NULL, FALSE);
@@ -205,18 +199,18 @@ int CViewKXT::DrawKXImage (HDC hDC)
 
 int CViewKXT::DrawDayLine (HDC hDC)
 {
-	if ((m_nShowDayLine & KXT_SHOW_DL5) > 0)
-		DrawDayLine (hDC,  5);
-	if ((m_nShowDayLine & KXT_SHOW_DL10) > 0)
-		DrawDayLine (hDC,  10);
-	if ((m_nShowDayLine & KXT_SHOW_DL20) > 0)
-		DrawDayLine (hDC,  20);
-	if ((m_nShowDayLine & KXT_SHOW_DL30) > 0)
-		DrawDayLine (hDC,  30);
-	if ((m_nShowDayLine & KXT_SHOW_DL60) > 0)
-		DrawDayLine (hDC,  60);
-	if ((m_nShowDayLine & KXT_SHOW_DL120) > 0)
-		DrawDayLine (hDC,  120);
+	if (CRegMng::g_pRegMng->GetIntValue("Line5Show", 1) > 0)
+		DrawDayLine(hDC, 5);
+	if (CRegMng::g_pRegMng->GetIntValue("Line10Show", 1) > 0)
+		DrawDayLine(hDC, 10);
+	if (CRegMng::g_pRegMng->GetIntValue("Line20Show", 1) > 0)
+		DrawDayLine(hDC, 20);
+	if (CRegMng::g_pRegMng->GetIntValue("Line30Show", 1) > 0)
+		DrawDayLine(hDC, 30);
+	if (CRegMng::g_pRegMng->GetIntValue("Line60Show", 1) > 0)
+		DrawDayLine(hDC, 60);
+	if (CRegMng::g_pRegMng->GetIntValue("Line120Show", 1) > 0)
+		DrawDayLine(hDC, 120);
 	return QC_ERR_NONE;
 }
 
