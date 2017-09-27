@@ -36,12 +36,6 @@ CPngDec::CPngDec(void)
 CPngDec::~CPngDec(void)
 {
 	Close();
-	QC_DEL_A(m_pBmpBuff);
-	if (m_hBmpImage != NULL)
-	{
-		DeleteObject(m_hBmpImage);
-		m_hBmpImage = NULL;
-	}
 	QC_DEL_P(m_pIO);
 }
 
@@ -177,6 +171,12 @@ int	CPngDec::Close(void)
 			png_destroy_read_struct(&m_hHandle, 0, 0);
 		m_hInfo = NULL;
 		m_hHandle = NULL;
+	}
+	QC_DEL_A(m_pBmpBuff);
+	if (m_hBmpImage != NULL)
+	{
+		DeleteObject(m_hBmpImage);
+		m_hBmpImage = NULL;
 	}
 
 	return QC_ERR_NONE;

@@ -25,7 +25,7 @@
 
 int	qcStock_ParseRTItemInfo(CIOcurl * pIO, const char * pCode, qcStockRealTimeItem * pStockInfo)
 {
-	if (pCode == NULL || pStockInfo == NULL)
+	if (pIO == NULL || pCode == NULL || pStockInfo == NULL)
 		return QC_ERR_ARG;
 
 	char szURL[256];
@@ -178,7 +178,7 @@ int	qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem>
 		sscanf(pItemText, "%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%d,%lf", 
 			&pItem->m_dClose, &pItem->m_dMax, &pItem->m_dMin, &pItem->m_dOpen, &dYesClose,
 			&pItem->m_dDiffNum, &pItem->m_dDiffRate, &pItem->m_dExchange, &pItem->m_nVolume, &pItem->m_dMoney);
-		pItem->m_dSwing = (pItem->m_dMax - pItem->m_dMin) / dYesClose;
+		pItem->m_dSwing = (pItem->m_dMax - pItem->m_dMin) * 100 / dYesClose;
 
 		if (pItem->m_dClose != 0 && dYesClose != 0)
 		{
@@ -425,6 +425,17 @@ int	qcStock_ParseRTItem(char * pItemInfo, qcStockRealTimeItem * pStockInfo)
 				pStockInfo->m_wzName[nPos++] = *pNamePos;
 				pNamePos++;
 			}
+		}
+	}
+
+	char * pDatePos = strstr(pItemInfo, "\"update\":");
+	if (pDatePos != NULL)
+	{
+		pDatePos = strstr(pDatePos+9, "\"");
+		if (pDatePos != NULL)
+		{
+			memset(pStockInfo->m_szDate, 0, sizeof(pStockInfo->m_szDate));
+			strncpy(pStockInfo->m_szDate, pDatePos + 1, 10);
 		}
 	}
 

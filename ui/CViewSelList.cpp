@@ -177,21 +177,17 @@ int CViewSelList::UpdateInfo(void)
 	return nRC;
 }
 
-bool CViewSelList::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
+bool CViewSelList::CreateWnd(HWND hParent, RECT rcView, COLORREF clrBG, CGroupBase * pGroup)
 {
-	if (!CWndBase::CreateWnd (hParent, rcView, clrBG))
+	if (!CWndBase::CreateWnd(hParent, rcView, clrBG, pGroup))
 		return false;
 
 	CBaseGraphics::OnCreateWnd (m_hWnd);
 
 	if (1)
-	{
 		ThreadStart();
-	}
 	else
-	{
 		SetTimer(m_hWnd, WM_TIMER_UPDATE, m_nUpdateTime, NULL);
-	}
 
 	return true;
 }

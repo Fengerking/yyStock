@@ -27,7 +27,7 @@ public:
 	CViewCode(HINSTANCE hInst);
 	virtual ~CViewCode(void);
 
-	virtual bool	CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG);
+	virtual bool	CreateWnd(HWND hParent, RECT rcView, COLORREF clrBG, CGroupBase * pGroup);
 	virtual LRESULT	OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	virtual LRESULT	OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

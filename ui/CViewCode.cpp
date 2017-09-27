@@ -66,7 +66,7 @@ int	CViewCode::NotifyCode(void)
 	return QC_ERR_NONE;
 }
 
-bool CViewCode::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
+bool CViewCode::CreateWnd(HWND hParent, RECT rcView, COLORREF clrBG, CGroupBase * pGroup)
 {
 	CBaseGraphics::OnCreateWnd(hParent);
 
@@ -78,7 +78,7 @@ bool CViewCode::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
 	rcView.right = rcView.left + yyViewCode_Width;
 	rcView.bottom = rcView.top + yyViewCode_Height;
 
-	if (!CWndBase::CreateWnd (hParent, rcView, clrBG))
+	if (!CWndBase::CreateWnd(hParent, rcView, clrBG, pGroup))
 		return false;
 
 	ShowWindow(m_hWnd, SW_HIDE);

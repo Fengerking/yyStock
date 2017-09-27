@@ -16,5 +16,6 @@
 #include "CNodeList.h"
 
 int		qcStock_DownLoadHistoryData (const char * pCode);
+int		qcStock_CopyRTInfoToKXTInfo (qcStockKXTInfoItem * pKXTInfo, qcStockRealTimeItem * pRTInfo);
 
 #endif // __UStockTools_H__

@@ -109,6 +109,7 @@
     <ClInclude Include="..\..\ui\CDlgDownLoad.h" />
     <ClInclude Include="..\..\ui\CGroupBase.h" />
     <ClInclude Include="..\..\ui\CGroupMain.h" />
+    <ClInclude Include="..\..\ui\CGroupStock.h" />
     <ClInclude Include="..\..\ui\CViewCode.h" />
     <ClInclude Include="..\..\ui\CViewFST.h" />
     <ClInclude Include="..\..\ui\CViewKXT.h" />
@@ -143,6 +144,7 @@
     <ClCompile Include="..\..\ui\CDlgDownLoad.cpp" />
     <ClCompile Include="..\..\ui\CGroupBase.cpp" />
     <ClCompile Include="..\..\ui\CGroupMain.cpp" />
+    <ClCompile Include="..\..\ui\CGroupStock.cpp" />
     <ClCompile Include="..\..\ui\CViewCode.cpp" />
     <ClCompile Include="..\..\ui\CViewFST.cpp" />
     <ClCompile Include="..\..\ui\CViewKXT.cpp" />

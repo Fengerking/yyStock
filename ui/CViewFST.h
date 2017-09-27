@@ -22,7 +22,7 @@ public:
 	CViewFST(HINSTANCE hInst);
 	virtual ~CViewFST(void);
 
-	virtual bool	CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG);
+	virtual bool	CreateWnd(HWND hParent, RECT rcView, COLORREF clrBG, CGroupBase * pGroup);
 	virtual LRESULT	OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:

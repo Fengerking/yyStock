@@ -35,7 +35,6 @@ CIOcurl::CIOcurl(void)
 CIOcurl::~CIOcurl(void)
 {
 	Close();
-    curl_global_cleanup();  
 }
 
 int CIOcurl::Open(const char * pURL, long long llOffset, int nFlag)
@@ -73,6 +72,7 @@ int CIOcurl::Close(void)
 	if (m_pCURL != NULL)
 	{
 		curl_easy_cleanup(m_pCURL);
+		curl_global_cleanup();
 		m_pCURL = NULL;
 	}
 	return CIOBase::Close();

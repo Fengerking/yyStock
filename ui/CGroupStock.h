@@ -1,5 +1,5 @@
 /*******************************************************************************
-	File:		CGroupMain.h
+	File:		CGroupStock.h
 
 	Contains:	the base class of all objects.
 
@@ -9,8 +9,8 @@
 	2016-11-29		Bangfei			Create file
 
 *******************************************************************************/
-#ifndef __CGroupMain_H__
-#define __CGroupMain_H__
+#ifndef __CGroupStock_H__
+#define __CGroupStock_H__
 
 #include "windows.h"
 #include "string.h"
@@ -20,16 +20,12 @@
 
 #include "CViewFST.h"
 #include "CViewKXT.h"
-#include "CViewSelList.h"
-#include "CViewRTInfo.h"
 
-#include "CGroupStock.h"
-
-class CGroupMain : public CGroupBase
+class CGroupStock : public CGroupBase
 {
 public:
-	CGroupMain(HINSTANCE hInst);
-	virtual ~CGroupMain(void);
+	CGroupStock(HINSTANCE hInst);
+	virtual ~CGroupStock(void);
 
 	virtual int			CreateWnd(HWND hWnd, RECT * pRect);
 	virtual int			ShowViews(int nShow);
@@ -39,12 +35,12 @@ public:
 	virtual LRESULT		OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
-	CGroupStock *		m_pGroupStock;
-	CViewSelList *		m_pViewSEL;
-	CViewRTInfo *		m_pViewRTI;
+	virtual int			ShowType(void);
 
-	double				m_dSplt;;
-
+protected:
+	CViewFST *			m_pViewFST;
+	CViewKXT *			m_pViewKXT;
+	int					m_nShowType;
 };
 
-#endif // __CGroupMain_H__
+#endif // __CGroupStock_H__

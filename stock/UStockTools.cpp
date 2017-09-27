@@ -92,3 +92,22 @@ int	qcStock_DownLoadHistoryData(const char * pCode)
 	return QC_ERR_NONE;
 }
 
+int	qcStock_CopyRTInfoToKXTInfo(qcStockKXTInfoItem * pKXTInfo, qcStockRealTimeItem * pRTInfo)
+{
+	if (pKXTInfo == NULL || pRTInfo == NULL)
+		return QC_ERR_ARG;
+
+	sscanf(pRTInfo->m_szDate, "%d/%d%/%d", &pKXTInfo->m_nYear, &pKXTInfo->m_nMonth, &pKXTInfo->m_nDay);
+	pKXTInfo->m_dMin = pRTInfo->m_dMinPrice;
+	pKXTInfo->m_dMax = pRTInfo->m_dMaxPrice;
+	pKXTInfo->m_dOpen = pRTInfo->m_dOpenPrice;
+	pKXTInfo->m_dClose = pRTInfo->m_dNowPrice;
+	pKXTInfo->m_nVolume = pRTInfo->m_nTradeNum;
+	pKXTInfo->m_dMoney = pRTInfo->m_nTradeMoney;
+	pKXTInfo->m_dDiffNum = pRTInfo->m_dDiffNum;
+	pKXTInfo->m_dDiffRate = pRTInfo->m_dDiffRate;
+	pKXTInfo->m_dSwing = pRTInfo->m_dSwing;
+	pKXTInfo->m_dExchange = 0;
+
+	return QC_ERR_NONE;
+}

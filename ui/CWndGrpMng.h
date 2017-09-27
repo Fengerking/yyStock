@@ -40,6 +40,7 @@ public:
 	virtual LRESULT		OnMouseDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT		OnMouseUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT		OnMouseMove(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT		OnMouseWheel(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
 	HINSTANCE			m_hInst;
@@ -48,8 +49,6 @@ protected:
 	CStockItemList *	m_pLstStock;
 
 	CGroupMain *		m_pGrpMain;
-	CViewKXT *			m_pViewKXT;
-
 	CViewCode *			m_pViewCode;
 
 	CRegMng *			m_pRegMng;

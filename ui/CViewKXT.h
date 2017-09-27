@@ -14,6 +14,7 @@
 #include "qcStock.h"
 
 #include "CWndBase.h"
+#include "CIOcurl.h"
 #include "CNodeList.h"
 
 #define	KXT_ITEM_MAX_WIDTH	96
@@ -25,7 +26,7 @@ public:
 	CViewKXT(HINSTANCE hInst);
 	virtual ~CViewKXT(void);
 
-	virtual bool	CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG);
+	virtual bool	CreateWnd(HWND hParent, RECT rcView, COLORREF clrBG, CGroupBase * pGroup);
 	virtual LRESULT	OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 	virtual LRESULT	OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -56,6 +57,7 @@ protected:
 protected:
 	CObjectList<qcStockKXTInfoItem> m_lstData;
 
+	CIOcurl	*		m_pIO;
 	double			m_dMaxPrice;
 	double			m_dMinPrice;
 	long long		m_llMaxVolume;

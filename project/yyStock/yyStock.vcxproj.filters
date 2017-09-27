@@ -153,6 +153,9 @@
     <ClInclude Include="..\..\ui\CDlgDownLoad.h">
       <Filter>UI Files\Dialog</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\ui\CGroupStock.h">
+      <Filter>UI Files\Group</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -244,6 +247,9 @@
     </ClCompile>
     <ClCompile Include="..\..\ui\CDlgDownLoad.cpp">
       <Filter>UI Files\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CGroupStock.cpp">
+      <Filter>UI Files\Group</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

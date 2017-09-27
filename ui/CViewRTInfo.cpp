@@ -216,9 +216,9 @@ bool CViewRTInfo::ReleaseHistory (void)
 	return true;
 }
 
-bool CViewRTInfo::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
+bool CViewRTInfo::CreateWnd(HWND hParent, RECT rcView, COLORREF clrBG, CGroupBase * pGroup)
 {
-	if (!CWndBase::CreateWnd (hParent, rcView, clrBG))
+	if (!CWndBase::CreateWnd (hParent, rcView, clrBG, pGroup))
 		return false;
 
 	CBaseGraphics::OnCreateWnd (m_hWnd);
@@ -226,6 +226,7 @@ bool CViewRTInfo::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
 	if (m_pIO == NULL)
 		m_pIO = new CIOcurl();
 
+	SendMessage(m_hParent, WM_MSG_CODE_REQUEST, (WPARAM)m_szCode, 0);
 	SendMessage(m_hParent, WM_MSG_CODE_REGIST, (WPARAM)this, 0);
 
 	if (1)

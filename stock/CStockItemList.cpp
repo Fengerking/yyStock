@@ -120,6 +120,8 @@ int CStockItemList::OpenFileList(void)
 	char	szLine[64];
 	int		nRestSize = nSize;
 	int		nLineLen = 0;
+	char *	pStart = NULL;
+	char *	pEnd = NULL;
 	while (nRestSize > 0)
 	{
 		nLineLen = qcReadTextLine(pData, nRestSize, szLine, sizeof(szLine));
@@ -128,8 +130,11 @@ int CStockItemList::OpenFileList(void)
 		pItem = new qcStockInfoItem();
 		memset(pItem, 0, sizeof(qcStockInfoItem));
 		m_lstStock.AddTail(pItem);
-		strncpy(pItem->m_szCode, szLine, 6);
-		strncpy(pItem->m_szName, szLine + 7, nLineLen-9);
+		pStart = strstr(szLine, ",");
+		strncpy(pItem->m_szCode, szLine, pStart - szLine);
+		pStart++;
+
+		strncpy(pItem->m_szName, pStart, nLineLen - (pStart - szLine) - 2);
 	}
 	ioFile.Close();
 

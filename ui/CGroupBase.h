@@ -15,16 +15,17 @@
 #include "windows.h"
 #include "string.h"
 
+#include "CBaseObject.h"
 #include "CRegMng.h"
 #include "CViewRTInfo.h"
 
-class CGroupBase
+class CGroupBase : public CBaseObject
 {
 public:
 	CGroupBase(HINSTANCE hInst);
 	virtual ~CGroupBase(void);
 
-	virtual int			CreateWnd (HWND hWnd);
+	virtual int			CreateWnd (HWND hWnd, RECT * pRect);
 	virtual int			ShowViews(int nShow);
 
 	virtual LRESULT		OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -33,10 +34,12 @@ public:
 	virtual LRESULT		OnMouseDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT		OnMouseUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT		OnMouseMove(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT		OnMouseWheel(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
 	HINSTANCE			m_hInst;
 	HWND				m_hMainWnd;
+	RECT				m_rcView;
 
 
 };

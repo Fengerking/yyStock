@@ -17,10 +17,13 @@
 #include "CRegMng.h"
 
 #include "UStockParser.h"
+#include "UStockTools.h"
+
 #include "ULogFunc.h"
 
 CViewKXT::CViewKXT(HINSTANCE hInst)
 	: CWndBase (hInst)
+	, m_pIO(NULL)
 	, m_nItemStart (-1)
 	, m_nItemCount (0)
 	, m_hItemPos (NULL)
@@ -44,16 +47,40 @@ CViewKXT::CViewKXT(HINSTANCE hInst)
 CViewKXT::~CViewKXT(void)
 {
 	SendMessage(m_hParent, WM_MSG_CODE_REMOVE, (WPARAM)this, 0);
-
 	ReleaseData();
+	QC_DEL_P(m_pIO);
 }
 
 int CViewKXT::UpdateInfo(void)
 {
 	ReleaseData();
 	m_nItemStart = -1;
-	if (qcStock_ParseHistoryData(m_szCode, &m_lstData, -1) == QC_ERR_NONE)
+	int nRC = qcStock_ParseHistoryData(m_szCode, &m_lstData, -1);
+	if (nRC == QC_ERR_NONE)
 	{
+		SYSTEMTIME tmNow;
+		GetLocalTime(&tmNow);
+		if (tmNow.wDayOfWeek != 6 && tmNow.wDayOfWeek != 7 && tmNow.wDayOfWeek != 0)
+		{
+			qcStockKXTInfoItem * pItem = m_lstData.GetTail();
+			if (pItem->m_nDay != tmNow.wDay)
+			{
+				qcStockRealTimeItem	stkRTInfo;
+				if (m_pIO == NULL)
+					m_pIO = new CIOcurl();
+				nRC = qcStock_ParseRTItemInfo(m_pIO, m_szCode, &stkRTInfo);
+				if (nRC == QC_ERR_NONE)
+				{
+					pItem = new qcStockKXTInfoItem();
+					nRC = qcStock_CopyRTInfoToKXTInfo (pItem, &stkRTInfo);
+					if (nRC == QC_ERR_NONE)
+						m_lstData.AddTail(pItem);
+					else
+						delete pItem;
+				}
+			}
+		}
+
 		qcStock_CreateDayLineMACD(&m_lstData);
 		InvalidateRect(m_hWnd, NULL, FALSE);
 	}
@@ -667,16 +694,16 @@ LRESULT	CViewKXT::OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return S_OK;
 }
 
-bool CViewKXT::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
+bool CViewKXT::CreateWnd(HWND hParent, RECT rcView, COLORREF clrBG, CGroupBase * pGroup)
 {
-	if (!CWndBase::CreateWnd (hParent, rcView, clrBG))
+	if (!CWndBase::CreateWnd(hParent, rcView, clrBG, pGroup))
 		return false;
 	CBaseGraphics::OnCreateWnd (m_hWnd);
+
 	SendMessage(m_hParent, WM_MSG_CODE_REGIST, (WPARAM)this, 0);
-
 	SendMessage(m_hParent, WM_MSG_CODE_REQUEST, (WPARAM)m_szCode, 0);
-	UpdateInfo();
 
+	UpdateInfo();
 	OnResize (m_hWnd, WM_SIZE, 0, 0);
 
 	return true;

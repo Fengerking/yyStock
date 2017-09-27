@@ -27,6 +27,8 @@
 
 #define		QC_THREAD_EVENT_UPDATE	1001
 
+class CGroupBase;
+
 class CWndBase : public CBaseGraphics, public CThreadFunc
 {
 public:
@@ -37,7 +39,7 @@ public:
 	CWndBase(HINSTANCE hInst);
 	virtual ~CWndBase(void);
 
-	virtual bool	CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG);
+	virtual bool	CreateWnd(HWND hParent, RECT rcView, COLORREF clrBG, CGroupBase * pGroup);
 	virtual void	Close (void);
 
 	virtual HWND	GetWnd (void) {return m_hWnd;}
@@ -55,6 +57,7 @@ public:
 	virtual LRESULT	OnMouseDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT	OnMouseUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT	OnMouseMove(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT	OnMouseWheel(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
 	virtual int		UpdateView(HDC hDC);
@@ -66,6 +69,7 @@ protected:
 protected:
 	HINSTANCE		m_hInst;
 	HWND			m_hParent;
+	CGroupBase *	m_pGroup;
 	HWND			m_hWnd;
 	RECT			m_rcWnd;
 

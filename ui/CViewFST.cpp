@@ -82,12 +82,13 @@ int CViewFST::UpdateInfo(void)
 	return QC_ERR_NONE;
 }
 
-bool CViewFST::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
+bool CViewFST::CreateWnd(HWND hParent, RECT rcView, COLORREF clrBG, CGroupBase * pGroup)
 {
-	if (!CWndBase::CreateWnd (hParent, rcView, clrBG))
+	if (!CWndBase::CreateWnd(hParent, rcView, clrBG, pGroup))
 		return false;
 
 	SendMessage(m_hParent, WM_MSG_CODE_REGIST, (WPARAM)this, 0);
+	SendMessage(m_hParent, WM_MSG_CODE_REQUEST, (WPARAM)m_szCode, 0);
 
 	if (1)
 	{

@@ -230,7 +230,7 @@ bool qcIsTradeTime (void)
 	// only update the stock info in working time
 	SYSTEMTIME tmSys;
 	GetLocalTime (&tmSys);
-	tmSys.wHour -= 1;
+//	tmSys.wHour -= 1;
 	if (tmSys.wDayOfWeek == 6 || tmSys.wDayOfWeek == 0)
 		return false;
 

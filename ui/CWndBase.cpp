@@ -27,6 +27,7 @@ CWndBase::CWndBase(HINSTANCE hInst)
 	: m_hInst (hInst)
 	, m_hWnd (NULL)
 	, m_hParent (NULL)
+	, m_pGroup(NULL)
 	, m_hBKBrush (NULL)
 	, m_nClrFont (RGB(255,255,255))
 	, m_nTimerUpdate (0)
@@ -56,9 +57,10 @@ CWndBase::~CWndBase(void)
 		Close ();
 }
 
-bool CWndBase::CreateWnd (HWND hParent, RECT rcView, COLORREF clrBG)
+bool CWndBase::CreateWnd(HWND hParent, RECT rcView, COLORREF clrBG, CGroupBase * pGroup)
 {
 	m_hParent = hParent;
+	m_pGroup = pGroup;
 	if (m_hWnd != NULL)
 	{
 		SetParent (m_hWnd, hParent);
@@ -154,6 +156,11 @@ LRESULT CWndBase::OnMouseUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 }
 
 LRESULT CWndBase::OnMouseMove(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	return S_FALSE;
+}
+
+LRESULT CWndBase::OnMouseWheel(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_FALSE;
 }
