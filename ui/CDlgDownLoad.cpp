@@ -26,6 +26,7 @@ CDlgDownLoad::CDlgDownLoad(HINSTANCE hInst, HWND hParent)
 	: CDlgBase (hInst, hParent)
 	, m_hEdtResult(NULL)
 	, m_hProgress(NULL)
+	, m_pIO(NULL)
 	, m_pItem(NULL)
 	, m_nCommandID(0)
 	, m_hPosCode(NULL)
@@ -41,6 +42,7 @@ CDlgDownLoad::CDlgDownLoad(HINSTANCE hInst, HWND hParent)
 CDlgDownLoad::~CDlgDownLoad(void)
 {
 	QC_DEL_A(m_pErrorText);
+	QC_DEL_P(m_pIO);
 }
 
 int CDlgDownLoad::OpenDlg (void)
@@ -78,11 +80,13 @@ int	CDlgDownLoad::OnStart(void)
 	EnableWindow(GetDlgItem(m_hDlg, IDC_BUTTON_COMPINFO), FALSE);
 	EnableWindow(GetDlgItem(m_hDlg, IDC_BUTTON_HYGN), FALSE);
 
-	m_nTimer = SetTimer(m_hDlg, 1001, 1, NULL);
 	m_nProcNum = 0;
 	strcpy(m_pErrorText, "");
 	m_nStartTime = qcGetSysTime();
 	m_hPosCode = CStockItemList::g_stkList->m_lstStock.GetHeadPosition();
+	if (m_pIO == NULL)
+		m_pIO = new CIOcurl();
+	m_nTimer = SetTimer(m_hDlg, 1001, 1, NULL);
 
 	return 0;
 }
@@ -98,7 +102,14 @@ int CDlgDownLoad::OnDownLoad(void)
 	int nStart = qcGetSysTime();
 	int nRC = 0;
 	if (m_nCommandID == IDC_BUTTON_HISTORY)
-		nRC = qcStock_DownLoadHistoryData(m_pItem->m_szCode);
+	{
+		nRC = qcStock_DownLoadData_History(m_pIO, m_pItem->m_szCode);
+	}
+	else if (m_nCommandID == IDC_BUTTON_CQFQ)
+	{
+		nRC = qcStock_DownLoadData_FHSP(m_pIO, m_pItem->m_szCode);
+		m_pIO->Close();
+	}
 	int nEnd = qcGetSysTime();
 	int nTotal = (nEnd - m_nStartTime) / 1000;
 	sprintf(m_szStatus, "%s %s    Used:  % 8d.   Total:   %02d:%02d:%02d   % 8d / %d", 
@@ -114,7 +125,7 @@ int CDlgDownLoad::OnDownLoad(void)
 		strcat(m_pErrorText, "    Download Failed! \r\n");
 		SetWindowText(m_hEdtResult, m_pErrorText);
 	}
-	m_nTimer = SetTimer(m_hDlg, 1001, 1, NULL);
+	m_nTimer = SetTimer(m_hDlg, 1001, 10, NULL);
 
 	return 0;
 }

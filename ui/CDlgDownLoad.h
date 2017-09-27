@@ -14,6 +14,7 @@
 
 #include "CDlgBase.h"
 #include "CStockItemList.h"
+#include "CIOcurl.h"
 
 class CDlgDownLoad : public CDlgBase
 {
@@ -35,6 +36,8 @@ protected:
 protected:
 	HWND				m_hEdtResult;
 	HWND				m_hProgress;
+
+	CIOcurl  *			m_pIO;
 
 	int					m_nCommandID;
 	qcStockInfoItem *	m_pItem;

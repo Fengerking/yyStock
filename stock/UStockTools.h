@@ -14,8 +14,13 @@
 
 #include "qcStock.h"
 #include "CNodeList.h"
+#include "CIOcurl.h"
 
-int		qcStock_DownLoadHistoryData (const char * pCode);
+int		qcStock_DownLoadData_History(CIOcurl * pIO, const char * pCode);
+int		qcStock_DownLoadData_FHSP(CIOcurl * pIO, const char * pCode);
+int		qcStock_DownLoadData_Info(CIOcurl * pIO, const char * pCode);
+int		qcStock_DownLoadData_CWZB(CIOcurl * pIO, const char * pCode);
+
 int		qcStock_CopyRTInfoToKXTInfo (qcStockKXTInfoItem * pKXTInfo, qcStockRealTimeItem * pRTInfo);
 
 #endif // __UStockTools_H__

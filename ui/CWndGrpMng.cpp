@@ -35,6 +35,7 @@ CWndGrpMng::CWndGrpMng(HINSTANCE hInst)
 	m_pRegMng = new CRegMng("Setting");
 	m_pLstStock = new CStockItemList();
 	m_pLstStock->OpenFileList();
+//	m_pLstStock->OpenHttpList();
 }
 
 CWndGrpMng::~CWndGrpMng(void)

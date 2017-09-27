@@ -24,7 +24,7 @@
 
 CViewSelList::CViewSelList(HINSTANCE hInst)
 	: CWndBase (hInst)
-	, m_nCodeNum(2)
+	, m_nCodeNum(0)
 	, m_pIO(NULL)
 {
 	SetObjectName("CViewSelList");

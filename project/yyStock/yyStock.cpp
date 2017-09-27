@@ -6,7 +6,6 @@
 
 #include "CIOcurl.h"
 #include "CStockItemList.h"
-#include "CPngDec.h"
 
 #include "CWndGrpMng.h"
 
@@ -101,48 +100,15 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    if (!hWnd)
       return FALSE;
 
+//   CIOcurl ioHttp;
+//  qcStock_DownLoadData_FHSP(&ioHttp, "000001");
+
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);
 
    g_pWndMng = new CWndGrpMng(g_hInst);
    g_pWndMng->CreateWnd(hWnd);
 
- /*
-   pngDec.OpenSource("http://img1.money.126.net/chart/hs/time/540x360/0600895.png");
-//	CIOcurl ioURL;
-//	ioURL.Open("http://quotes.money.163.com/service/chddata.html?code=1300316&start=20170901&end=20170917", 0, 0);
-//	ioURL.Open("http://api.money.126.net/data/feed/0601398", 0, 0);
-  
-   int nStart = qcGetSysTime();
-
-   SetTimer(hWnd, 1001, 1000, NULL);
-     CStockItemList stockList;
-	 stockList.OpenFileList();
-	 
-	 int nUsed = qcGetSysTime() - nStart;
-	 nStart = qcGetSysTime();
-
-//   qcStockRealTimeItem * pStockInfo = new qcStockRealTimeItem();
-//   memset(pStockInfo, 0, sizeof(qcStockRealTimeItem));
-//   qcStock_ParseRealTimeInfo("600895", pStockInfo);
-//   delete pStockInfo;
-/*
-	 qcStockInfoItem * pItem = NULL;
-	 NODEPOS pos = stockList.m_lstStock.GetHeadPosition();
-	 while (pos != NULL)
-	 {
-		pItem = stockList.m_lstStock.GetNext(pos);
-		qcStock_DownLoadHistoryData(pItem->m_szCode);
-	 }
-
-
-	 CObjectList<qcStockKXTInfoItem> lstHistory;
-	 qcStock_ParseHistoryData("600895", &lstHistory);
-
-//	 qcStock_DownLoadHistoryData("600895");
-
-	 nUsed = qcGetSysTime() - nStart;
-*/
    return TRUE;
 }
 
