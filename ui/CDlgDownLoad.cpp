@@ -27,6 +27,7 @@ CDlgDownLoad::CDlgDownLoad(HINSTANCE hInst, HWND hParent)
 	, m_hEdtResult(NULL)
 	, m_hProgress(NULL)
 	, m_pIO(NULL)
+	, m_nDelayTime(10)
 	, m_pItem(NULL)
 	, m_nCommandID(0)
 	, m_hPosCode(NULL)
@@ -108,7 +109,10 @@ int CDlgDownLoad::OnDownLoad(void)
 	else if (m_nCommandID == IDC_BUTTON_CQFQ)
 	{
 		nRC = qcStock_DownLoadData_FHSP(m_pIO, m_pItem->m_szCode);
-		m_pIO->Close();
+		if (nRC == QC_ERR_FINISH)
+			m_nDelayTime = 10;
+		else
+			m_nDelayTime = 1000;
 	}
 	int nEnd = qcGetSysTime();
 	int nTotal = (nEnd - m_nStartTime) / 1000;
@@ -125,7 +129,7 @@ int CDlgDownLoad::OnDownLoad(void)
 		strcat(m_pErrorText, "    Download Failed! \r\n");
 		SetWindowText(m_hEdtResult, m_pErrorText);
 	}
-	m_nTimer = SetTimer(m_hDlg, 1001, 10, NULL);
+	m_nTimer = SetTimer(m_hDlg, 1001, m_nDelayTime, NULL);
 
 	return 0;
 }

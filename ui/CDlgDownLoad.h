@@ -38,6 +38,7 @@ protected:
 	HWND				m_hProgress;
 
 	CIOcurl  *			m_pIO;
+	int					m_nDelayTime;
 
 	int					m_nCommandID;
 	qcStockInfoItem *	m_pItem;

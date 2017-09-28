@@ -101,6 +101,15 @@ int	qcStock_DownLoadData_FHSP(CIOcurl * pIO, const char * pCode)
 		return QC_ERR_ARG;
 
 	char szURL[1024];
+	qcGetAppPath(NULL, szURL, sizeof(szURL));
+	sprintf(szURL, "%sdata\\fhsp\\%s.txt", szURL, pCode);
+	CIOFile ioFile;
+	if (ioFile.Open(szURL, 0, QCIO_FLAG_READ) == QC_ERR_NONE)
+	{
+		ioFile.Close();
+		return QC_ERR_FINISH;
+	}
+
 	sprintf(szURL, "http://vip.stock.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/%s.phtml", pCode);
 	int nRC = pIO->Open(szURL, 0, 0);
 	if (nRC != QC_ERR_NONE)
@@ -208,10 +217,11 @@ int	qcStock_DownLoadData_FHSP(CIOcurl * pIO, const char * pCode)
 			pBuff += nLine;
 		}
 	}
+	if (lstItem.GetCount() <= 0)
+		return QC_ERR_FAILED;
 
 	qcGetAppPath(NULL, szURL, sizeof(szURL));
 	sprintf(szURL, "%sdata\\fhsp\\%s.txt", szURL, pCode);
-	CIOFile ioFile;
 	if (ioFile.Open(szURL, 0, QCIO_FLAG_WRITE) != QC_ERR_NONE)
 		return QC_ERR_FAILED;
 	NODEPOS pos = lstItem.GetHeadPosition();
