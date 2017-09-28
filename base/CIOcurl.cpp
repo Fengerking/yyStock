@@ -58,10 +58,10 @@ int CIOcurl::Open(const char * pURL, long long llOffset, int nFlag)
 			break;
 	}
 
-	if (0)
+	if (1)
 	{
 		CIOFile ioFile;
-		ioFile.Open("c:\\work\\Temp\\0000.csv", 0, QCIO_FLAG_WRITE);
+		ioFile.Open("c:\\work\\Temp\\0000.txt", 0, QCIO_FLAG_WRITE);
 		ioFile.Write((unsigned char *)m_szBufferData.c_str(), m_szBufferData.length());
 	}
 	return QC_ERR_NONE;

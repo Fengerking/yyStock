@@ -249,6 +249,87 @@ int	qcStock_DownLoadData_Info(CIOcurl * pIO, const char * pCode)
 	if (pIO == NULL || pCode == NULL)
 		return QC_ERR_ARG;
 
+	char szURL[1024];
+	sprintf(szURL, "http://quotes.money.163.com/f10/gdfx_%s.html#00000", pCode);
+	int nRC = pIO->Open(szURL, 0, 0);
+	if (nRC != QC_ERR_NONE)
+		return nRC;
+
+	int			nFileSize = (int)pIO->GetSize();
+	char *		pFileData = pIO->GetData();
+	char *		pBuff = pFileData;
+	char *		pText = NULL;
+	char *		pStop = NULL;
+	int			nRest = nFileSize;
+	char		szLine[2048];
+	int			nLine = 0;
+	char		szKeyWord[256];
+
+	strcpy(szKeyWord, "总股本");
+	qcStock_GetUTF8Text(szKeyWord, sizeof(szKeyWord));
+	int nFind = qcStock_FindKeyWord(pBuff, nRest, szKeyWord);
+	pBuff += nFind; nRest -= nFind;
+	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	pBuff += nLine; nRest -= nLine;
+	pText = strstr(szLine, "<td>") + 4;
+	double dTotalNum = atof(pText) * 100000000;
+
+	strcpy(szKeyWord, "流通A股");
+	qcStock_GetUTF8Text(szKeyWord, sizeof(szKeyWord));
+	nFind = qcStock_FindKeyWord(pBuff, nRest, szKeyWord);
+	pBuff += nFind; nRest -= nFind;
+	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	pBuff += nLine; nRest -= nLine;
+	pText = strstr(szLine, "<td>") + 4;
+	double dTradeNum = atof(pText) * 100000000;
+
+
+	char	szCWZBDate[5][32];
+	char	szCWZBValue[5][32];
+	sprintf(szURL, "http://quotes.money.163.com/f10/zycwzb_%s.html#00000", pCode);
+	nRC = pIO->Open(szURL, 0, 0);
+	if (nRC != QC_ERR_NONE)
+		return nRC;
+	nFileSize = (int)pIO->GetSize();
+	pFileData = pIO->GetData();
+	pBuff = pFileData;
+	nRest = nFileSize;
+
+	strcpy(szKeyWord, "table_bg001 border_box limit_sale scr_table");
+	nFind = qcStock_FindKeyWord(pBuff, nRest, szKeyWord);
+	pBuff += nFind; nRest -= nFind;
+	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	pBuff += nLine; nRest -= nLine;
+	int i = 0;
+	pText = szLine;
+	for (i = 0; i < 5; i++)
+	{
+		pText = strstr(pText, "<th >");
+		if (pText == NULL)
+			break;
+		pStop = strstr(pText, "</th>");
+		if (pStop == NULL)
+			break;
+		*pStop = 0;
+		strcpy(szCWZBDate[i], pText + 5);
+		pText = pStop + 4;
+	}
+	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	pBuff += nLine; nRest -= nLine;
+	pText = szLine;
+	for (i = 0; i < 5; i++)
+	{
+		pText = strstr(pText, "<td>");
+		if (pText == NULL)
+			break;
+		pStop = strstr(pText, "</td>");
+		if (pStop == NULL)
+			break;
+		*pStop = 0;
+		strcpy(szCWZBValue[i], pText + 5);
+		pText = pStop + 4;
+	}
+
 	return QC_ERR_NONE;
 }
 
@@ -278,4 +359,35 @@ int	qcStock_CopyRTInfoToKXTInfo(qcStockKXTInfoItem * pKXTInfo, qcStockRealTimeIt
 	pKXTInfo->m_dExchange = 0;
 
 	return QC_ERR_NONE;
+}
+
+int	qcStock_GetUTF8Text(char * pText, int nSize)
+{
+	wchar_t wzWord[64];
+	memset(wzWord, 0, sizeof(wzWord));
+	MultiByteToWideChar(CP_ACP, 0, pText, -1, wzWord, 32);
+	memset(pText, 0, nSize);
+	WideCharToMultiByte(CP_UTF8, 0, wzWord, -1, pText, nSize, NULL, NULL);
+
+	return QC_ERR_NONE;
+}
+
+int	qcStock_FindKeyWord(char * pText, int nSize, char * pKey)
+{
+	char *		pBuff = pText;
+	int			nRest = nSize;
+	char		szLine[2048];
+	int			nLine = 0;
+
+	while (nRest > 0)
+	{
+		nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+		if (nLine <= 0)
+			break;
+		pBuff += nLine;
+		nRest -= nLine;
+		if (strstr(szLine, pKey) != NULL)
+			break;
+	}
+	return nSize - nRest;
 }

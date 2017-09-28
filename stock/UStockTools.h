@@ -23,4 +23,7 @@ int		qcStock_DownLoadData_CWZB(CIOcurl * pIO, const char * pCode);
 
 int		qcStock_CopyRTInfoToKXTInfo (qcStockKXTInfoItem * pKXTInfo, qcStockRealTimeItem * pRTInfo);
 
+int		qcStock_GetUTF8Text(char * pText, int nSize);
+int		qcStock_FindKeyWord(char * pText, int nSize, char * pKey);
+
 #endif // __UStockTools_H__

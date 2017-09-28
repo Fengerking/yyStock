@@ -195,6 +195,142 @@ int	qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem>
 			break;
 	}
 
+	qcStock_CreateAdjustFHSP(pCode, pList);
+
+	return QC_ERR_NONE;
+}
+
+int	qcStock_CreateAdjustFHSP(const char * pCode, CObjectList<qcStockKXTInfoItem> * pList)
+{
+	int nChuFuQuan = 1;
+	if (CRegMng::g_pRegMng != NULL)
+		nChuFuQuan = CRegMng::g_pRegMng->GetIntValue("ChuFuQuan", 1);
+	if (nChuFuQuan == 0)
+		return QC_ERR_NONE;
+
+	char szFile[256];
+	qcGetAppPath(NULL, szFile, sizeof(szFile));
+	sprintf(szFile, "%sdata\\fhsp\\%s.txt", szFile, pCode);
+	CIOFile ioFile;
+	if (ioFile.Open(szFile, 0, QCIO_FLAG_READ) != QC_ERR_NONE)
+		return QC_ERR_FAILED;
+
+	char *		pFileData = ioFile.GetData ();
+	char *		pBuff = pFileData;
+	int			nFileSize = (int)ioFile.GetSize();
+	int			nRestSize = nFileSize;
+	char		szLine[2048];
+	char *		pPos = NULL;
+	char *		pTxt = NULL;
+	int			nLine = 0;
+	CObjectList<qcStockFHSPInfoItem>	lstFHSP;
+	qcStockFHSPInfoItem  *				pItem = NULL;
+	while (pBuff - pFileData < nFileSize)
+	{
+		nLine = qcReadTextLine(pBuff, nRestSize, szLine, sizeof(szLine));
+		if (nLine <= 0)
+			break;
+		pBuff += nLine;
+		nRestSize -= nLine;
+
+		pItem = new qcStockFHSPInfoItem();
+		memset(pItem, 0, sizeof(qcStockFHSPInfoItem));
+		lstFHSP.AddTail(pItem);
+		sscanf(szLine, "%d-%02d-%02d,", &pItem->m_nYear, &pItem->m_nMonth, &pItem->m_nDay);
+		pTxt = strstr(szLine, ",") + 1;
+		pPos = strstr(pTxt + 1, ",");
+		*pPos = 0;
+		pItem->m_dGive = atof(pTxt);
+
+		pTxt = pPos + 1;
+		pPos = strstr(pTxt + 1, ",");
+		*pPos = 0;
+		pItem->m_dGain = atof(pTxt);
+
+		pTxt = pPos + 1;
+		pItem->m_dRation = atof(pTxt);
+	}
+
+	double	dDiffPrice = 0;
+	double	dScale = 1.0;
+	int		nDaysFSHP = 0;
+	int		nDaysKXT = 0;
+
+	NODEPOS					posFHSP = NULL;
+	qcStockFHSPInfoItem *	pItemFHSP = NULL;
+	qcStockKXTInfoItem *	pItemKXT = NULL;
+	NODEPOS					posKXT = NULL;
+	if (nChuFuQuan == 1)
+	{
+		posFHSP = lstFHSP.GetHeadPosition();
+		if (posFHSP == NULL)
+		{
+			pItemFHSP = lstFHSP.RemoveTail();
+			while (pItemFHSP != NULL)
+			{
+				delete pItemFHSP;
+				pItemFHSP = lstFHSP.RemoveTail();
+			}
+			return QC_ERR_NONE;
+		}
+		pItemFHSP = lstFHSP.GetNext(posFHSP);
+		nDaysFSHP = qcGetDaysFrom2000(pItemFHSP->m_nYear, pItemFHSP->m_nMonth, pItemFHSP->m_nDay);
+		posKXT = pList->GetTailPosition();
+		while (posKXT != NULL)
+		{
+			pItemKXT = pList->GetPrev(posKXT);
+			pItemKXT->m_dClose = (pItemKXT->m_dClose - dDiffPrice) / dScale;
+			pItemKXT->m_dOpen = (pItemKXT->m_dOpen - dDiffPrice) / dScale;
+			pItemKXT->m_dMin = (pItemKXT->m_dMin - dDiffPrice) / dScale;
+			pItemKXT->m_dMax = (pItemKXT->m_dMax - dDiffPrice) / dScale;
+			pItemKXT->m_nVolume = (int)(pItemKXT->m_nVolume  * dScale);
+
+			nDaysKXT = qcGetDaysFrom2000(pItemKXT->m_nYear, pItemKXT->m_nMonth, pItemKXT->m_nDay);
+			if (nDaysKXT <= nDaysFSHP)
+			{
+				dDiffPrice = dDiffPrice + pItemFHSP->m_dRation;
+				dScale = dScale * (1 + pItemFHSP->m_dGive + pItemFHSP->m_dGain);
+				if (posFHSP != NULL)
+				{
+					pItemFHSP = lstFHSP.GetNext(posFHSP);
+					nDaysFSHP = qcGetDaysFrom2000(pItemFHSP->m_nYear, pItemFHSP->m_nMonth, pItemFHSP->m_nDay);
+				}
+			}
+		}
+	}
+	else
+	{
+		posFHSP = lstFHSP.GetTailPosition();
+		if (posFHSP == NULL)
+		{
+			pItemFHSP = lstFHSP.RemoveTail();
+			while (pItemFHSP != NULL)
+			{
+				delete pItemFHSP;
+				pItemFHSP = lstFHSP.RemoveTail();
+			}
+			return QC_ERR_NONE;
+		}
+		pItemFHSP = lstFHSP.GetPrev(posFHSP);
+		posKXT = pList->GetHeadPosition();
+		while (posKXT != NULL)
+		{
+			pItemKXT = pList->GetNext(posKXT);
+			if (pItemKXT->m_nYear == pItemFHSP->m_nYear && pItemKXT->m_nMonth == pItemFHSP->m_nMonth && pItemKXT->m_nDay == pItemFHSP->m_nDay)
+			{
+				dDiffPrice = dDiffPrice + pItemFHSP->m_dRation;
+				dScale = dScale * (1 + pItemFHSP->m_dGive + pItemFHSP->m_dGain);
+				if (posFHSP != NULL)
+					pItemFHSP = lstFHSP.GetPrev(posFHSP);
+			}
+			pItemKXT->m_dClose = (pItemKXT->m_dClose + dDiffPrice) * dScale;
+			pItemKXT->m_dOpen = (pItemKXT->m_dOpen + dDiffPrice) * dScale;
+			pItemKXT->m_dMin = (pItemKXT->m_dMin + dDiffPrice) * dScale;
+			pItemKXT->m_dMax = (pItemKXT->m_dMax + dDiffPrice) * dScale;
+			pItemKXT->m_nVolume = (int)(pItemKXT->m_nVolume  * dScale);
+		}
+	}
+
 	return QC_ERR_NONE;
 }
 

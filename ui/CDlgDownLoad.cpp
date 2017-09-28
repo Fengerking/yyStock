@@ -87,6 +87,14 @@ int	CDlgDownLoad::OnStart(void)
 	m_hPosCode = CStockItemList::g_stkList->m_lstStock.GetHeadPosition();
 	if (m_pIO == NULL)
 		m_pIO = new CIOcurl();
+
+	if (m_nCommandID == IDC_BUTTON_HISTORY)
+	{
+		int nRC = qcStock_DownLoadData_History(m_pIO, "0000001");
+		nRC = qcStock_DownLoadData_History(m_pIO, "1399001");
+		nRC = qcStock_DownLoadData_History(m_pIO, "1399006");
+	}
+
 	m_nTimer = SetTimer(m_hDlg, 1001, 1, NULL);
 
 	return 0;

@@ -100,8 +100,9 @@ BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
    if (!hWnd)
       return FALSE;
 
-//   CIOcurl ioHttp;
+   CIOcurl ioHttp;
 //  qcStock_DownLoadData_FHSP(&ioHttp, "000001");
+   qcStock_DownLoadData_Info(&ioHttp, "600895");
 
    ShowWindow(hWnd, nCmdShow);
    UpdateWindow(hWnd);

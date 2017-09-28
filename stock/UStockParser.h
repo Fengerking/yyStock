@@ -20,6 +20,7 @@ int		qcStock_ParseRTItemInfo(CIOcurl * pIO, const char * pCode, qcStockRealTimeI
 int		qcStock_ParseRTListInfo(CIOcurl * pIO, const char ** ppCode, int nNum, qcStockRealTimeItem ** ppStockInfo);
 
 int		qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem> * pList, int nNum);
+int		qcStock_CreateAdjustFHSP(const char * pCode, CObjectList<qcStockKXTInfoItem> * pList);
 int		qcStock_CreateDayLineMACD(CObjectList<qcStockKXTInfoItem> * pList);
 
 int		qcStock_ParseRTItem(char * pItemInfo, qcStockRealTimeItem * pStockInfo);

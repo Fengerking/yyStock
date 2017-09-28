@@ -27,6 +27,7 @@ CViewFST::CViewFST(HINSTANCE hInst)
 
 	_tcscpy (m_szClassName, _T("yyStockViewFST"));
 	_tcscpy (m_szWindowName, _T("yyStockViewFST"));
+	m_nUpdateTime = m_nUpdateTime * 5;
 }
 
 CViewFST::~CViewFST(void)
