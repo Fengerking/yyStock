@@ -71,17 +71,23 @@ int CViewKXT::UpdateInfo(void)
 				nRC = qcStock_ParseRTItemInfo(m_pIO, m_szCode, &stkRTInfo);
 				if (nRC == QC_ERR_NONE)
 				{
-					pItem = new qcStockKXTInfoItem();
-					nRC = qcStock_CopyRTInfoToKXTInfo (pItem, &stkRTInfo);
-					if (nRC == QC_ERR_NONE)
-						m_lstData.AddTail(pItem);
-					else
-						delete pItem;
+					if (((int)(pItem->m_dClose * 100) != (int)(stkRTInfo.m_dNowPrice * 100)) || 
+						((int)(pItem->m_dDiffRate * 100) != (int)(stkRTInfo.m_dDiffRate * 100)))
+					{
+						pItem = new qcStockKXTInfoItem();
+						nRC = qcStock_CopyRTInfoToKXTInfo(pItem, &stkRTInfo);
+						if (nRC == QC_ERR_NONE)
+							m_lstData.AddTail(pItem);
+						else
+							delete pItem;
+					}
 				}
 			}
 		}
 
+		qcStock_CreateAdjustFHSP(m_szCode, &m_lstData);
 		qcStock_CreateDayLineMACD(&m_lstData);
+
 		InvalidateRect(m_hWnd, NULL, FALSE);
 	}
 	return QC_ERR_NONE;
@@ -424,7 +430,7 @@ int CViewKXT::DrawDayInfoPic (HDC hDC)
 	nY += m_nFntMidHeight + 8;
 	DrawDblText (hDC, pItem->m_dExchange, m_hFntMid, nX, nY, "换手 ", MSC_WHITE, true, 0);
 	nY += m_nFntMidHeight + 8;
-	DrawDblText (hDC, pItem->m_dMoney / 10000, m_hFntMid, nX, nY, "成交 ", MSC_WHITE, 0, 0);
+	DrawIntText (hDC, pItem->m_nVolume / 10000, m_hFntMid, nX, nY, "成交 ", MSC_WHITE, 0, 0);
 	nY += m_nFntMidHeight + 8;
 	DrawDblText (hDC, pItem->m_dSwing, m_hFntMid, nX, nY, "振幅 ", MSC_WHITE, true, 0);
 	nY += m_nFntMidHeight + 8;

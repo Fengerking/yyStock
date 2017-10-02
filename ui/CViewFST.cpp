@@ -44,6 +44,7 @@ int CViewFST::UpdateView (HDC hDC)
 	if (m_pPngDec == NULL)
 		return QC_ERR_FAILED;
 
+	GetClientRect(m_hWnd, &m_rcDraw);
 	RECT rcView;
 	GetClientRect(m_hWnd, &rcView);
 	HBITMAP hBmp = m_pPngDec->GetBmp();

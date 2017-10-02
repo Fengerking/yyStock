@@ -158,6 +158,7 @@ int	qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem>
 	int		nRestSize = nFileSize;
 	char	szLine[1024];
 	char *	pItemText = szLine;
+	char *	pVolume = NULL;
 	double	dYesClose = 0;
 	int nLen = qcReadTextLine(pFileData, nRestSize, szLine, sizeof(szLine));
 	nRestSize -= nLen;
@@ -178,12 +179,22 @@ int	qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem>
 		sscanf(pItemText, "%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%d,%lf", 
 			&pItem->m_dClose, &pItem->m_dMax, &pItem->m_dMin, &pItem->m_dOpen, &dYesClose,
 			&pItem->m_dDiffNum, &pItem->m_dDiffRate, &pItem->m_dExchange, &pItem->m_nVolume, &pItem->m_dMoney);
+
 		pItem->m_dSwing = (pItem->m_dMax - pItem->m_dMin) * 100 / dYesClose;
 
 		if (pItem->m_dClose != 0 && dYesClose != 0)
 		{
 			if (pItem->m_dClose > dYesClose * 1.11 || pItem->m_dClose < dYesClose * 0.89)
 				dYesClose = dYesClose;
+		}
+
+		if (strlen(pCode) == 7)
+		{
+			pVolume = pItemText;
+			for (int i = 0; i < 8; i++)
+				pVolume = strstr(pVolume+1, ",");
+			pVolume++;
+			sscanf(pVolume, "%d", &pItem->m_nVolume);
 		}
 
 		if (pItem->m_dClose > 0)
@@ -195,7 +206,6 @@ int	qcStock_ParseHistoryData(const char * pCode, CObjectList<qcStockKXTInfoItem>
 			break;
 	}
 
-	qcStock_CreateAdjustFHSP(pCode, pList);
 
 	return QC_ERR_NONE;
 }

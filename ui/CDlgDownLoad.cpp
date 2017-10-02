@@ -122,6 +122,15 @@ int CDlgDownLoad::OnDownLoad(void)
 		else
 			m_nDelayTime = 1000;
 	}
+	else if (m_nCommandID == IDC_BUTTON_COMPINFO)
+	{
+		nRC = qcStock_DownLoadData_Info(m_pIO, m_pItem->m_szCode);
+	}
+	else if (m_nCommandID == IDC_BUTTON_CODELIST)
+	{
+		CStockItemList::g_stkList->OpenHttpList();
+		m_hPosCode = NULL;
+	}
 	int nEnd = qcGetSysTime();
 	int nTotal = (nEnd - m_nStartTime) / 1000;
 	sprintf(m_szStatus, "%s %s    Used:  % 8d.   Total:   %02d:%02d:%02d   % 8d / %d", 
@@ -171,8 +180,8 @@ INT_PTR CDlgDownLoad::OnReceiveMsg (HWND hDlg, UINT uMsg, WPARAM wParam, LPARAM 
 		int wmEvent = HIWORD(wParam);
 		switch (wmId)
 		{
-		case IDC_BUTTON_HISTORY:
 		case IDC_BUTTON_CODELIST:
+		case IDC_BUTTON_HISTORY:
 		case IDC_BUTTON_CQFQ:
 		case IDC_BUTTON_FINANCE:
 		case IDC_BUTTON_COMPINFO:

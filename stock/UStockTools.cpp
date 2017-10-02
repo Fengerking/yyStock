@@ -250,6 +250,12 @@ int	qcStock_DownLoadData_Info(CIOcurl * pIO, const char * pCode)
 		return QC_ERR_ARG;
 
 	char szURL[1024];
+	CIOFile ioFile;
+	qcGetAppPath(NULL, szURL, sizeof(szURL));
+	sprintf(szURL, "%sdata\\info\\%s.txt", szURL, pCode);
+	if (ioFile.Open(szURL, 0, QCIO_FLAG_READ) == QC_ERR_NONE)
+		return QC_ERR_NONE;
+
 	sprintf(szURL, "http://quotes.money.163.com/f10/gdfx_%s.html#00000", pCode);
 	int nRC = pIO->Open(szURL, 0, 0);
 	if (nRC != QC_ERR_NONE)
@@ -261,7 +267,7 @@ int	qcStock_DownLoadData_Info(CIOcurl * pIO, const char * pCode)
 	char *		pText = NULL;
 	char *		pStop = NULL;
 	int			nRest = nFileSize;
-	char		szLine[2048];
+	char		szLine[10240];
 	int			nLine = 0;
 	char		szKeyWord[256];
 
@@ -269,7 +275,7 @@ int	qcStock_DownLoadData_Info(CIOcurl * pIO, const char * pCode)
 	qcStock_GetUTF8Text(szKeyWord, sizeof(szKeyWord));
 	int nFind = qcStock_FindKeyWord(pBuff, nRest, szKeyWord);
 	pBuff += nFind; nRest -= nFind;
-	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof (szLine));
 	pBuff += nLine; nRest -= nLine;
 	pText = strstr(szLine, "<td>") + 4;
 	double dTotalNum = atof(pText) * 100000000;
@@ -278,14 +284,17 @@ int	qcStock_DownLoadData_Info(CIOcurl * pIO, const char * pCode)
 	qcStock_GetUTF8Text(szKeyWord, sizeof(szKeyWord));
 	nFind = qcStock_FindKeyWord(pBuff, nRest, szKeyWord);
 	pBuff += nFind; nRest -= nFind;
-	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof(szLine));
 	pBuff += nLine; nRest -= nLine;
 	pText = strstr(szLine, "<td>") + 4;
 	double dTradeNum = atof(pText) * 100000000;
 
+	char	szCWZBDate[1024];
+	char	szCWZBLucre[1024];
+	char	szCWZBCash[1024];
+	char	szCWZBValue[1024];
+	char	szCWZBDebt[1024];
 
-	char	szCWZBDate[5][32];
-	char	szCWZBValue[5][32];
 	sprintf(szURL, "http://quotes.money.163.com/f10/zycwzb_%s.html#00000", pCode);
 	nRC = pIO->Open(szURL, 0, 0);
 	if (nRC != QC_ERR_NONE)
@@ -298,37 +307,226 @@ int	qcStock_DownLoadData_Info(CIOcurl * pIO, const char * pCode)
 	strcpy(szKeyWord, "table_bg001 border_box limit_sale scr_table");
 	nFind = qcStock_FindKeyWord(pBuff, nRest, szKeyWord);
 	pBuff += nFind; nRest -= nFind;
-	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	// Get Date 
+	nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof(szLine));
 	pBuff += nLine; nRest -= nLine;
+	qcStock_FillValue_table(szLine, nLine, 0, szCWZBDate, 5);
+
+	// Get Lucre 
+	nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof(szLine));
+	pBuff += nLine; nRest -= nLine;
+	qcStock_FillValue_table(szLine, nLine, 1, szCWZBLucre, 5);
+
+	// Get Cash 
 	int i = 0;
-	pText = szLine;
-	for (i = 0; i < 5; i++)
+	for (i = 0; i < 11; i++)
 	{
-		pText = strstr(pText, "<th >");
-		if (pText == NULL)
-			break;
-		pStop = strstr(pText, "</th>");
-		if (pStop == NULL)
-			break;
-		*pStop = 0;
-		strcpy(szCWZBDate[i], pText + 5);
-		pText = pStop + 4;
+		nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof(szLine));
+		pBuff += nLine; nRest -= nLine;
+		pText = szLine;
 	}
-	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	qcStock_FillValue_table(szLine, nLine, 1, szCWZBCash, 5);
+
+	// Get Value 
+	for (i = 0; i < 2; i++)
+	{
+		nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof(szLine));
+		pBuff += nLine; nRest -= nLine;
+		pText = szLine;
+	}
+	qcStock_FillValue_table(szLine, nLine, 1, szCWZBValue, 5);
+	// Get Debt 
+	for (i = 0; i < 2; i++)
+	{
+		nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof(szLine));
+		pBuff += nLine; nRest -= nLine;
+		pText = szLine;
+	}
+	qcStock_FillValue_table(szLine, nLine, 1, szCWZBDebt, 5);
+
+	sprintf(szURL, "http://quotes.money.163.com/f10/gszl_%s.html#00000", pCode);
+	nRC = pIO->Open(szURL, 0, 0);
+	if (nRC != QC_ERR_NONE)
+		return nRC;
+	nFileSize = (int)pIO->GetSize();
+	pFileData = pIO->GetData();
+	pBuff = pFileData;
+	nRest = nFileSize;
+
+	strcpy(szKeyWord, "公司全称");
+	qcStock_GetUTF8Text(szKeyWord, sizeof(szKeyWord));
+	nFind = qcStock_FindKeyWord(pBuff, nRest, szKeyWord);
+	pBuff += nFind; nRest -= nFind;
+	nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof(szLine));
 	pBuff += nLine; nRest -= nLine;
-	pText = szLine;
-	for (i = 0; i < 5; i++)
+	char  pTextCompName[1024];
+	qcStock_FillValue_table(szLine, nLine, 1, pTextCompName, 1);
+
+	strcpy(szKeyWord, "主营业务");
+	qcStock_GetUTF8Text(szKeyWord, sizeof(szKeyWord));
+	nFind = qcStock_FindKeyWord(pBuff, nRest, szKeyWord);
+	pBuff += nFind; nRest -= nFind;
+	nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof(szLine));
+	pBuff += nLine; nRest -= nLine;
+	char  pTextField[8192];
+	qcStock_FillValue_table(szLine, nLine, 1, pTextField, 1);
+
+	strcpy(szKeyWord, "经营范围");
+	qcStock_GetUTF8Text(szKeyWord, sizeof(szKeyWord));
+	nFind = qcStock_FindKeyWord(pBuff, nRest, szKeyWord);
+	pBuff += nFind; nRest -= nFind;
+	nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof(szLine));
+	pBuff += nLine; nRest -= nLine;
+	char  pTextRange[8192];
+	qcStock_FillValue_table(szLine, nLine, 1, pTextRange, 1);
+
+	strcpy(szKeyWord, "上市日期");
+	qcStock_GetUTF8Text(szKeyWord, sizeof(szKeyWord));
+	nFind = qcStock_FindKeyWord(pBuff, nRest, szKeyWord);
+	pBuff += nFind; nRest -= nFind;
+	nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof(szLine));
+	pBuff += nLine; nRest -= nLine;
+	char  pTextCreateDate[64];
+	qcStock_FillValue_table(szLine, nLine, 1, pTextCreateDate, 1);
+	pTextCreateDate[strlen(pTextCreateDate) - 1] = 0;
+
+	strcpy(szKeyWord, "发行价格");
+	qcStock_GetUTF8Text(szKeyWord, sizeof(szKeyWord));
+	nFind = qcStock_FindKeyWord(pBuff, nRest, szKeyWord);
+	pBuff += nFind; nRest -= nFind;
+	nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof(szLine));
+	pBuff += nLine; nRest -= nLine;
+	char  pTextPrice[64];
+	qcStock_FillValue_table(szLine, nLine, 1, pTextPrice, 1);
+	if (strlen(pTextPrice) > 0)
+		pTextPrice[strlen(pTextPrice) - 1] = 0;
+	double dOpenPrice = 0;
+	sscanf(pTextPrice, "%lf", &dOpenPrice);
+
+	qcGetAppPath(NULL, szURL, sizeof(szURL));
+	sprintf(szURL, "%sdata\\info\\%s.txt", szURL, pCode);
+	if (ioFile.Open(szURL, 0, QCIO_FLAG_WRITE) != QC_ERR_NONE)
+		return QC_ERR_FAILED;
+
+	char szPrevName[1024];
+	strcpy(szPrevName, "公司全称：");
+	ioFile.Write((unsigned char *)szPrevName, strlen(szPrevName));
+	qcStock_GetCharText(pTextCompName, strlen(pTextCompName), true);
+	ioFile.Write((unsigned char *)pTextCompName, strlen(pTextCompName));
+	sprintf(szPrevName, "流通股本:%d\r\n", (int)dTradeNum);
+	ioFile.Write((unsigned char *)szPrevName, strlen(szPrevName));
+	sprintf(szPrevName, "总共股本:%d\r\n", (int)dTotalNum);
+	ioFile.Write((unsigned char *)szPrevName, strlen(szPrevName));
+	sprintf(szPrevName, "上市日期:%s\r\n", pTextCreateDate);
+	ioFile.Write((unsigned char *)szPrevName, strlen(szPrevName));
+	sprintf(szPrevName, "发行价格:%.2lf\r\n", dOpenPrice);
+	ioFile.Write((unsigned char *)szPrevName, strlen(szPrevName));
+
+	strcpy(szPrevName, "\r\n财务指标：\r\n");
+	ioFile.Write((unsigned char *)szPrevName, strlen(szPrevName));
+	strcpy(szPrevName, "  日  期     收  益    现金（万）  净资产  \r\n");
+	ioFile.Write((unsigned char *)szPrevName, strlen(szPrevName));
+
+	strcpy(szPrevName, "\r\n");
+	char * pTextStart1 = szCWZBDate;
+	char * pTextStart2 = szCWZBLucre;
+	char * pTextStart3 = szCWZBCash;
+	char * pTextStart4 = szCWZBValue;
+	char * pTextStart5 = szCWZBDebt;
+
+	double dValue = 0;
+	double dDebt = 0;
+	char * pValue = NULL;
+	char   szValue[32];
+
+	int    nSpaceNum = 0;
+	char * pTextSplt = strstr(pTextStart1, "|");
+	while (pTextSplt != NULL)
 	{
-		pText = strstr(pText, "<td>");
-		if (pText == NULL)
-			break;
-		pStop = strstr(pText, "</td>");
-		if (pStop == NULL)
-			break;
-		*pStop = 0;
-		strcpy(szCWZBValue[i], pText + 5);
-		pText = pStop + 4;
+		nSpaceNum = 0;
+		ioFile.Write((unsigned char *)pTextStart1, pTextSplt - pTextStart1);
+		nSpaceNum += pTextSplt - pTextStart1;
+		pTextStart1 = pTextSplt + 1;
+
+		if (pTextStart2[0] == '-')
+		{
+			ioFile.Write((unsigned char *)"      ", 3);
+			nSpaceNum += 3;
+		}
+		else
+		{
+			ioFile.Write((unsigned char *)"      ", 4);
+			nSpaceNum += 4;
+		}
+		pTextSplt = strstr(pTextStart2, "|");
+		ioFile.Write((unsigned char *)pTextStart2, pTextSplt - pTextStart2);
+		nSpaceNum += pTextSplt - pTextStart2;
+		pTextStart2 = pTextSplt + 1;
+
+		if (nSpaceNum < 24)
+		{
+			ioFile.Write((unsigned char *)"          ", 22 - nSpaceNum);
+			nSpaceNum = 24;
+		}
+		if (pTextStart3[0] != '-')
+		{
+			ioFile.Write((unsigned char *)"      ", 1);
+			nSpaceNum += 1;
+		}
+		pTextSplt = strstr(pTextStart3, "|");
+		ioFile.Write((unsigned char *)pTextStart3, pTextSplt - pTextStart3);
+		nSpaceNum += pTextSplt - pTextStart3;
+		pTextStart3 = pTextSplt + 1;
+
+		pTextSplt = strstr(pTextStart4, "|");
+		pValue = pTextStart4;
+		i = 0;
+		memset(szValue, 0, sizeof(szValue));
+		while (pValue < pTextSplt)
+		{
+			if (*pValue != ',')
+				szValue[i++] = *pValue;
+			pValue++;
+		}
+		sscanf(szValue, "%lf", &dValue);
+		pTextStart4 = pTextSplt + 1;
+
+		pTextSplt = strstr(pTextStart5, "|");
+		pValue = pTextStart5;
+		i = 0;
+		memset(szValue, 0, sizeof(szValue));
+		while (pValue < pTextSplt)
+		{
+			if (*pValue != ',')
+				szValue[i++] = *pValue;
+			pValue++;
+		}
+		sscanf(szValue, "%lf", &dDebt);
+		pTextStart5 = pTextSplt + 1;
+
+		if (nSpaceNum < 34)
+			ioFile.Write((unsigned char *)"          ", 34 - nSpaceNum);
+		if (dValue > dDebt)
+			sprintf(szPrevName, "    %.2lf", (dValue - dDebt) / (dTotalNum / 10000));
+		else
+			sprintf(szPrevName, "   %.2lf", (dValue - dDebt) / (dTotalNum / 10000));
+		ioFile.Write((unsigned char *)szPrevName, strlen(szPrevName));
+
+		pTextSplt = strstr(pTextStart1, "|");
+
+		ioFile.Write((unsigned char *)"\r\n", 2);
 	}
+
+	strcpy(szPrevName, "\r\n主营业务：\r\n");
+	ioFile.Write((unsigned char *)szPrevName, strlen(szPrevName));
+	qcStock_GetCharText(pTextField, strlen(pTextField), true);
+	ioFile.Write((unsigned char *)pTextField, strlen(pTextField));
+	strcpy(szPrevName, "\r\n经营范围：\r\n");
+	ioFile.Write((unsigned char *)szPrevName, strlen(szPrevName));
+	qcStock_GetCharText(pTextRange, strlen(pTextRange), true);
+	ioFile.Write((unsigned char *)pTextRange, strlen(pTextRange));
+
+	ioFile.Close();
 
 	return QC_ERR_NONE;
 }
@@ -372,6 +570,20 @@ int	qcStock_GetUTF8Text(char * pText, int nSize)
 	return QC_ERR_NONE;
 }
 
+int	qcStock_GetCharText(char * pUTF8Text, int nSize, bool bNewLine)
+{
+	wchar_t * wzText = new wchar_t[nSize];
+	memset(wzText, 0, nSize * sizeof(wchar_t));
+	MultiByteToWideChar(CP_UTF8, 0, pUTF8Text, -1, wzText, nSize);
+	memset(pUTF8Text, 0, nSize);
+	WideCharToMultiByte(CP_ACP, 0, wzText, -1, pUTF8Text, nSize, NULL, NULL);
+	if (bNewLine)
+		strcat(pUTF8Text, "\r\n");
+	delete[]wzText;
+
+	return QC_ERR_NONE;
+}
+
 int	qcStock_FindKeyWord(char * pText, int nSize, char * pKey)
 {
 	char *		pBuff = pText;
@@ -391,3 +603,43 @@ int	qcStock_FindKeyWord(char * pText, int nSize, char * pKey)
 	}
 	return nSize - nRest;
 }
+
+int	qcStock_FillValue_table(char * pLine, int nSize, int nType, char * pValue, int nNum)
+{
+	if (pLine == NULL || pValue == NULL)
+		return QC_ERR_ARG;
+	strcpy(pValue, "");
+	int		i = 0;
+	char *	pText = pLine;
+	char *	pStop = NULL;
+	for (i = 0; i < nNum; i++)
+	{
+		if (nType == 0)
+			pText = strstr(pText, "<th");
+		else
+			pText = strstr(pText, "<td");
+		if (pText == NULL)
+			break;
+		pText = strstr(pText + 3, ">");
+		if (pText == NULL)
+			break;
+		pText++;
+		if (nType == 0)
+			pStop = strstr(pText, "</th>");
+		else
+			pStop = strstr(pText, "</td>");
+		if (pStop == NULL)
+		{
+			pLine[nSize - 2] = 0;
+			strcat(pValue, pText);
+			strcat(pValue, "|");
+			break;
+		}
+		*pStop = 0;
+		strcat(pValue, pText);
+		strcat(pValue, "|");
+		pText = pStop + 4;
+	}
+	return QC_ERR_NONE;
+}
+

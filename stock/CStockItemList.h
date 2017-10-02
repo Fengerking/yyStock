@@ -28,6 +28,7 @@ public:
 
 protected:
 	virtual int	SaveList(void);
+	virtual int	ReleaseList(void);
 
 protected:
 	char	m_szStockListURL[256];

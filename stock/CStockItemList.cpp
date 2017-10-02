@@ -32,12 +32,7 @@ CStockItemList::CStockItemList(void)
 
 CStockItemList::~CStockItemList(void)
 {
-	qcStockInfoItem * pItem = m_lstStock.RemoveTail();
-	while (pItem != NULL)
-	{
-		delete pItem;
-		pItem = m_lstStock.RemoveTail();
-	}
+	ReleaseList();
 	g_stkList = NULL;
 }
 
@@ -56,6 +51,8 @@ int CStockItemList::OpenHttpList(void)
 	char * pStart = strstr(pDataBuff, "(600000)");
 	if (pStart == NULL)
 		return QC_ERR_FAILED;
+
+	ReleaseList();
 
 	char * pData = pStart;
 	char * pCode = pStart;
@@ -116,6 +113,9 @@ int CStockItemList::OpenFileList(void)
 	int		nSize = (int)ioFile.GetSize();
 	if (nSize < 1024)
 		return QC_ERR_FAILED;
+
+	ReleaseList();
+
 	qcStockInfoItem	* pItem = new qcStockInfoItem();
 	char	szLine[64];
 	int		nRestSize = nSize;
@@ -161,4 +161,13 @@ int	CStockItemList::SaveList(void)
 	return QC_ERR_NONE;
 }
 
-
+int	CStockItemList::ReleaseList(void)
+{
+	qcStockInfoItem * pItem = m_lstStock.RemoveTail();
+	while (pItem != NULL)
+	{
+		delete pItem;
+		pItem = m_lstStock.RemoveTail();
+	}
+	return QC_ERR_NONE;
+}

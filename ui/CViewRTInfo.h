@@ -50,5 +50,7 @@ protected:
 	qcStockRealTimeItem			m_stkRTInfo;
 	CObjectList <sTradeHistory>	m_lstHistory;
 	int							m_nLastValume;
+
+	int							m_nTradeNum;
 };
 #endif //__CViewRTInfo_H__

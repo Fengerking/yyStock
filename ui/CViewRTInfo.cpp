@@ -15,6 +15,7 @@
 #include "qcErr.h"
 
 #include "CViewRTInfo.h"
+#include "CIOFile.h"
 
 #include "UStockParser.h"
 
@@ -26,6 +27,7 @@ CViewRTInfo::CViewRTInfo(HINSTANCE hInst)
 	, m_nWndWidth (398)
 	, m_pIO(NULL)
 	, m_nLastValume (0)
+	, m_nTradeNum(0)
 {
 	SetObjectName("CViewRTInfo");
 
@@ -63,8 +65,8 @@ int CViewRTInfo::UpdateView (HDC hDC)
 	int		nY = m_rcDraw.top;
 
 	SetBkMode(m_hMemDC, TRANSPARENT);
-	DrawWtrText(m_hMemDC, m_stkRTInfo.m_wzName, m_hFntBig, nX + 10, nY, MSC_WHITE, 0);
-	DrawStrText(m_hMemDC, m_szCode, m_hFntBig, m_rcDraw.right - 8, nY, MSC_WHITE, 1);
+	DrawWtrText(m_hMemDC, m_stkRTInfo.m_wzName, m_hFntBig, nX + 10, nY, MSC_GRAY_4, 0);
+	DrawStrText(m_hMemDC, m_szCode, m_hFntBig, m_rcDraw.right - 8, nY, MSC_GRAY_4, 1);
 
 	nY = m_rcDraw.top + (m_nFntBigHeight + 8);
 	DrawLine (m_hMemDC, m_rcWnd.left, nY, m_rcWnd.right, nY, 1, MSC_GRAY_3);
@@ -189,6 +191,31 @@ int CViewRTInfo::UpdateInfo(void)
 	int nRC = qcStock_ParseRTItemInfo(m_pIO, m_szCode, &m_stkRTInfo);
 	if (nRC == QC_ERR_NONE)
 	{
+		if (m_nTradeNum == 0)
+		{
+			char szURL[1024];
+			qcGetAppPath(NULL, szURL, sizeof(szURL));
+			sprintf(szURL, "%sdata\\info\\%s.txt", szURL, m_szCode);
+			CIOFile ioFile;
+			if (ioFile.Open(szURL, 0, QCIO_FLAG_READ) == QC_ERR_NONE)
+			{
+				char *	pFileData = ioFile.GetData();
+				int		nFileSize = (int)ioFile.GetSize();
+				char	szLine[2048];
+				int nLine = qcReadTextLine(pFileData, nFileSize, szLine, 2048);
+				nLine = qcReadTextLine(pFileData + nLine, nFileSize, szLine, 2048);
+				char * pValue = strstr(szLine, ":");
+				if (pValue != NULL)
+				{
+					pValue++;
+					m_nTradeNum = atoi(pValue);
+				}
+				ioFile.Close();
+			}
+		}
+		if (m_nTradeNum > 0)
+			m_stkRTInfo.m_dTurnOver = m_stkRTInfo.m_nTradeNum * 100.0 / m_nTradeNum;
+
 		m_dClosePrice = m_stkRTInfo.m_dClosePrice;
 		sTradeHistory * pItem = new sTradeHistory();
 		GetLocalTime(&pItem->sTime);
@@ -248,6 +275,7 @@ LRESULT CViewRTInfo::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	{
 	case WM_MSG_CODE_CHANGE:
 		ReleaseHistory();
+		m_nTradeNum = 0;
 		memset(&m_stkRTInfo, 0, sizeof(qcStockRealTimeItem));
 		strcpy(m_szCode, (char *)wParam);
 		UpdateInfo();

@@ -90,27 +90,27 @@ ATOM MyRegisterClass(HINSTANCE hInstance)
 
 BOOL InitInstance(HINSTANCE hInstance, int nCmdShow)
 {
-   int	nScreenX = GetSystemMetrics(SM_CXSCREEN);
-   int	nScreenY = GetSystemMetrics(SM_CYSCREEN);
-   HWND hWnd;
-   g_hInst = hInstance; // Store instance handle in our global variable
-   hWnd = CreateWindow(g_szWindowClass, g_szTitle, WS_OVERLAPPEDWINDOW,
+	int	nScreenX = GetSystemMetrics(SM_CXSCREEN);
+	int	nScreenY = GetSystemMetrics(SM_CYSCREEN);
+	HWND hWnd;
+	g_hInst = hInstance; // Store instance handle in our global variable
+	hWnd = CreateWindow(g_szWindowClass, g_szTitle, WS_OVERLAPPEDWINDOW,
 						//nScreenX / 4, 200, nScreenX / 2, nScreenY / 2, NULL, NULL, hInstance, NULL);
 						0, 0, nScreenX, nScreenY, NULL, NULL, hInstance, NULL);
-   if (!hWnd)
-      return FALSE;
+	if (!hWnd)
+		return FALSE;
 
-   CIOcurl ioHttp;
-//  qcStock_DownLoadData_FHSP(&ioHttp, "000001");
-   qcStock_DownLoadData_Info(&ioHttp, "600895");
+	CIOcurl ioHttp;
+	//qcStock_DownLoadData_FHSP(&ioHttp, "000001");
+	//qcStock_DownLoadData_Info(&ioHttp, "600895");
 
-   ShowWindow(hWnd, nCmdShow);
-   UpdateWindow(hWnd);
+	ShowWindow(hWnd, nCmdShow);
+	UpdateWindow(hWnd);
 
-   g_pWndMng = new CWndGrpMng(g_hInst);
-   g_pWndMng->CreateWnd(hWnd);
+	g_pWndMng = new CWndGrpMng(g_hInst);
+	g_pWndMng->CreateWnd(hWnd);
 
-   return TRUE;
+	return TRUE;
 }
 
 LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
