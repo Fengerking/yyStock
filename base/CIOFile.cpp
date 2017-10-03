@@ -27,6 +27,8 @@ CIOFile::~CIOFile(void)
 
 int CIOFile::Open (const char * pURL, long long llOffset, int nFlag)
 {
+	Close();
+
 	char * pNewURL = (char *)pURL;
 	if (!strncmp (pURL, "file://", 7))
 		pNewURL = (char *)pURL + 7;

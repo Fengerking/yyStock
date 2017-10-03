@@ -20,6 +20,7 @@
 
 #include "CViewFST.h"
 #include "CViewKXT.h"
+#include "CViewInfo.h"
 
 class CGroupStock : public CGroupBase
 {
@@ -40,6 +41,8 @@ protected:
 protected:
 	CViewFST *			m_pViewFST;
 	CViewKXT *			m_pViewKXT;
+	CViewInfo *			m_pViewInfo;
+
 	int					m_nShowType;
 };
 
