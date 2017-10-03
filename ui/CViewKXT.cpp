@@ -665,6 +665,8 @@ LRESULT	CViewKXT::OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 LRESULT	CViewKXT::OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	if (!IsWindowVisible(m_hWnd))
+		return S_FALSE;
 	if (wParam == VK_UP || wParam == VK_DOWN)
 	{
 		if (wParam == VK_UP)

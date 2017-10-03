@@ -138,7 +138,7 @@ int CViewInfo::DrawLineText(HDC hDC, int nXPos, int nYPos, char * pLine){
 	int		nCharNum = 0;
 	int		nLineNum = 0;
 	GetTextExtentPoint(hDC, "A", 1, &szSize);
-	while (pTxt - pLine < strlen(pLine))
+	while ((unsigned int)(pTxt - pLine) < strlen(pLine))
 	{
 		nTxtNum = (m_rcWnd.right / szSize.cx) / 2 * 2;
 
