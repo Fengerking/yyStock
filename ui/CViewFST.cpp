@@ -56,7 +56,7 @@ int CViewFST::UpdateView (HDC hDC)
 		StretchBlt(hDC, 0, 0, rcView.right, rcView.bottom, m_hMemDC, 0, 0, m_pPngDec->GetWidth(), m_pPngDec->GetHeight(), SRCCOPY);
 		SelectObject(m_hMemDC, hOld);
 	}
-	DrawRect(hDC, &rcView, 4, MSC_WHITE);
+	DrawRect(hDC, &rcView, 3, MSC_WHITE);
 	return QC_ERR_NONE;
 }
 

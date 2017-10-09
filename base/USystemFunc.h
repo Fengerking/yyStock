@@ -23,6 +23,8 @@ int		qcGetCPUNum (void);
 
 int		qcGetAppPath (void * hInst, char * pPath, int nSize);
 bool	qcDeleteFolder (char * pFolder);
+bool	qcCreateFolder(char * pFolder);
+bool	qcPathExist(char* pPath); // pPath can be folder or file
 
 bool	qcIsTradeTime (void);
 bool	qcCopyToClipBoard (char * pText);

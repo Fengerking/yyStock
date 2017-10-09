@@ -25,7 +25,10 @@ CStockItemList::CStockItemList(void)
 
 	strcpy(m_szStockListURL, "http://quote.eastmoney.com/stocklist.html");
 	qcGetAppPath(NULL, m_szStockListFile, sizeof(m_szStockListFile));
-	strcat(m_szStockListFile, "data\\qcStockList.txt");
+	strcat(m_szStockListFile, "data\\");
+	qcCreateFolder(m_szStockListFile);
+
+	strcat(m_szStockListFile, "qcStockList.txt");
 
 	g_stkList = this;
 }
@@ -106,7 +109,11 @@ int CStockItemList::OpenFileList(void)
 {
 	CIOFile ioFile;
 	if (ioFile.Open(m_szStockListFile, 0, QCIO_FLAG_READ) != QC_ERR_NONE)
-		return QC_ERR_FAILED;
+	{
+		if (OpenHttpList() != QC_ERR_NONE)
+			return QC_ERR_FAILED;
+		return QC_ERR_NONE;
+	}
 	char *	pData = ioFile.GetData();
 	if (pData == NULL)
 		return QC_ERR_FAILED;

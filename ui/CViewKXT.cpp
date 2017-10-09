@@ -588,7 +588,7 @@ int CViewKXT::DrawBackImage (HDC hDC)
 	}
 	m_hBmpOld = (HBITMAP)SelectObject (hDC, m_hBmpBack);
 	FillRect (hDC, &m_rcWnd, m_hBKBrush);
-	DrawRect (hDC, &m_rcWnd, 5, MSC_GRAY_4);
+	DrawRect (hDC, &m_rcWnd, 3, MSC_GRAY_4);
 
 	int	nX = m_rcKXT.left;
 	int	nY = m_rcKXT.top;

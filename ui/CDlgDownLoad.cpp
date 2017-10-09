@@ -117,10 +117,6 @@ int CDlgDownLoad::OnDownLoad(void)
 	else if (m_nCommandID == IDC_BUTTON_CQFQ)
 	{
 		nRC = qcStock_DownLoadData_FHSP(m_pIO, m_pItem->m_szCode);
-		if (nRC == QC_ERR_FINISH)
-			m_nDelayTime = 10;
-		else
-			m_nDelayTime = 1000;
 	}
 	else if (m_nCommandID == IDC_BUTTON_COMPINFO)
 	{
@@ -131,14 +127,13 @@ int CDlgDownLoad::OnDownLoad(void)
 		CStockItemList::g_stkList->OpenHttpList();
 		m_hPosCode = NULL;
 	}
+	m_nProcNum++;
 	int nEnd = qcGetSysTime();
 	int nTotal = (nEnd - m_nStartTime) / 1000;
 	sprintf(m_szStatus, "%s %s    Used:  % 8d.   Total:   %02d:%02d:%02d   % 8d / %d", 
 						m_pItem->m_szCode, m_pItem->m_szName, nEnd - nStart, 
 						nTotal / 3600, (nTotal % 3600) / 60, nTotal % 60, m_nProcNum, m_nCodeNum);
 	SetDlgItemText(m_hDlg, IDC_STATIC_STATUS, m_szStatus);
-
-	m_nProcNum++;
 	SendMessage(m_hProgress, PBM_SETPOS, (WPARAM)m_nProcNum, 0);
 	if (nRC != QC_ERR_NONE)
 	{

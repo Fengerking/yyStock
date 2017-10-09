@@ -61,7 +61,7 @@ int CViewSelList::UpdateView (HDC hDC)
 	}
 	SetBkMode(m_hMemDC, TRANSPARENT);
 	FillRect(m_hMemDC, &m_rcWnd, m_hBKBrush);
-	DrawRect(m_hMemDC, &m_rcWnd, 5, MSC_GRAY_4);
+	DrawRect(m_hMemDC, &m_rcWnd, 3, MSC_GRAY_4);
 
 	int		nX = m_rcDraw.left;
 	int		nY = m_rcDraw.top;
@@ -82,7 +82,12 @@ int CViewSelList::UpdateView (HDC hDC)
 		if (nX + 580 < m_rcWnd.right)
 			DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dDiffRate, m_hFntBig, nX + 580, nY, "", -2, true, 1);
 		if (nX + 730 < m_rcWnd.right)
-			DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice - m_pRTInfo[i]->m_dLastPrice, m_hFntBig, nX + 730, nY, "", -2, false, 1);
+		{
+			if (m_pRTInfo[i]->m_nLastIndex >= 5)
+				DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice - m_pRTInfo[i]->m_dLastPrice[(m_pRTInfo[i]->m_nLastIndex-5)%5], m_hFntBig, nX + 730, nY, "", -2, false, 1);
+			else
+				DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice - m_pRTInfo[i]->m_dLastPrice[0], m_hFntBig, nX + 730, nY, "", -2, false, 1);
+		}
 		nY += m_nFntBigHeight;
 		if (nY > m_rcDraw.bottom - m_nFntBigHeight)
 			break;
@@ -102,7 +107,12 @@ int CViewSelList::UpdateView (HDC hDC)
 			if (nX + 580 < m_rcWnd.right)
 				DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dDiffRate, m_hFntBig, nX + 580, nY, "", -2, true, 1);
 			if (nX + 730 < m_rcWnd.right)
-				DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice - m_pRTInfo[i]->m_dLastPrice, m_hFntBig, nX + 730, nY, "", -2, false, 1);
+			{
+				if (m_pRTInfo[i]->m_nLastIndex >= 5)
+					DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice - m_pRTInfo[i]->m_dLastPrice[(m_pRTInfo[i]->m_nLastIndex - 5) % 5], m_hFntBig, nX + 730, nY, "", -2, false, 1);
+				else
+					DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice - m_pRTInfo[i]->m_dLastPrice[0], m_hFntBig, nX + 730, nY, "", -2, false, 1);
+			}
 			nY += m_nFntBigHeight;
 			if (nY > m_rcDraw.bottom - m_nFntBigHeight)
 				break;

@@ -69,7 +69,8 @@ struct qcStockRealTimeItem
 	int			m_nAllNum;
 	double		m_dAllMoney;
 
-	double		m_dLastPrice;
+	double		m_dLastPrice[5];
+	int			m_nLastIndex;
 };
 
 struct qcStockDayInfoItem

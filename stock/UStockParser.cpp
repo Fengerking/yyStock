@@ -117,16 +117,11 @@ int	qcStock_ParseRTListInfo(CIOcurl * pIO, const char ** ppCode, int nNum, qcSto
 		memset(szItemInfo, 0, sizeof(szItemInfo));
 		strncpy(szItemInfo, pItemStart, (pItemEnd - pItemStart) + 1);
 
-		SYSTEMTIME tmSys;
-		GetLocalTime(&tmSys);
-		if (tmSys.wSecond % 5 == 0)
-			ppStockInfo[i]->m_dLastPrice = ppStockInfo[i]->m_dNowPrice;
-
 		if (qcStock_ParseRTItem(szItemInfo, ppStockInfo[i]) != QC_ERR_NONE)
 			return QC_ERR_FAILED;
 
-		if (ppStockInfo[i]->m_dLastPrice == 0)
-			ppStockInfo[i]->m_dLastPrice = ppStockInfo[i]->m_dNowPrice;
+		ppStockInfo[i]->m_dLastPrice[ppStockInfo[i]->m_nLastIndex%5] = ppStockInfo[i]->m_dNowPrice;
+		ppStockInfo[i]->m_nLastIndex++;
 	}
 
 	return QC_ERR_NONE;

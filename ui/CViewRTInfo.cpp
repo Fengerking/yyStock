@@ -59,7 +59,7 @@ int CViewRTInfo::UpdateView (HDC hDC)
 	}
 	SetBkMode (m_hMemDC, TRANSPARENT);
 	FillRect (m_hMemDC, &m_rcWnd, m_hBKBrush);
-	DrawRect (m_hMemDC, &m_rcWnd, 5, MSC_GRAY_4);
+	DrawRect (m_hMemDC, &m_rcWnd, 3, MSC_GRAY_4);
 
 	int		nX = m_rcDraw.left;
 	int		nY = m_rcDraw.top;
@@ -187,7 +187,7 @@ int CViewRTInfo::UpdateInfo(void)
 		if (m_stkRTInfo.m_dNowPrice != 0)
 			return QC_ERR_FAILED;
 	}
-	memset(&m_stkRTInfo, 0, sizeof(qcStockRealTimeItem));
+//	memset(&m_stkRTInfo, 0, sizeof(qcStockRealTimeItem));
 	int nRC = qcStock_ParseRTItemInfo(m_pIO, m_szCode, &m_stkRTInfo);
 	if (nRC == QC_ERR_NONE)
 	{

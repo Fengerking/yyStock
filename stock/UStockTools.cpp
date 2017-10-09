@@ -38,6 +38,8 @@ int	qcStock_DownLoadData_History(CIOcurl * pIO, const char * pCode)
 
 	qcGetAppPath(NULL, szFileName, sizeof(szFileName));
 	strcat(szFileName, "data\\history\\");
+	qcCreateFolder(szFileName);
+
 	strcat(szFileName, pCode);
 	strcat(szFileName, ".csv");
 
@@ -100,129 +102,101 @@ int	qcStock_DownLoadData_FHSP(CIOcurl * pIO, const char * pCode)
 	if (pIO == NULL || pCode == NULL)
 		return QC_ERR_ARG;
 
-	char szURL[1024];
-	qcGetAppPath(NULL, szURL, sizeof(szURL));
-	sprintf(szURL, "%sdata\\fhsp\\%s.txt", szURL, pCode);
-	CIOFile ioFile;
-	if (ioFile.Open(szURL, 0, QCIO_FLAG_READ) == QC_ERR_NONE)
-	{
-		ioFile.Close();
-		return QC_ERR_FINISH;
-	}
+	char		szFileName[256];
+	char		szHttpName[256];
+	qcGetAppPath(NULL, szFileName, sizeof(szFileName));
+	strcat(szFileName, "data\\fhsp\\");
+	qcCreateFolder(szFileName);
 
-	sprintf(szURL, "http://vip.stock.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/%s.phtml", pCode);
-	int nRC = pIO->Open(szURL, 0, 0);
+	strcat(szFileName, pCode);
+	strcat(szFileName, ".txt");
+
+	sprintf(szHttpName, "http://quotes.money.163.com/f10/fhpg_%s.html#00000", pCode);
+	int nRC = pIO->Open(szHttpName, 0, 0);
 	if (nRC != QC_ERR_NONE)
 		return nRC;
 
-	CObjectList<qcStockFHSPInfoItem>	lstItem;
-
-	int		nFileSize = (int)pIO->GetSize();
-	char *	pFileData = pIO->GetData ();
-
-	int			nRest = nFileSize;
+	int			nFileSize = (int)pIO->GetSize();
+	char *		pFileData = pIO->GetData();
 	char *		pBuff = pFileData;
-	char		szLine[2048];
-	char *		pPos = NULL;
-	char *		pTxt = NULL;
+	char *		pText = NULL;
+	char *		pStop = NULL;
+	int			nRest = nFileSize;
+	char		szLine[20480];
 	int			nLine = 0;
-	qcStockFHSPInfoItem  * pItem = NULL;
-	while (pBuff - pFileData < nFileSize)
+
+	int			i = 0;
+	char		szKeyWord[256];
+	strcpy(szKeyWord, "ÅÉÏ¢");
+	qcStock_GetUTF8Text(szKeyWord, sizeof(szKeyWord));
+	int nFind = qcStock_FindKeyWord(pBuff, nRest, szKeyWord);
+	pBuff += nFind; nRest -= nFind;
+	nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof(szLine));
+	pBuff += nLine; nRest -= nLine;
+	nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof(szLine));
+	pBuff += nLine; nRest -= nLine;
+	nLine = qcReadTextLine(pBuff, nRest, szLine, sizeof(szLine));
+
+	CObjectList<qcStockFHSPInfoItem>	lstItem;
+	qcStockFHSPInfoItem *				pItem = NULL;
+	pText = szLine;
+	while (pText - szLine < nLine - 12)
 	{
-		nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
-		if (nLine <= 0)
-			break;
-		pBuff += nLine;
-		if (strstr(szLine, "<tbody>") != NULL)
-			break;
-	}
-
-	while (pBuff - pFileData < nFileSize)
-	{
-		nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
-		if (nLine <= 0)
-			break;
-		pBuff += nLine;
-		if (strstr(szLine, "</tbody>") != NULL)
-			break;
-		if (strstr(szLine, "<tr>") == NULL)
-			continue;
-
-		nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
-		if (nLine <= 0)
-			break;
-		pBuff += nLine;
-		pTxt = strstr(szLine, "<td>");
-		if (pTxt == NULL)
-			break;
-		pTxt += 4;
-		pPos = strstr(szLine, "</td>");
-		if (pPos == NULL)
-			break;
-		*pPos = 0;
-
 		pItem = new qcStockFHSPInfoItem();
 		memset(pItem, 0, sizeof(qcStockFHSPInfoItem));
-		lstItem.AddTail(pItem);
-		sscanf(pTxt, "%d-%d-%d", &pItem->m_nYear, &pItem->m_nMonth, &pItem->m_nDay);
-
-		nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
-		pBuff += nLine;
-		pTxt = strstr(szLine, "<td>");
-		pTxt += 4;
-		pPos = strstr(szLine, "</td>");
-		*pPos = 0;
-		pItem->m_dGive = atof(pTxt) / 10;
-
-		nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
-		pBuff += nLine;
-		pTxt = strstr(szLine, "<td>");
-		pTxt += 4;
-		pPos = strstr(szLine, "</td>");
-		*pPos = 0;
-		pItem->m_dGain = atof(pTxt) / 10;
-
-		nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
-		pBuff += nLine;
-		pTxt = strstr(szLine, "<td>");
-		pTxt += 4;
-		pPos = strstr(szLine, "</td>");
-		*pPos = 0;
-		pItem->m_dRation = atof(pTxt) / 10;
-
-		strcpy(szLine, "");
-		while (strstr(szLine, "</td>") == NULL)
+		for (i = 0; i < 8; i++)
 		{
-			nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
-			pBuff += nLine;
-		}
-		nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
-		pBuff += nLine;
-		pTxt = strstr(szLine, "<td>");
-		pTxt += 4;
-		pPos = strstr(szLine, "</td>");
-		*pPos = 0;
-		nRC = sscanf(pTxt, "%d-%d-%d", &pItem->m_nYear, &pItem->m_nMonth, &pItem->m_nDay);
-		if (nRC == 0)
-		{
-			pItem->m_dGive = 0;
-			pItem->m_dGain = 0;
-			pItem->m_dDividend = 0;
-			pItem->m_dRation = 0;
+			pText = strstr(pText, "<td");
+			if (pText == NULL)
+				break;
+			pText = strstr(pText, ">");
+			if (pText == NULL)
+				break;
+			pText++;
+			pStop = strstr(pText, "</td>");
+			if (pStop == NULL)
+				break;
+			*pStop = 0;
+
+			if (i == 2)
+			{
+				pItem->m_dGive = atof(pText) / 10;
+			}
+			else if (i == 3)
+			{
+				pItem->m_dGain = atof(pText) / 10;
+			}
+			else if (i == 4)
+			{
+				pItem->m_dRation = atof(pText) / 10;
+			}
+			else if (i == 6)
+			{
+				nRC = sscanf(pText, "%d-%d-%d", &pItem->m_nYear, &pItem->m_nMonth, &pItem->m_nDay);
+				if (nRC > 0)
+				{
+					lstItem.AddTail(pItem);
+				}
+				else
+				{
+					delete pItem;
+					pItem = NULL;
+				}
+			}
+
+			pText = pStop + 4;
 		}
 
-		while (strstr(szLine, "</tr>") == NULL)
+		if (pText == NULL || pStop == NULL)
 		{
-			nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
-			pBuff += nLine;
+			if (pItem != NULL)
+				delete pItem;
+			break;
 		}
 	}
-	if (lstItem.GetCount() <= 0)
-		return QC_ERR_FAILED;
 
-	qcGetAppPath(NULL, szURL, sizeof(szURL));
-	sprintf(szURL, "%sdata\\fhsp\\%s.txt", szURL, pCode);
-	if (ioFile.Open(szURL, 0, QCIO_FLAG_WRITE) != QC_ERR_NONE)
+	CIOFile ioFile;
+	if (ioFile.Open(szFileName, 0, QCIO_FLAG_WRITE) != QC_ERR_NONE)
 		return QC_ERR_FAILED;
 	NODEPOS pos = lstItem.GetHeadPosition();
 	while (pos != NULL)
@@ -252,7 +226,10 @@ int	qcStock_DownLoadData_Info(CIOcurl * pIO, const char * pCode)
 	char szURL[1024];
 	CIOFile ioFile;
 	qcGetAppPath(NULL, szURL, sizeof(szURL));
-	sprintf(szURL, "%sdata\\info\\%s.txt", szURL, pCode);
+	strcat(szURL, "data\\info\\");
+	qcCreateFolder(szURL);
+
+	sprintf(szURL, "%s%s.txt", szURL, pCode);
 	if (ioFile.Open(szURL, 0, QCIO_FLAG_READ) == QC_ERR_NONE)
 		return QC_ERR_NONE;
 
@@ -643,3 +620,147 @@ int	qcStock_FillValue_table(char * pLine, int nSize, int nType, char * pValue, i
 	return QC_ERR_NONE;
 }
 
+/*
+char szURL[1024];
+qcGetAppPath(NULL, szURL, sizeof(szURL));
+strcat(szURL, "data\\fhsp\\");
+qcCreateFolder(szURL);
+sprintf(szURL, "%s%s.txt", szURL, pCode);
+CIOFile ioFile;
+if (ioFile.Open(szURL, 0, QCIO_FLAG_READ) == QC_ERR_NONE)
+{
+	ioFile.Close();
+	return QC_ERR_FINISH;
+}
+
+sprintf(szURL, "http://vip.stock.finance.sina.com.cn/corp/go.php/vISSUE_ShareBonus/stockid/%s.phtml", pCode);
+int nRC = pIO->Open(szURL, 0, 0);
+if (nRC != QC_ERR_NONE)
+return nRC;
+
+CObjectList<qcStockFHSPInfoItem>	lstItem;
+
+int		nFileSize = (int)pIO->GetSize();
+char *	pFileData = pIO->GetData();
+
+int			nRest = nFileSize;
+char *		pBuff = pFileData;
+char		szLine[2048];
+char *		pPos = NULL;
+char *		pTxt = NULL;
+int			nLine = 0;
+qcStockFHSPInfoItem  * pItem = NULL;
+while (pBuff - pFileData < nFileSize)
+{
+	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	if (nLine <= 0)
+		break;
+	pBuff += nLine;
+	if (strstr(szLine, "<tbody>") != NULL)
+		break;
+}
+
+while (pBuff - pFileData < nFileSize)
+{
+	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	if (nLine <= 0)
+		break;
+	pBuff += nLine;
+	if (strstr(szLine, "</tbody>") != NULL)
+		break;
+	if (strstr(szLine, "<tr>") == NULL)
+		continue;
+
+	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	if (nLine <= 0)
+		break;
+	pBuff += nLine;
+	pTxt = strstr(szLine, "<td>");
+	if (pTxt == NULL)
+		break;
+	pTxt += 4;
+	pPos = strstr(szLine, "</td>");
+	if (pPos == NULL)
+		break;
+	*pPos = 0;
+
+	pItem = new qcStockFHSPInfoItem();
+	memset(pItem, 0, sizeof(qcStockFHSPInfoItem));
+	lstItem.AddTail(pItem);
+	sscanf(pTxt, "%d-%d-%d", &pItem->m_nYear, &pItem->m_nMonth, &pItem->m_nDay);
+
+	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	pBuff += nLine;
+	pTxt = strstr(szLine, "<td>");
+	pTxt += 4;
+	pPos = strstr(szLine, "</td>");
+	*pPos = 0;
+	pItem->m_dGive = atof(pTxt) / 10;
+
+	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	pBuff += nLine;
+	pTxt = strstr(szLine, "<td>");
+	pTxt += 4;
+	pPos = strstr(szLine, "</td>");
+	*pPos = 0;
+	pItem->m_dGain = atof(pTxt) / 10;
+
+	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	pBuff += nLine;
+	pTxt = strstr(szLine, "<td>");
+	pTxt += 4;
+	pPos = strstr(szLine, "</td>");
+	*pPos = 0;
+	pItem->m_dRation = atof(pTxt) / 10;
+
+	strcpy(szLine, "");
+	while (strstr(szLine, "</td>") == NULL)
+	{
+		nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+		pBuff += nLine;
+	}
+	nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+	pBuff += nLine;
+	pTxt = strstr(szLine, "<td>");
+	pTxt += 4;
+	pPos = strstr(szLine, "</td>");
+	*pPos = 0;
+	nRC = sscanf(pTxt, "%d-%d-%d", &pItem->m_nYear, &pItem->m_nMonth, &pItem->m_nDay);
+	if (nRC == 0)
+	{
+		pItem->m_dGive = 0;
+		pItem->m_dGain = 0;
+		pItem->m_dDividend = 0;
+		pItem->m_dRation = 0;
+	}
+
+	while (strstr(szLine, "</tr>") == NULL)
+	{
+		nLine = qcReadTextLine(pBuff, nRest, szLine, 2048);
+		pBuff += nLine;
+	}
+}
+if (lstItem.GetCount() <= 0)
+return QC_ERR_FAILED;
+
+qcGetAppPath(NULL, szURL, sizeof(szURL));
+sprintf(szURL, "%sdata\\fhsp\\%s.txt", szURL, pCode);
+if (ioFile.Open(szURL, 0, QCIO_FLAG_WRITE) != QC_ERR_NONE)
+return QC_ERR_FAILED;
+NODEPOS pos = lstItem.GetHeadPosition();
+while (pos != NULL)
+{
+	pItem = lstItem.GetNext(pos);
+	sprintf(szLine, "%d-%02d-%02d,%.2f,%.2f,%.2f\r\n", pItem->m_nYear, pItem->m_nMonth, pItem->m_nDay,
+		pItem->m_dGive, pItem->m_dGain, pItem->m_dRation);
+	ioFile.Write((unsigned char *)szLine, strlen(szLine));
+}
+ioFile.Close();
+
+pItem = lstItem.RemoveTail();
+while (pItem != NULL)
+{
+	delete pItem;
+	pItem = lstItem.RemoveTail();
+}
+*/

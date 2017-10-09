@@ -58,7 +58,7 @@ int CIOcurl::Open(const char * pURL, long long llOffset, int nFlag)
 			break;
 	}
 
-	if (1)
+	if (0)
 	{
 		CIOFile ioFile;
 		ioFile.Open("c:\\work\\Temp\\0000.txt", 0, QCIO_FLAG_WRITE);

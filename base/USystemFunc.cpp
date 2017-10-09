@@ -11,6 +11,8 @@
 *******************************************************************************/
 #ifdef __QC_OS_WIN32__
 #include "shlobj.h"
+#include "shlwapi.h"
+#include "stdio.h"
 #else
 #include <stdio.h>
 #include <unistd.h>
@@ -222,6 +224,74 @@ bool qcDeleteFolder (char * pFolder)
 #else
 	return false;
 #endif // __QC_OS_WIN32__
+}
+
+
+bool qcCreateFolder(char * pFolder)
+{
+	if (qcPathExist(pFolder))
+		return true;
+
+	char szNewPath[2048];
+	memset(szNewPath, 0, sizeof(szNewPath));
+	strcpy(szNewPath, pFolder);
+
+	char * pPos = strchr(szNewPath, '\\');
+	while (pPos != NULL)
+	{
+		*pPos = '/';
+		pPos++;
+		pPos = strchr(szNewPath, '\\');
+	}
+
+	pPos = strchr(szNewPath, '/');
+	if (pPos == NULL)
+		return false;
+	pPos = strchr(pPos + 1, '/');
+	while (pPos != NULL)
+	{
+#ifdef __QC_OS_WIN32__
+		*pPos = 0;
+		if (PathFileExists(szNewPath) == FALSE)
+			CreateDirectory(szNewPath, NULL);
+		*pPos = '/';
+		pPos = strchr(pPos + 1, '/');
+		if (pPos == NULL)
+		{
+			if (PathFileExists(szNewPath) == FALSE)
+				CreateDirectory(szNewPath, NULL);
+		}
+#elif defined __QC_OS_NDK__ || defined __QC_OS_IOS__ || defined __QC_OS_MACOS__
+		*pPos = 0;
+		if (!qcPathExist(szNewPath))
+			mkdir(szNewPath, 0777);
+		*pPos = '/';
+		pPos = strchr(pPos + 1, '/');
+		if (pPos == NULL)
+		{
+			if (!qcPathExist(szNewPath))
+				mkdir(szNewPath, 0777);
+		}
+#else
+
+#endif // __QC_OS_WIN32__
+	}
+	return true;
+}
+
+bool qcPathExist(char* pPath)
+{
+	bool bExist = false;
+#ifdef __QC_OS_WIN32__
+	WIN32_FIND_DATA ffd;
+	HANDLE hFind = INVALID_HANDLE_VALUE;
+	hFind = FindFirstFile(pPath, &ffd);
+	bExist = (hFind != INVALID_HANDLE_VALUE);
+#else
+	bExist = (-1 != access(pPath, 0));
+#endif
+
+	return bExist;
 }
 
 bool qcIsTradeTime (void)
