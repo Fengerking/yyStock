@@ -22,6 +22,7 @@
 #include "CViewKXT.h"
 #include "CViewSelList.h"
 #include "CViewRTInfo.h"
+#include "CViewCodeList.h"
 
 #include "CGroupStock.h"
 
@@ -42,6 +43,7 @@ protected:
 	CGroupStock *		m_pGroupStock;
 	CViewSelList *		m_pViewSEL;
 	CViewRTInfo *		m_pViewRTI;
+	CViewCodeList *		m_pViewList;
 
 	double				m_dSplt;;
 

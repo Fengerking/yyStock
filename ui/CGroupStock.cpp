@@ -101,9 +101,15 @@ LRESULT CGroupStock::OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam
 
 LRESULT CGroupStock::OnMouseWheel(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	m_nShowType = m_nShowType + 1;
+	if (qcInRect(LOWORD(lParam), HIWORD(lParam), &m_rcView) <= 0)
+		return S_FALSE;
+
 	m_nShowType = m_nShowType % 3;
 	ShowType();
+
+	m_nShowType++;
+	if (m_nShowType > 3)
+		m_nShowType = 0;
 	return S_OK;
 }
 

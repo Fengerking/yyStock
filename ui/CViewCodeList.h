@@ -1,5 +1,5 @@
 /*******************************************************************************
-	File:		CViewSelList.h
+	File:		CViewCodeList.h
 
 	Contains:	the window view header file
 
@@ -9,43 +9,31 @@
 	2016-12-29		Bangfei			Create file
 
 *******************************************************************************/
-#ifndef __CViewSelList_H__
-#define __CViewSelList_H__
+#ifndef __CViewCodeList_H__
+#define __CViewCodeList_H__
 #include "qcStock.h"
 
 #include "CWndBase.h"
 #include "CNodeList.h"
-#include "CIOcurl.h"
 
-#define	VSL_LISTNUM_MAX	256
+#include "CStockItemList.h"
 
-class CViewSelList : public CWndBase
+class CViewCodeList : public CWndBase
 {
 public:
-	CViewSelList(HINSTANCE hInst);
-	virtual ~CViewSelList(void);
-
+	CViewCodeList(HINSTANCE hInst);
+	virtual ~CViewCodeList(void);
 
 	virtual bool	CreateWnd(HWND hParent, RECT rcView, COLORREF clrBG, CGroupBase * pGroup);
 	virtual LRESULT	OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-
 	virtual LRESULT	OnMouseWheel(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
-	virtual int		UpdateList (void);
-	virtual int		UpdateInfo (void);
-
-	virtual int		UpdatePageNum(void);
-	virtual int		UpdateView (HDC hDC);
+	int				UpdateView(HDC hDC);
+	int				UpdatePageNum(void);
 
 protected:
-	char *					m_szCodeList[VSL_LISTNUM_MAX];
-	int						m_nCodeNum;
-
-	CIOcurl	*				m_pIO;
-	qcStockRealTimeItem *	m_pRTInfo[VSL_LISTNUM_MAX];
-
-	int						m_nMaxWidth;
-	int						m_nMinWidth;
+	CObjectList<qcStockInfoItem> *	m_pCodeList;
+	int								m_nSolidNum;
 };
-#endif //__CViewSelList_H__
+#endif //__CViewCodeList_H__

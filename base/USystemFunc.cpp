@@ -405,6 +405,17 @@ int	qcGetTodayFrom2000 (void)
 	return qcGetDaysFrom2000 (tmToday.wYear, tmToday.wMonth, tmToday.wDay);
 }
 
+int	qcInRect(int nX, int nY, RECT * pRect)
+{
+	if (pRect == NULL)
+		return 0;
+	if (nX < pRect->left || nX > pRect->right)
+		return 0;
+	if (nY < pRect->top || nY > pRect->bottom)
+		return 0;
+	return 1;
+}
+
 int	qcReadTextLine (char * pData, int nSize, char * pLine, int nLine)
 {
 	if (pData == NULL)

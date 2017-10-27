@@ -24,8 +24,10 @@
 
 CViewSelList::CViewSelList(HINSTANCE hInst)
 	: CWndBase (hInst)
-	, m_nCodeNum(0)
 	, m_pIO(NULL)
+	, m_nCodeNum(0)
+	, m_nMaxWidth(770)
+	, m_nMinWidth(360)
 {
 	SetObjectName("CViewSelList");
 
@@ -41,7 +43,7 @@ CViewSelList::~CViewSelList(void)
 {
 	ThreadStop();
 
-	for (int i = 0; i < 256; i++)
+	for (int i = 0; i < VSL_LISTNUM_MAX; i++)
 	{
 		if (m_pRTInfo[i] != NULL)
 			delete m_pRTInfo[i];
@@ -52,6 +54,8 @@ CViewSelList::~CViewSelList(void)
 
 int CViewSelList::UpdateView (HDC hDC)
 {
+	CAutoLock lock(&m_mtLock);
+
 	if (m_hMemDC == NULL)
 		m_hMemDC = CreateCompatibleDC(hDC);
 	if (m_hBmpInfo == NULL)
@@ -71,10 +75,18 @@ int CViewSelList::UpdateView (HDC hDC)
 		nY += m_nFntBigHeight;
 		DrawLine(m_hMemDC, m_rcWnd.left, nY, m_rcWnd.right, nY, 1, MSC_GRAY_3);
 	}
+	if (m_rcWnd.right > m_nMaxWidth + m_nMinWidth)
+	{
+		if (m_rcWnd.right > m_nMaxWidth * 2)
+			DrawLine(m_hMemDC, m_rcWnd.right / 2, 0, m_rcWnd.right / 2, nY, 4, MSC_GRAY_3);
+		else
+			DrawLine(m_hMemDC, m_nMaxWidth, 0, m_nMaxWidth, nY, 4, MSC_GRAY_3);
+	}
 
+	int nStartItem = m_nItemNum * m_nPageIdx;
 	nY = m_rcDraw.top;
 	int i = 0;
-	for (i = 0; i < m_nCodeNum; i++)
+	for (i = nStartItem; i < m_nCodeNum; i++)
 	{
 		m_dClosePrice = m_pRTInfo[i]->m_dClosePrice;
 		DrawWtrText(m_hMemDC, m_pRTInfo[i]->m_wzName, m_hFntBig, nX + 10, nY, MSC_GRAY_3, 0);
@@ -88,17 +100,19 @@ int CViewSelList::UpdateView (HDC hDC)
 			else
 				DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice - m_pRTInfo[i]->m_dLastPrice[0], m_hFntBig, nX + 730, nY, "", -2, false, 1);
 		}
+
 		nY += m_nFntBigHeight;
 		if (nY > m_rcDraw.bottom - m_nFntBigHeight)
 			break;
 	}
 
-	if (m_rcWnd.right > 750 + 400)
+	if (m_rcWnd.right > m_nMaxWidth + m_nMinWidth)
 	{
-		DrawLine(m_hMemDC, m_rcWnd.right / 2, 0, m_rcWnd.right / 2, nY, 4, MSC_GRAY_3);
-
+		if (m_rcWnd.right > m_nMaxWidth * 2)
+			nX = m_rcDraw.right / 2 + 8;
+		else
+			nX = m_nMaxWidth + 8;
 		nY = m_rcDraw.top;
-		nX = m_rcDraw.right / 2 + 8;
 		for (i = i + 1; i < m_nCodeNum; i++)
 		{
 			m_dClosePrice = m_pRTInfo[i]->m_dClosePrice;
@@ -113,13 +127,28 @@ int CViewSelList::UpdateView (HDC hDC)
 				else
 					DrawDblText(m_hMemDC, m_pRTInfo[i]->m_dNowPrice - m_pRTInfo[i]->m_dLastPrice[0], m_hFntBig, nX + 730, nY, "", -2, false, 1);
 			}
+
 			nY += m_nFntBigHeight;
 			if (nY > m_rcDraw.bottom - m_nFntBigHeight)
 				break;
 		}
 	}
 
+	DrawScrollBar(m_hMemDC);
 	BitBlt(hDC, 0, 0, m_rcWnd.right, m_rcWnd.bottom, m_hMemDC, 0, 0, SRCCOPY);
+
+	return QC_ERR_NONE;
+}
+
+int CViewSelList::UpdatePageNum(void)
+{
+	CAutoLock lock(&m_mtLock);
+
+	m_nItemNum = m_rcWnd.bottom / m_nFntBigHeight;
+	if (m_rcWnd.right > m_nMaxWidth + 400)
+		m_nItemNum = m_nItemNum * 2;
+	m_nPageNum = (m_nCodeNum + m_nItemNum - 1) / m_nItemNum;
+	m_nPageIdx = 0;
 
 	return QC_ERR_NONE;
 }
@@ -127,14 +156,14 @@ int CViewSelList::UpdateView (HDC hDC)
 int	CViewSelList::UpdateList(void)
 {
 	int i = 0;
-	for (i = 0; i < 256; i++)
+	for (i = 0; i < VSL_LISTNUM_MAX; i++)
 	{
 		m_pRTInfo[i] = NULL;
 		m_szCodeList[i] = new char[32];
 		strcpy(m_szCodeList[i], "");
 	}
 
-	char	szFileName[256];
+	char	szFileName[VSL_LISTNUM_MAX];
 	qcGetAppPath(NULL, szFileName, sizeof(szFileName));
 	strcat(szFileName, "data\\qcStockSelect.txt");
 
@@ -156,6 +185,8 @@ int	CViewSelList::UpdateList(void)
 		nRestSize -= nLen;
 		pFileData += nLen;
 		m_nCodeNum++;
+		if (m_nCodeNum >= VSL_LISTNUM_MAX)
+			break;
 	}
 
 	for (i = 0; i < m_nCodeNum; i++)
@@ -169,21 +200,23 @@ int	CViewSelList::UpdateList(void)
 
 int CViewSelList::UpdateInfo(void)
 {
+	CAutoLock lock(&m_mtLock);
+	int nStartItem = m_nItemNum * m_nPageIdx;
 	if (!qcIsTradeTime())
 	{
-		if (m_pRTInfo[0] != NULL && m_pRTInfo[0]->m_dNowPrice != 0)
+		if (m_pRTInfo[nStartItem] != NULL && m_pRTInfo[nStartItem]->m_dNowPrice != 0)
 			return QC_ERR_FAILED;
 	}
 	int nRC = 0;
-	int nStart = qcGetSysTime();
-
 	if (m_pIO == NULL)
 		m_pIO = new CIOcurl();
-	nRC = qcStock_ParseRTListInfo(m_pIO, (const char **)&m_szCodeList[0], m_nCodeNum, &m_pRTInfo[0]);
+	int nItemNum = m_nItemNum;
+	if (nItemNum + nStartItem > m_nCodeNum)
+		nItemNum = m_nCodeNum - nStartItem;
+	nRC = qcStock_ParseRTListInfo(m_pIO, (const char **)&m_szCodeList[nStartItem], nItemNum, &m_pRTInfo[nStartItem]);
 	if (nRC == QC_ERR_NONE)
 		InvalidateRect(m_hWnd, NULL, FALSE);
 
-	int nUsed = qcGetSysTime() - nStart;
 	return nRC;
 }
 
@@ -194,12 +227,39 @@ bool CViewSelList::CreateWnd(HWND hParent, RECT rcView, COLORREF clrBG, CGroupBa
 
 	CBaseGraphics::OnCreateWnd (m_hWnd);
 
+	UpdatePageNum();
+
 	if (1)
 		ThreadStart();
 	else
 		SetTimer(m_hWnd, WM_TIMER_UPDATE, m_nUpdateTime, NULL);
 
 	return true;
+}
+
+LRESULT	CViewSelList::OnMouseWheel(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	RECT rcWnd;
+	GetWindowRect(m_hWnd, &rcWnd);
+	if (qcInRect(LOWORD(lParam), HIWORD(lParam), &rcWnd) <= 0)
+		return S_FALSE;
+
+	CAutoLock lock(&m_mtLock);
+	short zDelta = HIWORD(wParam);
+	if (zDelta > 0)
+		m_nPageIdx--;
+	else
+		m_nPageIdx++;
+	if (m_nPageIdx >= m_nPageNum)
+		m_nPageIdx = 0;
+	if (m_nPageIdx < 0)
+		m_nPageIdx = m_nPageNum - 1;
+
+	UpdateInfo();
+
+	InvalidateRect(m_hWnd, NULL, TRUE);
+
+	return S_OK;
 }
 
 LRESULT CViewSelList::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -223,6 +283,7 @@ LRESULT CViewSelList::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 			SAFE_DEL_OBJ(m_hBmpInfo);
 			SAFE_DEL_OBJ(m_hBmpBack);
 		}
+		UpdatePageNum();
 		break;
 
 	case WM_LBUTTONUP:
@@ -235,6 +296,8 @@ LRESULT CViewSelList::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 		int nY = nYPos / m_nFntBigHeight;
 		int nYCount = m_rcWnd.bottom / m_nFntBigHeight;
 		int nIndex = nX * nYCount + nY;
+		int nStartItem = m_nItemNum * m_nPageIdx;
+		nIndex = nIndex + nStartItem;
 		if (m_szCodeList[nIndex] == NULL)
 			return S_OK;
 		if (strlen(m_szCodeList[nIndex]) < 6)

@@ -34,6 +34,8 @@ bool	qcIsHoliday (int nYear, int nMonth, int nDay);
 int		qcGetDaysFrom2000 (int nYear, int nMonth, int nDay);
 int		qcGetTodayFrom2000 (void);
 
+int		qcInRect(int nX, int nY, RECT * pRect);
+
 int		qcReadTextLine (char * pData, int nSize, char * pLine, int nLine);
 
 

@@ -36,6 +36,9 @@ CWndBase::CWndBase(HINSTANCE hInst)
 	, m_nTimerLBClick (0)
 	, m_nUpdateTime(1000)
 	, m_pThreadWork(NULL)
+	, m_nPageNum(0)
+	, m_nPageIdx(0)
+	, m_nItemNum(0)
 {
 	SetObjectName("CWndBase");
 
@@ -172,6 +175,26 @@ int	CWndBase::UpdateView(HDC hDC)
 
 int	CWndBase::UpdateInfo(void)
 {
+	return QC_ERR_NONE;
+}
+
+int	CWndBase::DrawScrollBar(HDC hDC)
+{
+	if (hDC == NULL)
+		return QC_ERR_FAILED;
+
+	if (m_nPageNum <= 1)
+		return QC_ERR_NONE;
+
+	RECT rcWnd;
+	GetClientRect(m_hWnd, &rcWnd);
+	RECT rcBar;
+	SetRect(&rcBar, rcWnd.right - 10, 2, rcWnd.right - 2, rcWnd.bottom - 2);
+	FillRect(hDC, &rcBar, m_hBrushGray);
+	int nHeight = (rcBar.bottom - rcBar.top) / m_nPageNum;
+	SetRect(&rcBar, rcWnd.right - 10, 2 + nHeight * m_nPageIdx, rcWnd.right - 2, 2 + nHeight * (m_nPageIdx + 1));
+	FillRect(hDC, &rcBar, m_hBrushWhite);
+
 	return QC_ERR_NONE;
 }
 

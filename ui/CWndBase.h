@@ -63,6 +63,8 @@ protected:
 	virtual int		UpdateView(HDC hDC);
 	virtual int		UpdateInfo(void);
 
+	virtual int		DrawScrollBar(HDC hDC);
+
 	virtual int		ThreadStart(void);
 	virtual int		ThreadStop(void);
 
@@ -93,6 +95,10 @@ protected:
 	virtual int			OnHandleEvent(CThreadEvent * pEvent);
 	CThreadWork	*		m_pThreadWork;
 	CMutexLock			m_mtLock;
+
+	int					m_nPageIdx;
+	int					m_nPageNum;
+	int					m_nItemNum;
 };
 
 #endif //__CWndBase_H__
