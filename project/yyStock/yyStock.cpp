@@ -141,6 +141,11 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		break;
 
+	case WM_MSG_CHILDWND_MSG:
+		if (g_pWndMng != NULL)
+			return g_pWndMng->OnReceiveMessage(hWnd, message, wParam, lParam);
+		break;
+
 	case WM_PAINT:
 		hdc = BeginPaint(hWnd, &ps);
 		EndPaint(hWnd, &ps);

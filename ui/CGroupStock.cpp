@@ -75,6 +75,14 @@ int	CGroupStock::ShowViews(int nShow)
 	return QC_ERR_NONE;
 }
 
+HWND CGroupStock::GetMainWnd(void)
+{ 
+	if (m_pViewFST != NULL && m_pViewFST->GetWnd()!= NULL)
+		return m_pViewFST->GetWnd();
+
+	return m_hMainWnd;
+}
+
 LRESULT CGroupStock::OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	RECT rcView;

@@ -16,6 +16,14 @@
 #include "CThreadWork.h"
 #include "CMutexLock.h"
 
+struct qcChildWndMsg
+{
+	HWND	m_hWnd;
+	UINT	m_uMsg;
+	WPARAM	m_wParam;
+	LPARAM	m_lParam;
+};
+
 #define		WM_TIMER_FIRST			101
 #define		WM_TIMER_UPDATE			102
 #define		WM_TIMER_LBUTTONCLICK	103
@@ -24,6 +32,8 @@
 #define		WM_MSG_CODE_REMOVE	WM_USER + 102   // CWndBase
 #define		WM_MSG_CODE_CHANGE	WM_USER + 103	// char *
 #define		WM_MSG_CODE_REQUEST	WM_USER + 104	// char *
+
+#define		WM_MSG_CHILDWND_MSG	WM_USER + 111	// qcChildWndMsg *
 
 #define		QC_THREAD_EVENT_UPDATE	1001
 
@@ -90,6 +100,8 @@ protected:
 	int				m_nTimerLBClick;
 
 	int				m_nUpdateTime;
+
+	qcChildWndMsg	m_msgWnd;
 
 protected:
 	virtual int			OnHandleEvent(CThreadEvent * pEvent);

@@ -24,6 +24,9 @@ CGroupMain::CGroupMain(HINSTANCE hInst)
 	, m_pViewRTI(NULL)
 	, m_pViewList(NULL)
 	, m_dSplt(0.8)
+	, m_hCursorSize(NULL)
+	, m_hCursorArrow(NULL)
+	, m_bResize(false)
 {
 	SetObjectName("CGroupMain");
 }
@@ -39,6 +42,9 @@ CGroupMain::~CGroupMain(void)
 int	CGroupMain::CreateWnd(HWND hWnd, RECT * pRect)
 {
 	CGroupBase::CreateWnd(hWnd, pRect);
+
+	m_hCursorSize = LoadCursor(NULL, IDC_SIZENS);
+	m_hCursorArrow = LoadCursor(NULL, IDC_ARROW);
 
 	if (m_pGroupStock == NULL)
 		m_pGroupStock = new CGroupStock(m_hInst);
@@ -133,5 +139,79 @@ LRESULT CGroupMain::OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	if (m_pGroupStock != NULL)
 		m_pGroupStock->OnKeyUp(hWnd, uMsg, wParam, lParam);
+	return S_FALSE;
+}
+
+LRESULT CGroupMain::OnMouseMove(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	int xPos = LOWORD(lParam);
+	int yPos = HIWORD(lParam);
+	if (m_bResize && wParam == MK_LBUTTON)
+	{
+		SetCursor(m_hCursorSize);
+		RECT rcView;
+		GetClientRect(hWnd, &rcView);
+		InvalidateRect(hWnd, NULL, TRUE);
+		HDC hDC = GetDC(hWnd);
+		if (m_pViewSEL != NULL)
+			m_pViewSEL->DrawLine(hDC, rcView.left, yPos - 2, rcView.right, yPos + 2, 4, MSC_CYAN);
+		ReleaseDC(hWnd, hDC);
+		return S_OK;
+	}
+
+	if (m_pViewSEL == NULL || m_pViewSEL->GetWnd() == NULL || m_hCursorSize == NULL)
+		return S_FALSE;
+	m_bResize = false;
+	if (hWnd != m_pViewSEL->GetWnd())
+	{
+		SetCursor(m_hCursorArrow);
+		return S_FALSE;
+	}
+
+	if (yPos < 16)
+	{
+		m_bResize = true;
+		SetCursor(m_hCursorSize);
+	}
+	else
+	{
+		SetCursor(m_hCursorArrow);
+	}
+
+	return S_OK;
+}
+
+LRESULT CGroupMain::OnMouseDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	if (m_bResize == true)
+	{
+		SetCursor(m_hCursorSize);
+		return S_OK;
+	}
+
+	return S_FALSE;
+}
+
+LRESULT CGroupMain::OnMouseUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	if (m_bResize == true)
+	{
+		int xPos = LOWORD(lParam);
+		int yPos = HIWORD(lParam);
+		RECT rcWnd;
+		GetWindowRect(hWnd, &rcWnd);
+		yPos = rcWnd.top + yPos;
+		RECT rcMain;
+		GetWindowRect(m_hMainWnd, &rcMain);
+
+		m_dSplt = (double)yPos / (rcMain.bottom - rcMain.top);
+
+		OnResize(NULL, 0, 0, 0);
+
+		m_bResize = false;
+		SetCursor(m_hCursorArrow);
+		return S_OK;
+	}
+		
 	return S_FALSE;
 }

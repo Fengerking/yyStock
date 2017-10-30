@@ -28,6 +28,7 @@ public:
 	virtual int			CreateWnd (HWND hWnd, RECT * pRect);
 	virtual int			ShowViews(int nShow);
 	virtual HWND		GetWnd(void) { return m_hMainWnd; }
+	virtual HWND		GetMainWnd(void) { return m_hMainWnd; }
 
 	virtual LRESULT		OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT		OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

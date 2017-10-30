@@ -38,6 +38,9 @@ public:
 	virtual LRESULT		OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT		OnMouseWheel(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT		OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT		OnMouseMove(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT		OnMouseUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT		OnMouseDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 protected:
 	CGroupStock *		m_pGroupStock;
@@ -47,6 +50,9 @@ protected:
 
 	double				m_dSplt;;
 
+	HCURSOR				m_hCursorSize;
+	HCURSOR				m_hCursorArrow;
+	bool				m_bResize;
 };
 
 #endif // __CGroupMain_H__

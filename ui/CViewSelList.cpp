@@ -264,6 +264,11 @@ LRESULT	CViewSelList::OnMouseWheel(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM l
 
 LRESULT CViewSelList::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	m_msgWnd.m_hWnd = hWnd;
+	m_msgWnd.m_uMsg = uMsg;
+	m_msgWnd.m_wParam = wParam;
+	m_msgWnd.m_lParam = lParam;
+
 	switch (uMsg)
 	{
 	case WM_TIMER:
@@ -288,6 +293,9 @@ LRESULT CViewSelList::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPA
 
 	case WM_LBUTTONUP:
 	{
+		if (SendMessage(m_hParent, WM_MSG_CHILDWND_MSG, (WPARAM)&m_msgWnd, NULL) == S_OK)
+			return S_OK;
+
 		int nXPos = LOWORD(lParam);
 		int nYPos = HIWORD(lParam);
 		int	nX = 0;

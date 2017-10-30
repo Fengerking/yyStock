@@ -244,10 +244,16 @@ int	CWndBase::OnHandleEvent(CThreadEvent * pEvent)
 
 LRESULT CWndBase::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	m_msgWnd.m_hWnd = hWnd;
+	m_msgWnd.m_uMsg = uMsg;
+	m_msgWnd.m_wParam = wParam;
+	m_msgWnd.m_lParam = lParam;
+
 	switch (uMsg)
 	{
 	case WM_LBUTTONDOWN:
-		PostMessage (m_hParent, uMsg, wParam, lParam);
+		if (SendMessage(m_hParent, WM_MSG_CHILDWND_MSG, (WPARAM)&m_msgWnd, NULL) == S_OK)
+			return S_OK;
 		if (m_bLButtonClick)
 		{
 			PostMessage (m_hWnd, WM_LBUTTONDBLCLK, wParam, lParam);
@@ -260,8 +266,9 @@ LRESULT CWndBase::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 		}
 		break;
 
+	case WM_LBUTTONUP:
 	case WM_MOUSEMOVE:
-		PostMessage (m_hParent, uMsg, wParam, lParam);
+		SendMessage(m_hParent, WM_MSG_CHILDWND_MSG, (WPARAM)&m_msgWnd, NULL);
 		break;
 
 	case WM_TIMER:

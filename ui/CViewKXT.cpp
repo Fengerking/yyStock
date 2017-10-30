@@ -764,6 +764,10 @@ LRESULT CViewKXT::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM 
 		}
 		break;
 
+	case WM_SIZE:
+		OnResize(hWnd, uMsg, wParam, lParam);
+		break;
+
 	case WM_ERASEBKGND:
 		return S_FALSE;
 

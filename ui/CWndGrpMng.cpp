@@ -122,6 +122,19 @@ LRESULT CWndGrpMng::OnReceiveMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 			strcpy((char *)wParam, m_pViewCode->GetCode());
 		return S_OK;
 
+	case WM_MSG_CHILDWND_MSG:
+	{
+		nRC = S_FALSE;
+		qcChildWndMsg * pMsg = (qcChildWndMsg *)wParam;
+		if (pMsg->m_uMsg == WM_MOUSEMOVE)
+			nRC = OnMouseMove(pMsg->m_hWnd, pMsg->m_uMsg, pMsg->m_wParam, pMsg->m_lParam);
+		else if (pMsg->m_uMsg == WM_LBUTTONDOWN)
+			nRC = OnMouseDown (pMsg->m_hWnd, pMsg->m_uMsg, pMsg->m_wParam, pMsg->m_lParam);
+		else if (pMsg->m_uMsg == WM_LBUTTONUP)
+			nRC = OnMouseUp (pMsg->m_hWnd, pMsg->m_uMsg, pMsg->m_wParam, pMsg->m_lParam);
+		return nRC;
+	}
+
 	case WM_SIZE:
 		nRC = OnResize(hWnd, uMsg, wParam, lParam);
 		break;
@@ -169,37 +182,48 @@ LRESULT CWndGrpMng::OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 LRESULT CWndGrpMng::OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	LRESULT lRC = S_FALSE;
 	if (m_pViewCode != NULL)
-		m_pViewCode->OnKeyUp(hWnd, uMsg, wParam, lParam);
+		lRC = m_pViewCode->OnKeyUp(hWnd, uMsg, wParam, lParam);
 	if (m_pGrpMain != NULL)
-		m_pGrpMain->OnKeyUp(hWnd, uMsg, wParam, lParam);
+		lRC = m_pGrpMain->OnKeyUp(hWnd, uMsg, wParam, lParam);
 
-	return S_OK;
+	return lRC;
 }
 
 LRESULT CWndGrpMng::OnKeyDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	return S_OK;
+	return S_FALSE;
 }
 
 LRESULT CWndGrpMng::OnMouseDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	return S_OK;
+	LRESULT lRC = S_FALSE;
+	if (m_pGrpMain != NULL)
+		lRC = m_pGrpMain->OnMouseDown(hWnd, uMsg, wParam, lParam);
+	return lRC;
 }
 
 LRESULT CWndGrpMng::OnMouseUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	return S_OK;
+	LRESULT lRC = S_FALSE;
+	if (m_pGrpMain != NULL)
+		lRC = m_pGrpMain->OnMouseUp(hWnd, uMsg, wParam, lParam);
+	return lRC;
 }
 
 LRESULT CWndGrpMng::OnMouseMove(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	return S_OK;
+	LRESULT lRC = S_FALSE;
+	if (m_pGrpMain != NULL)
+		lRC = m_pGrpMain->OnMouseMove(hWnd, uMsg, wParam, lParam);
+	return lRC;
 }
 
 LRESULT CWndGrpMng::OnMouseWheel(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	LRESULT lRC = S_FALSE;
 	if (m_pGrpMain != NULL)
-		m_pGrpMain->OnMouseWheel(hWnd, uMsg, wParam, lParam);
-	return S_OK;
+		lRC = m_pGrpMain->OnMouseWheel(hWnd, uMsg, wParam, lParam);
+	return lRC;
 }
