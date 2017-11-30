@@ -14,6 +14,8 @@
 
 #include "CGroupMain.h"
 
+#include "CRegMng.h"
+
 #include "USystemFunc.h"
 #include "ULogFunc.h"
 
@@ -29,6 +31,8 @@ CGroupMain::CGroupMain(HINSTANCE hInst)
 	, m_bResize(false)
 {
 	SetObjectName("CGroupMain");
+
+	m_dSplt = CRegMng::g_pRegMng->GetIntValue("Splitter", 80) / 100.0;
 }
 
 CGroupMain::~CGroupMain(void)
@@ -37,6 +41,8 @@ CGroupMain::~CGroupMain(void)
 	QC_DEL_P(m_pViewSEL);
 	QC_DEL_P(m_pViewRTI);
 	QC_DEL_P(m_pViewList);
+
+	CRegMng::g_pRegMng->SetIntValue("Splitter", (int)(m_dSplt * 100));
 }
 
 int	CGroupMain::CreateWnd(HWND hWnd, RECT * pRect)

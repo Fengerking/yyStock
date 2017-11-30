@@ -616,7 +616,12 @@ int	qcStock_ParseValue(char * pText, char * pItem, void * pValue, int nType)
 	if (nType == QCSTOCK_VALUE_DOUBLE)
 		*((double *)pValue) = atof(pTextItem);
 	else if (nType == QCSTOCK_VALUE_INT)
-		*((int *)pValue) = atoi(pTextItem);
+	{
+		if (strlen(pTextItem) < 10)
+			*((int *)pValue) = atoi(pTextItem);
+		else
+			*((int *)pValue) = (int)(atoll (pTextItem) / 100);
+	}
 
 	*pTextEnd = ',';
 
