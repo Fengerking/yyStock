@@ -21,6 +21,7 @@
 #include "CGroupMain.h"
 #include "CViewKXT.h"
 #include "CViewCode.h"
+#include "CDlgDownLoad.h"
 
 #include "CRegMng.h"
 
@@ -50,6 +51,8 @@ protected:
 
 	CGroupMain *		m_pGrpMain;
 	CViewCode *			m_pViewCode;
+
+	CDlgDownLoad *		m_pDlgDownLoad;
 
 	CRegMng *			m_pRegMng;
 };

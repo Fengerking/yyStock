@@ -16,7 +16,6 @@
 
 #include "CIOcurl.h"
 #include "CDlgConfig.h"
-#include "CDlgDownLoad.h"
 
 #include "resource.h"
 
@@ -29,6 +28,7 @@ CWndGrpMng::CWndGrpMng(HINSTANCE hInst)
 	, m_pLstStock(NULL)
 	, m_pGrpMain(NULL)
 	, m_pViewCode(NULL)
+	, m_pDlgDownLoad(NULL)
 {
 	SetObjectName("CWndGrpMng");
 
@@ -45,6 +45,8 @@ CWndGrpMng::~CWndGrpMng(void)
 
 	QC_DEL_P(m_pRegMng);
 	QC_DEL_P(m_pLstStock);
+
+	QC_DEL_P(m_pDlgDownLoad);
 }
 
 int	CWndGrpMng::CreateWnd (HWND hWnd)
@@ -93,8 +95,9 @@ LRESULT CWndGrpMng::OnReceiveMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 		}
 		case ID_FILE_DOWNLOAD:
 		{
-			CDlgDownLoad dlgDownLoad(m_hInst, m_hMainWnd);
-			dlgDownLoad.OpenDlg();
+			if (m_pDlgDownLoad == NULL)
+				m_pDlgDownLoad = new CDlgDownLoad(m_hInst, m_hMainWnd);
+			m_pDlgDownLoad->CreateDlg();
 			break;
 		}
 		default:

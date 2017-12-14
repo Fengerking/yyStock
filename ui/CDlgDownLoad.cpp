@@ -52,6 +52,20 @@ int CDlgDownLoad::OpenDlg (void)
 	return DialogBoxParam (m_hInst, MAKEINTRESOURCE(IDD_DIALOG_DOWNLOAD), m_hParent, baseDlgProc, (LPARAM)this);
 }
 
+int CDlgDownLoad::CreateDlg(void)
+{
+	CDlgBase::CreateDlg();
+	m_hDlg = CreateDialog(m_hInst, MAKEINTRESOURCE(IDD_DIALOG_DOWNLOAD), m_hParent, baseDlgProc);
+	if (m_hDlg == NULL)
+		return -1;
+	SetWindowLong(m_hDlg, GWL_USERDATA, (LONG)this);
+
+	OnInitDlg();
+	ShowWindow(m_hDlg, SW_SHOW);
+
+	return 0;
+}
+
 int CDlgDownLoad::OnInitDlg (void)
 {
 	m_hEdtResult = GetDlgItem(m_hDlg, IDC_EDIT_RESULT);

@@ -23,6 +23,7 @@ public:
 	virtual ~CDlgDownLoad(void);
 
 	virtual int			OpenDlg (void);
+	virtual int			CreateDlg(void);
 
 protected:
 	virtual int			OnInitDlg (void);
