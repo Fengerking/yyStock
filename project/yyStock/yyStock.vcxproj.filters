@@ -162,6 +162,12 @@
     <ClInclude Include="..\..\ui\CViewCodeList.h">
       <Filter>UI Files\View</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\ui\CDlgMyStock.h">
+      <Filter>UI Files\Dialog</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\ui\CViewMyStock.h">
+      <Filter>UI Files\View</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -261,6 +267,12 @@
       <Filter>UI Files\View</Filter>
     </ClCompile>
     <ClCompile Include="..\..\ui\CViewCodeList.cpp">
+      <Filter>UI Files\View</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CDlgMyStock.cpp">
+      <Filter>UI Files\Dialog</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\ui\CViewMyStock.cpp">
       <Filter>UI Files\View</Filter>
     </ClCompile>
   </ItemGroup>

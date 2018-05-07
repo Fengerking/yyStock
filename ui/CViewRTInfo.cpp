@@ -27,7 +27,7 @@ CViewRTInfo::CViewRTInfo(HINSTANCE hInst)
 	, m_nWndWidth (398)
 	, m_pIO(NULL)
 	, m_nLastValume (0)
-	, m_nTradeNum(0)
+	, m_llTradeNum(0)
 {
 	SetObjectName("CViewRTInfo");
 
@@ -191,7 +191,7 @@ int CViewRTInfo::UpdateInfo(void)
 	int nRC = qcStock_ParseRTItemInfo(m_pIO, m_szCode, &m_stkRTInfo);
 	if (nRC == QC_ERR_NONE)
 	{
-		if (m_nTradeNum == 0)
+		if (m_llTradeNum == 0)
 		{
 			char szURL[1024];
 			qcGetAppPath(NULL, szURL, sizeof(szURL));
@@ -208,13 +208,13 @@ int CViewRTInfo::UpdateInfo(void)
 				if (pValue != NULL)
 				{
 					pValue++;
-					m_nTradeNum = atoi(pValue);
+					m_llTradeNum = atoll(pValue);
 				}
 				ioFile.Close();
 			}
 		}
-		if (m_nTradeNum > 0)
-			m_stkRTInfo.m_dTurnOver = m_stkRTInfo.m_nTradeNum * 100.0 / m_nTradeNum;
+		if (m_llTradeNum > 0)
+			m_stkRTInfo.m_dTurnOver = m_stkRTInfo.m_nTradeNum * 100.0 / m_llTradeNum;
 
 		m_dClosePrice = m_stkRTInfo.m_dClosePrice;
 		sTradeHistory * pItem = new sTradeHistory();
@@ -275,7 +275,7 @@ LRESULT CViewRTInfo::OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	{
 	case WM_MSG_CODE_CHANGE:
 		ReleaseHistory();
-		m_nTradeNum = 0;
+		m_llTradeNum = 0;
 		memset(&m_stkRTInfo, 0, sizeof(qcStockRealTimeItem));
 		strcpy(m_szCode, (char *)wParam);
 		UpdateInfo();

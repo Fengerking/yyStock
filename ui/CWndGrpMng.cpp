@@ -16,6 +16,7 @@
 
 #include "CIOcurl.h"
 #include "CDlgConfig.h"
+#include "CDlgMyStock.h"
 
 #include "resource.h"
 
@@ -66,6 +67,9 @@ int	CWndGrpMng::CreateWnd (HWND hWnd)
 
 	SetWindowPos(m_pViewCode->GetWnd (), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
+	CDlgMyStock	dlgMyStock(m_hInst, m_hMainWnd);
+	dlgMyStock.OpenDlg();
+
 	return QC_ERR_NONE;
 }
 
@@ -98,6 +102,12 @@ LRESULT CWndGrpMng::OnReceiveMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 			if (m_pDlgDownLoad == NULL)
 				m_pDlgDownLoad = new CDlgDownLoad(m_hInst, m_hMainWnd);
 			m_pDlgDownLoad->CreateDlg();
+			break;
+		}
+		case ID_FILE_MYSTOCK:
+		{
+			CDlgMyStock	dlgMyStock(m_hInst, m_hMainWnd);
+			dlgMyStock.OpenDlg();
 			break;
 		}
 		default:

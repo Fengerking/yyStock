@@ -230,8 +230,8 @@ int	qcStock_DownLoadData_Info(CIOcurl * pIO, const char * pCode)
 	qcCreateFolder(szURL);
 
 	sprintf(szURL, "%s%s.txt", szURL, pCode);
-	if (ioFile.Open(szURL, 0, QCIO_FLAG_READ) == QC_ERR_NONE)
-		return QC_ERR_NONE;
+//	if (ioFile.Open(szURL, 0, QCIO_FLAG_READ) == QC_ERR_NONE)
+//		return QC_ERR_NONE;
 
 	sprintf(szURL, "http://quotes.money.163.com/f10/gdfx_%s.html#00000", pCode);
 	int nRC = pIO->Open(szURL, 0, 0);
@@ -390,9 +390,9 @@ int	qcStock_DownLoadData_Info(CIOcurl * pIO, const char * pCode)
 	ioFile.Write((unsigned char *)szPrevName, strlen(szPrevName));
 	qcStock_GetCharText(pTextCompName, strlen(pTextCompName), true);
 	ioFile.Write((unsigned char *)pTextCompName, strlen(pTextCompName));
-	sprintf(szPrevName, "流通股本:%d\r\n", (int)dTradeNum);
+	sprintf(szPrevName, "流通股本:%lld\r\n", (long long)dTradeNum);
 	ioFile.Write((unsigned char *)szPrevName, strlen(szPrevName));
-	sprintf(szPrevName, "总共股本:%d\r\n", (int)dTotalNum);
+	sprintf(szPrevName, "总共股本:%lld\r\n", (long long)dTotalNum);
 	ioFile.Write((unsigned char *)szPrevName, strlen(szPrevName));
 	sprintf(szPrevName, "上市日期:%s\r\n", pTextCreateDate);
 	ioFile.Write((unsigned char *)szPrevName, strlen(szPrevName));

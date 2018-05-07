@@ -1,5 +1,5 @@
 /*******************************************************************************
-	File:		CViewRTInfo.h
+	File:		CViewMyStock.h
 
 	Contains:	the window view header file
 
@@ -9,48 +9,45 @@
 	2016-12-29		Bangfei			Create file
 
 *******************************************************************************/
-#ifndef __CViewRTInfo_H__
-#define __CViewRTInfo_H__
+#ifndef __CViewMyStock_H__
+#define __CViewMyStock_H__
 #include "qcStock.h"
 
 #include "CWndBase.h"
 #include "CNodeList.h"
 #include "CIOcurl.h"
 
-#define	 MAX_DOUBLE_VALUE	0XFFFFFFFF
-
-struct sTradeHistory
+struct qcMyStockItem
 {
-	SYSTEMTIME	sTime;
-	double		dPrice;
-	int			nNumber;
+	char		m_szCode[16];
+	char		m_szName[32];
+	char		m_szDate[32];
+	int			m_nNumber;
+	double		m_dBuyPrice;
+	double		m_dNowPrice;
 };
 
-class CViewRTInfo : public CWndBase
+class CViewMyStock : public CWndBase
 {
 public:
-	CViewRTInfo(HINSTANCE hInst);
-	virtual ~CViewRTInfo(void);
+	CViewMyStock(HINSTANCE hInst);
+	virtual ~CViewMyStock(void);
 
 	virtual bool	CreateWnd(HWND hParent, RECT rcView, COLORREF clrBG, CGroupBase * pGroup);
 	virtual LRESULT	OnReceiveMessage (HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	virtual int		GetWndWidth (void) {return m_nWndWidth;}
-
 protected:
-	virtual int		UpdateView(HDC hDC);
+	virtual int		UpdateView (HDC hDC);
 	virtual int		UpdateInfo(void);
-
-	virtual bool	ReleaseHistory (void);
+	virtual int		OpenMyStockFile (void);
 
 protected:
-	int							m_nWndWidth;
+	CObjectList<qcMyStockItem>	m_lstMyStock;
+
+	char *						m_szCodeList[256];
+	int							m_nCodeNum;
 
 	CIOcurl	*					m_pIO;
-	qcStockRealTimeItem			m_stkRTInfo;
-	CObjectList <sTradeHistory>	m_lstHistory;
-	int							m_nLastValume;
-
-	long long					m_llTradeNum;
+	qcStockRealTimeItem *		m_pRTInfo[256];
 };
-#endif //__CViewRTInfo_H__
+#endif //__CViewMyStock_H__

@@ -109,6 +109,7 @@
     <ClInclude Include="..\..\ui\CDlgBase.h" />
     <ClInclude Include="..\..\ui\CDlgConfig.h" />
     <ClInclude Include="..\..\ui\CDlgDownLoad.h" />
+    <ClInclude Include="..\..\ui\CDlgMyStock.h" />
     <ClInclude Include="..\..\ui\CGroupBase.h" />
     <ClInclude Include="..\..\ui\CGroupMain.h" />
     <ClInclude Include="..\..\ui\CGroupStock.h" />
@@ -117,6 +118,7 @@
     <ClInclude Include="..\..\ui\CViewFST.h" />
     <ClInclude Include="..\..\ui\CViewInfo.h" />
     <ClInclude Include="..\..\ui\CViewKXT.h" />
+    <ClInclude Include="..\..\ui\CViewMyStock.h" />
     <ClInclude Include="..\..\ui\CViewRTInfo.h" />
     <ClInclude Include="..\..\ui\CViewSelList.h" />
     <ClInclude Include="..\..\ui\CWndBase.h" />
@@ -146,6 +148,7 @@
     <ClCompile Include="..\..\ui\CDlgBase.cpp" />
     <ClCompile Include="..\..\ui\CDlgConfig.cpp" />
     <ClCompile Include="..\..\ui\CDlgDownLoad.cpp" />
+    <ClCompile Include="..\..\ui\CDlgMyStock.cpp" />
     <ClCompile Include="..\..\ui\CGroupBase.cpp" />
     <ClCompile Include="..\..\ui\CGroupMain.cpp" />
     <ClCompile Include="..\..\ui\CGroupStock.cpp" />
@@ -154,6 +157,7 @@
     <ClCompile Include="..\..\ui\CViewFST.cpp" />
     <ClCompile Include="..\..\ui\CViewInfo.cpp" />
     <ClCompile Include="..\..\ui\CViewKXT.cpp" />
+    <ClCompile Include="..\..\ui\CViewMyStock.cpp" />
     <ClCompile Include="..\..\ui\CViewRTInfo.cpp" />
     <ClCompile Include="..\..\ui\CViewSelList.cpp" />
     <ClCompile Include="..\..\ui\CWndBase.cpp" />
