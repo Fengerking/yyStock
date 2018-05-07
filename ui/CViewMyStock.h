@@ -40,6 +40,7 @@ protected:
 	virtual int		UpdateView (HDC hDC);
 	virtual int		UpdateInfo(void);
 	virtual int		OpenMyStockFile (void);
+	virtual void	FormatDouble(double dNum, char * szText, int nNum);
 
 protected:
 	CObjectList<qcMyStockItem>	m_lstMyStock;

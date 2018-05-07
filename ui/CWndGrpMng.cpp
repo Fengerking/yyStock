@@ -67,9 +67,6 @@ int	CWndGrpMng::CreateWnd (HWND hWnd)
 
 	SetWindowPos(m_pViewCode->GetWnd (), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
-	CDlgMyStock	dlgMyStock(m_hInst, m_hMainWnd);
-	dlgMyStock.OpenDlg();
-
 	return QC_ERR_NONE;
 }
 
