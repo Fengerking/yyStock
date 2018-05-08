@@ -17,6 +17,8 @@
 #include "USystemFunc.h"
 #include "ULogFunc.h"
 
+#include "resource.h"
+
 CGroupStock::CGroupStock(HINSTANCE hInst)
 	: CGroupBase(hInst)
 	, m_pViewFST(NULL)
@@ -81,6 +83,32 @@ HWND CGroupStock::GetMainWnd(void)
 		return m_pViewFST->GetWnd();
 
 	return m_hMainWnd;
+}
+
+LRESULT CGroupStock::OnCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	int wmId, wmEvent;
+	wmId = LOWORD(wParam);
+	wmEvent = HIWORD(wParam);
+	switch (wmId)
+	{
+	case ID_VIEW_FSPIC:
+	case ID_VIEW_KXPIC:
+	case ID_VIEW_STOCKINFO:
+		if (wmId == ID_VIEW_FSPIC)
+			m_nShowType = 0;
+		else if (wmId == ID_VIEW_KXPIC)
+			m_nShowType = 1;
+		else
+			m_nShowType = 2;
+		ShowType();
+		break;
+
+	default:
+		break;
+	}
+
+	return S_OK;
 }
 
 LRESULT CGroupStock::OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

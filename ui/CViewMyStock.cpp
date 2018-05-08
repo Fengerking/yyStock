@@ -51,6 +51,7 @@ CViewMyStock::~CViewMyStock(void)
 		if (m_pRTInfo[i] != NULL)
 			delete m_pRTInfo[i];
 		delete[] m_szCodeList[i];
+		delete[] m_szBuyCode[i];
 	}
 	QC_DEL_P(m_pIO);
 }
@@ -79,13 +80,13 @@ int CViewMyStock::UpdateView (HDC hDC)
 		nY += m_nFntMidHeight + 8;
 		DrawLine(m_hMemDC, m_rcWnd.left, nY, m_rcWnd.right, nY, 1, MSC_GRAY_3);
 		nIndex++;
-		if (nIndex > m_lstMyStock.GetCount() + 1)
+		if (nIndex > m_lstMyStock.GetCount() + m_nBuyCodeNum + 1)
 			break;
 	}
 	
 	nX = m_rcDraw.left;
 	nY = m_rcDraw.top + 4;
-	DrawStrText(m_hMemDC, "  股票       日期       数量    价格        金额     现价        盈亏   百分比       市值", m_hFntMid, nX, nY, MSC_WHITE, 0);
+	DrawStrText(m_hMemDC, "  股票       日期       数量    价格        金额     现价        盈亏     百分比      市值", m_hFntMid, nX, nY, MSC_WHITE, 0);
 
 	double			dTotalAll = 0;
 	double			dTotalOne = 0;
@@ -140,6 +141,33 @@ int CViewMyStock::UpdateView (HDC hDC)
 	DrawStrText(m_hMemDC, "汇总", m_hFntMid, nX, nY, MSC_WHITE, 0);
 	FormatDouble(dTotalAll, szLineText, 89);
 	DrawStrText(m_hMemDC, szLineText, m_hFntMid, nX, nY, MSC_WHITE, 0);
+
+	for (int i = 0; i < m_nBuyCodeNum; i++)
+	{
+		int		nBuyNum = 0;
+		char *	pStockName = NULL;
+		double	dNowPrice = 0;
+		pos = m_lstMyStock.GetHeadPosition();
+		while (pos != NULL)
+		{
+			pItem = m_lstMyStock.GetNext(pos);
+			if (!strcmp(m_szBuyCode[i], pItem->m_szCode))
+			{
+				nBuyNum += pItem->m_nNumber;
+				if (pStockName == NULL)
+				{
+					pStockName = pItem->m_szName;
+					dNowPrice = pItem->m_dNowPrice;
+				}
+			}
+		}
+
+		nY = nY + m_nFntMidHeight + 8;
+		memset(szLineText, 0, sizeof(szLineText));
+		sprintf(szLineText, "%s %s % 8d  ", pStockName, m_szBuyCode[i], nBuyNum);
+		FormatDouble(dNowPrice * nBuyNum, szLineText + strlen (szLineText), 12);
+		DrawStrText(m_hMemDC, szLineText, m_hFntMid, nX, nY, MSC_WHITE, 0);
+	}
 
 	BitBlt(hDC, 0, 0, m_rcWnd.right, m_rcWnd.bottom, m_hMemDC, 0, 0, SRCCOPY);
 
@@ -237,6 +265,8 @@ int	CViewMyStock::OpenMyStockFile(void)
 		m_pRTInfo[i] = NULL;
 		m_szCodeList[i] = new char[32];
 		strcpy(m_szCodeList[i], "");
+		m_szBuyCode[i] = new char[32];
+		strcpy(m_szBuyCode[i], "");
 	}
 
 	char	szFileName[256];
@@ -308,6 +338,20 @@ int	CViewMyStock::OpenMyStockFile(void)
 					break;
 				}
 			}
+
+			for (i = 0; i < m_nBuyCodeNum + 1; i++)
+			{
+				if (strlen(m_szBuyCode[i]) > 0)
+				{
+					if (!strcmp(m_szBuyCode[i], pItem->m_szCode))
+						break;
+					else
+						continue;
+				}
+				strcpy(m_szBuyCode[i], pItem->m_szCode);
+				m_nBuyCodeNum++;
+				break;
+			}
 		}
 	}
 
@@ -316,6 +360,7 @@ int	CViewMyStock::OpenMyStockFile(void)
 		m_pRTInfo[i] = new qcStockRealTimeItem();
 		memset(m_pRTInfo[i], 0, sizeof(qcStockRealTimeItem));
 	}
+
 	return QC_ERR_NONE;
 }
 

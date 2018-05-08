@@ -78,6 +78,13 @@ int	CGroupMain::ShowViews(int nShow)
 	return QC_ERR_NONE;
 }
 
+LRESULT CGroupMain::OnCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	if (m_pGroupStock != NULL)
+		m_pGroupStock->OnCommand(hWnd, uMsg, wParam, lParam);
+	return S_OK;
+}
+
 LRESULT CGroupMain::OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	RECT	rcWnd;

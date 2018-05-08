@@ -39,6 +39,11 @@ CViewInfo::~CViewInfo(void)
 int CViewInfo::UpdateView (HDC hDC)
 {
 	if (m_pIOFile == NULL)
+		m_pIOFile = new CIOFile();
+	char szURL[1024];
+	qcGetAppPath(NULL, szURL, sizeof(szURL));
+	sprintf(szURL, "%sdata\\info\\%s.txt", szURL, m_szCode);
+	if (m_pIOFile->Open(szURL, 0, QCIO_FLAG_READ) != QC_ERR_NONE)
 		return QC_ERR_FAILED;
 
 	SetBkMode(hDC, TRANSPARENT);
@@ -67,19 +72,13 @@ int CViewInfo::UpdateView (HDC hDC)
 			break;
 	}
 
+	m_pIOFile->Close();
+
 	return QC_ERR_NONE;
 }
 
 int CViewInfo::UpdateInfo(void)
 {
-	if (m_pIOFile == NULL)
-		m_pIOFile = new CIOFile();
-	char szURL[1024];
-	qcGetAppPath(NULL, szURL, sizeof(szURL));
-	sprintf(szURL, "%sdata\\info\\%s.txt", szURL, m_szCode);
-	if (m_pIOFile->Open(szURL, 0, QCIO_FLAG_READ) != QC_ERR_NONE)
-		return QC_ERR_FAILED;
-	
 	InvalidateRect(m_hWnd, NULL, TRUE);
 
 	return QC_ERR_NONE;

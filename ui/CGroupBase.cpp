@@ -43,6 +43,11 @@ int	CGroupBase::ShowViews(int nShow)
 	return QC_ERR_NONE;
 }
 
+LRESULT CGroupBase::OnCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	return S_FALSE;
+}
+
 LRESULT CGroupBase::OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
 	return S_FALSE;

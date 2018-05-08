@@ -67,6 +67,9 @@ int	CWndGrpMng::CreateWnd (HWND hWnd)
 
 	SetWindowPos(m_pViewCode->GetWnd (), HWND_TOP, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
 
+//	CDlgMyStock	dlgMyStock(m_hInst, m_hMainWnd);
+//	dlgMyStock.OpenDlg();
+
 	return QC_ERR_NONE;
 }
 
@@ -108,6 +111,7 @@ LRESULT CWndGrpMng::OnReceiveMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 			break;
 		}
 		default:
+			OnCommand (hWnd, uMsg, wParam, lParam);
 			break;
 		}
 		break;
@@ -177,6 +181,13 @@ LRESULT CWndGrpMng::OnReceiveMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM
 		return S_FALSE;
 	}
 	return nRC;
+}
+
+LRESULT CWndGrpMng::OnCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	if (m_pGrpMain != NULL)
+		m_pGrpMain->OnCommand(hWnd, uMsg, wParam, lParam);
+	return S_OK;
 }
 
 LRESULT CWndGrpMng::OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)

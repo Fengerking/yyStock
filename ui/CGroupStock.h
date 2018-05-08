@@ -32,6 +32,7 @@ public:
 	virtual int			ShowViews(int nShow);
 	virtual HWND		GetMainWnd(void);
 
+	virtual LRESULT		OnCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT		OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT		OnMouseWheel(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT		OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

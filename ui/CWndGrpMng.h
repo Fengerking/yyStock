@@ -35,6 +35,7 @@ public:
 	virtual LRESULT		OnReceiveMessage(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 
+	virtual LRESULT		OnCommand(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT		OnResize(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT		OnKeyUp(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 	virtual LRESULT		OnKeyDown(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);

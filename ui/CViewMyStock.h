@@ -50,5 +50,8 @@ protected:
 
 	CIOcurl	*					m_pIO;
 	qcStockRealTimeItem *		m_pRTInfo[256];
+
+	char *						m_szBuyCode[256];
+	int							m_nBuyCodeNum;
 };
 #endif //__CViewMyStock_H__
