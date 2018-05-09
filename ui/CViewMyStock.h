@@ -17,16 +17,6 @@
 #include "CNodeList.h"
 #include "CIOcurl.h"
 
-struct qcMyStockItem
-{
-	char		m_szCode[16];
-	char		m_szName[32];
-	char		m_szDate[32];
-	int			m_nNumber;
-	double		m_dBuyPrice;
-	double		m_dNowPrice;
-};
-
 class CViewMyStock : public CWndBase
 {
 public:
@@ -41,6 +31,7 @@ protected:
 	virtual int		UpdateInfo(void);
 	virtual int		OpenMyStockFile (void);
 	virtual void	FormatDouble(double dNum, char * szText, int nNum);
+	virtual void	DrawDouble(HDC hDC, HFONT hFont, double dNum, int nX, int nY, int nPos, bool bPercent = false);
 
 protected:
 	CObjectList<qcMyStockItem>	m_lstMyStock;

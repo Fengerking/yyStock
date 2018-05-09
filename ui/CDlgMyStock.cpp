@@ -51,7 +51,7 @@ int CDlgMyStock::OnCloseDlg (int nCloseID)
 
 int CDlgMyStock::OnInitDlg (void)
 {
-	SetWindowPos(m_hDlg, NULL, 0, 0, 1450, 800, 0);
+	SetWindowPos(m_hDlg, NULL, 0, 0, 1600, 800, 0);
 	CenterDlg ();
 
 	RECT rcDlg;

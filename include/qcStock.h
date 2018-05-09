@@ -158,6 +158,16 @@ struct qcStockFinanceInfoItem
 	double		m_dFund;
 };
 
+struct qcMyStockItem
+{
+	char		m_szCode[16];
+	char		m_szName[32];
+	char		m_szDate[32];
+	int			m_nNumber;
+	double		m_dBuyPrice;
+	double		m_dNowPrice;
+	double		m_dClsPrice;
+};
 
 #ifdef __cplusplus
 } /* extern "C" */

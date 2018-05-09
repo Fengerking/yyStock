@@ -86,10 +86,14 @@ int CViewMyStock::UpdateView (HDC hDC)
 	
 	nX = m_rcDraw.left;
 	nY = m_rcDraw.top + 4;
-	DrawStrText(m_hMemDC, "  股票       日期       数量    价格        金额     现价        盈亏     百分比      市值", m_hFntMid, nX, nY, MSC_WHITE, 0);
+	DrawStrText(m_hMemDC, "  股票       日期       数量    价格        金额     现价        盈亏     百分比      市值       今日盈亏  ", m_hFntMid, nX, nY, MSC_WHITE, 0);
 
 	double			dTotalAll = 0;
 	double			dTotalOne = 0;
+	double			dTodayAll = 0;
+	double			dTodayOne = 0;
+	double			dTodayNum = 0;
+
 	int				nPreY = 0;
 	char			szLineText[1024];
 	qcMyStockItem * pItem = NULL;
@@ -105,10 +109,12 @@ int CViewMyStock::UpdateView (HDC hDC)
 			{
 				FormatDouble(dTotalOne, szLineText, 89);
 				DrawStrText(m_hMemDC, szLineText, m_hFntMid, nX, nPreY, MSC_WHITE, 0);
+				DrawDouble(m_hMemDC, m_hFntMid, dTodayOne, nX, nPreY, 101);
 			}
 			DrawStrText(m_hMemDC, pItem->m_szName, m_hFntMid, nX, nY, MSC_WHITE, 0);
 			nPreY = nY;
 			dTotalOne = 0;
+			dTodayOne = 0;
 		}
 		else
 		{
@@ -129,24 +135,37 @@ int CViewMyStock::UpdateView (HDC hDC)
 			else
 				DrawStrText(m_hMemDC, szLineText, m_hFntMid, nX, nY, MSC_GREEN_1, 0);
 
+			dTodayNum = (pItem->m_dNowPrice - pItem->m_dClsPrice) * pItem->m_nNumber;
+			DrawDouble(m_hMemDC, m_hFntMid, dTodayNum, nX, nY, 101);
+
 			dTotalOne += pItem->m_dNowPrice * pItem->m_nNumber;
 			dTotalAll += pItem->m_dNowPrice * pItem->m_nNumber;
+
+			dTodayOne += dTodayNum;
+			dTodayAll += dTodayNum;
 		}
 	}
 
+	memset(szLineText, 0, sizeof(szLineText));
 	FormatDouble(dTotalOne, szLineText, 89);
 	DrawStrText(m_hMemDC, szLineText, m_hFntMid, nX, nPreY, MSC_WHITE, 0);
+	DrawDouble(m_hMemDC, m_hFntMid, dTodayOne, nX, nPreY, 101);
 
 	nY = nY + m_nFntMidHeight + 8;
 	DrawStrText(m_hMemDC, "汇总", m_hFntMid, nX, nY, MSC_WHITE, 0);
 	FormatDouble(dTotalAll, szLineText, 89);
 	DrawStrText(m_hMemDC, szLineText, m_hFntMid, nX, nY, MSC_WHITE, 0);
+	DrawDouble(m_hMemDC, m_hFntMid, dTodayAll, nX, nY, 101);
 
+	int		nBuyNum = 0;
+	char *	pStockName = NULL;
+	double	dNowPrice = 0;
+	double	dStockWin = 0;
 	for (int i = 0; i < m_nBuyCodeNum; i++)
 	{
-		int		nBuyNum = 0;
-		char *	pStockName = NULL;
-		double	dNowPrice = 0;
+		nBuyNum = 0;
+		pStockName = NULL;
+		dStockWin = 0;
 		pos = m_lstMyStock.GetHeadPosition();
 		while (pos != NULL)
 		{
@@ -154,6 +173,7 @@ int CViewMyStock::UpdateView (HDC hDC)
 			if (!strcmp(m_szBuyCode[i], pItem->m_szCode))
 			{
 				nBuyNum += pItem->m_nNumber;
+				dStockWin += (pItem->m_dNowPrice - pItem->m_dBuyPrice) * pItem->m_nNumber;
 				if (pStockName == NULL)
 				{
 					pStockName = pItem->m_szName;
@@ -167,6 +187,9 @@ int CViewMyStock::UpdateView (HDC hDC)
 		sprintf(szLineText, "%s %s % 8d  ", pStockName, m_szBuyCode[i], nBuyNum);
 		FormatDouble(dNowPrice * nBuyNum, szLineText + strlen (szLineText), 12);
 		DrawStrText(m_hMemDC, szLineText, m_hFntMid, nX, nY, MSC_WHITE, 0);
+
+		DrawDouble(m_hMemDC, m_hFntMid, dStockWin, nX, nY, strlen(szLineText)+ 12);
+		DrawDouble(m_hMemDC, m_hFntMid, dStockWin * 100 / (dNowPrice * nBuyNum), nX, nY, strlen(szLineText) + 20, true);
 	}
 
 	BitBlt(hDC, 0, 0, m_rcWnd.right, m_rcWnd.bottom, m_hMemDC, 0, 0, SRCCOPY);
@@ -191,7 +214,8 @@ int CViewMyStock::UpdateInfo(void)
 		pItem = m_lstMyStock.GetNext(pos);
 		if (strlen (pItem->m_szCode) <= 0)
 			continue;
-		pItem->m_dNowPrice = m_pRTInfo[nIndex++]->m_dNowPrice;
+		pItem->m_dNowPrice = m_pRTInfo[nIndex]->m_dNowPrice;
+		pItem->m_dClsPrice = m_pRTInfo[nIndex++]->m_dClosePrice;
 	}
 
 	if (nRC == QC_ERR_NONE)
@@ -372,13 +396,33 @@ void CViewMyStock::FormatDouble(double dNum, char * szText, int nNum)
 
 	int nTxtLen = strlen(szTxtNum);
 	strcpy(szTxtVal, szTxtNum);
-	if (nTxtLen > 7)
+	int nSpltLen = 7;
+	if (dNum < 0)
+		nSpltLen = 8;
+	if (nTxtLen > nSpltLen)
 	{
-		szTxtVal[nTxtLen - 7] = ',';
-		strcpy(szTxtVal + (nTxtLen - 7 + 1), szTxtNum + (nTxtLen - 7));
+		nSpltLen = 7;
+		szTxtVal[nTxtLen - nSpltLen] = ',';
+		strcpy(szTxtVal + (nTxtLen - nSpltLen + 1), szTxtNum + (nTxtLen - nSpltLen));
 	}
 	int nSpaceNum = nNum - strlen(szTxtVal) + 3;
 	memset(szText, ' ', nSpaceNum);
 	memcpy(szText + nSpaceNum, szTxtVal, strlen(szTxtVal));
 
+}
+
+void CViewMyStock::DrawDouble(HDC hDC, HFONT hFont, double dNum, int nX, int nY, int nPos, bool bPercent)
+{
+	char szText[1024];
+	memset(szText, 0, sizeof(szText));
+
+	FormatDouble(dNum, szText, nPos);
+	if (bPercent)
+		strcat(szText, "%");
+	if (dNum > 0)
+		DrawStrText(hDC, szText, hFont, nX, nY, MSC_RED_1, 0);
+	else if (dNum == 0)
+		DrawStrText(hDC, szText, hFont, nX, nY, MSC_WHITE, 0);
+	else
+		DrawStrText(hDC, szText, hFont, nX, nY, MSC_GRAY_3, 0);
 }
