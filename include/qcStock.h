@@ -167,6 +167,8 @@ struct qcMyStockItem
 	double		m_dBuyPrice;
 	double		m_dNowPrice;
 	double		m_dClsPrice;
+	double		m_dCash;
+	double		m_dDebt;
 };
 
 #ifdef __cplusplus

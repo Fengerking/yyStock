@@ -94,6 +94,9 @@ int CViewMyStock::UpdateView (HDC hDC)
 	double			dTodayOne = 0;
 	double			dTodayNum = 0;
 
+	double			dTotalCash = 0;
+	double			dTotalDebt = 0;
+
 	int				nPreY = 0;
 	char			szLineText[1024];
 	qcMyStockItem * pItem = NULL;
@@ -115,6 +118,9 @@ int CViewMyStock::UpdateView (HDC hDC)
 			nPreY = nY;
 			dTotalOne = 0;
 			dTodayOne = 0;
+
+			dTotalCash += pItem->m_dCash;
+			dTotalDebt += pItem->m_dDebt;
 		}
 		else
 		{
@@ -156,6 +162,16 @@ int CViewMyStock::UpdateView (HDC hDC)
 	FormatDouble(dTotalAll, szLineText, 89);
 	DrawStrText(m_hMemDC, szLineText, m_hFntMid, nX, nY, MSC_WHITE, 0);
 	DrawDouble(m_hMemDC, m_hFntMid, dTodayAll, nX, nY, 101);
+
+	DrawStrText(m_hMemDC, "现金", m_hFntMid, nX + 300, nY, MSC_WHITE, 0);
+	FormatDouble(dTotalCash, szLineText, 30);
+	DrawStrText(m_hMemDC, szLineText, m_hFntMid, nX, nY, MSC_WHITE, 0);
+	DrawStrText(m_hMemDC, "债务", m_hFntMid, nX + 550, nY, MSC_WHITE, 0);
+	FormatDouble(dTotalDebt, szLineText, 50);
+	DrawStrText(m_hMemDC, szLineText, m_hFntMid, nX, nY, MSC_WHITE, 0);
+	DrawStrText(m_hMemDC, "资产", m_hFntMid, nX + 848, nY, MSC_WHITE, 0);
+	FormatDouble(dTotalAll + dTotalCash - dTotalDebt, szLineText, 70);
+	DrawStrText(m_hMemDC, szLineText, m_hFntMid, nX, nY, MSC_WHITE, 0);
 
 	int		nBuyNum = 0;
 	char *	pStockName = NULL;
@@ -326,9 +342,24 @@ int	CViewMyStock::OpenMyStockFile(void)
 		pItem = new qcMyStockItem();
 		m_lstMyStock.AddTail(pItem);
 		memset(pItem, 0, sizeof(pItem));
-		if (szLine[0] == ';')
+		if (szLine[0] == ':')
 		{
+			pLine = szLine;
+			pStep = strchr(pLine + 1, ':');
+			if (pStep != NULL)
+				*pStep = 0;
 			strcpy(pItem->m_szName, szLine + 1);
+			if (pStep != NULL)
+			{
+				pLine = pStep + 1;
+				pStep = strstr(pLine, "cash=");
+				if (pStep != NULL)
+					pItem->m_dCash = atof(pStep + 5);
+
+				pStep = strstr(pLine, "debt=");
+				if (pStep != NULL)
+					pItem->m_dDebt = atof(pStep + 5);
+			}
 		}
 		else
 		{
