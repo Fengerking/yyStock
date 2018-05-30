@@ -92,22 +92,37 @@ int CViewRTInfo::UpdateView (HDC hDC)
 	DrawLine (m_hMemDC, m_rcWnd.left, nY, m_rcWnd.right, nY, 1, MSC_GRAY_3);
 	//---------------------------------------------------------------------------------
 
+	int nMaxNum = GetMaxNum();
+	int nPosX = m_rcDraw.right / 2 - 30;
+	int nLineX = nPosX + 120;
+	int nLineY = 10;
+	int nLineW = 10;
+
 	nY += 8;
 	DrawDblText (m_hMemDC, m_stkRTInfo.m_dSellPrice5, m_hFntSml, m_rcDraw.left, nY, "Âô5: ", -1, false, 0);
-	DrawIntText (m_hMemDC, m_stkRTInfo.m_nSellNum5, m_hFntSml, m_rcDraw.right / 2, nY, " ", -1, m_stkRTInfo.m_dSellPrice5, 0);
+	DrawIntText (m_hMemDC, m_stkRTInfo.m_nSellNum5, m_hFntSml, nPosX, nY, " ", -1, m_stkRTInfo.m_dSellPrice5, 0);
+	DrawNumLine(m_hMemDC, nMaxNum, m_stkRTInfo.m_nSellNum5, m_stkRTInfo.m_dSellPrice5, nLineX, nY + nLineY, nLineW);
+
 	nY += m_nFntSmlHeight + 4;
 	DrawDblText (m_hMemDC, m_stkRTInfo.m_dSellPrice4, m_hFntSml, m_rcDraw.left, nY, "Âô4: ", -1, false, 0);
-	DrawIntText (m_hMemDC, m_stkRTInfo.m_nSellNum4, m_hFntSml, m_rcDraw.right / 2, nY, " ", -1, m_stkRTInfo.m_dSellPrice4, 0);
+	DrawIntText (m_hMemDC, m_stkRTInfo.m_nSellNum4, m_hFntSml, nPosX, nY, " ", -1, m_stkRTInfo.m_dSellPrice4, 0);
+	DrawNumLine(m_hMemDC, nMaxNum, m_stkRTInfo.m_nSellNum4, m_stkRTInfo.m_dSellPrice4, nLineX, nY + nLineY, nLineW);
+
 	nY += m_nFntSmlHeight + 4;
 	DrawDblText (m_hMemDC, m_stkRTInfo.m_dSellPrice3, m_hFntSml, m_rcDraw.left, nY, "Âô3: ", -1, false, 0);
-	DrawIntText (m_hMemDC, m_stkRTInfo.m_nSellNum3, m_hFntSml, m_rcDraw.right / 2, nY, " ", -1, m_stkRTInfo.m_dSellPrice3, 0);
+	DrawIntText (m_hMemDC, m_stkRTInfo.m_nSellNum3, m_hFntSml, nPosX, nY, " ", -1, m_stkRTInfo.m_dSellPrice3, 0);
+	DrawNumLine(m_hMemDC, nMaxNum, m_stkRTInfo.m_nSellNum3, m_stkRTInfo.m_dSellPrice3, nLineX, nY + nLineY, nLineW);
+
 	nY += m_nFntSmlHeight + 4;
 	DrawDblText (m_hMemDC, m_stkRTInfo.m_dSellPrice2, m_hFntSml, m_rcDraw.left, nY, "Âô2: ", -1, false, 0);
-	DrawIntText (m_hMemDC, m_stkRTInfo.m_nSellNum2, m_hFntSml, m_rcDraw.right / 2, nY, " ", -1, m_stkRTInfo.m_dSellPrice2, 0);
+	DrawIntText (m_hMemDC, m_stkRTInfo.m_nSellNum2, m_hFntSml, nPosX, nY, " ", -1, m_stkRTInfo.m_dSellPrice2, 0);
+	DrawNumLine(m_hMemDC, nMaxNum, m_stkRTInfo.m_nSellNum2, m_stkRTInfo.m_dSellPrice2, nLineX, nY + nLineY, nLineW);
+
 	nY += m_nFntSmlHeight + 4;
 	DrawDblText (m_hMemDC, m_stkRTInfo.m_dSellPrice1, m_hFntSml, m_rcDraw.left, nY, "Âô1: ", -1, false, 0);
-	DrawIntText (m_hMemDC, m_stkRTInfo.m_nSellNum1, m_hFntSml, m_rcDraw.right / 2, nY, " ", -1, m_stkRTInfo.m_dSellPrice1, 0);
-	
+	DrawIntText (m_hMemDC, m_stkRTInfo.m_nSellNum1, m_hFntSml, nPosX, nY, " ", -1, m_stkRTInfo.m_dSellPrice1, 0);
+	DrawNumLine(m_hMemDC, nMaxNum, m_stkRTInfo.m_nSellNum1, m_stkRTInfo.m_dSellPrice1, nLineX, nY + nLineY, nLineW);
+
 	nY = m_rcDraw.top + (m_nFntBigHeight + 8) + (m_nFntMidHeight + 8) * 5 + (m_nFntSmlHeight + 4) * 5 + 8;;
 	DrawLine (m_hMemDC, m_rcWnd.left, nY, m_rcWnd.right, nY, 1, MSC_GRAY_3);
 	//---------------------------------------------------------------------------------
@@ -118,22 +133,32 @@ int CViewRTInfo::UpdateView (HDC hDC)
 	DrawLine (m_hMemDC, m_rcWnd.left, nY, m_rcWnd.right, nY, 1, MSC_GRAY_3);
 	//---------------------------------------------------------------------------------
 
+
 	nY += 8;
 	DrawDblText (m_hMemDC, m_stkRTInfo.m_dBuyPrice1, m_hFntSml, m_rcDraw.left, nY, "Âò1: ", -1, false, 0);
-	DrawIntText (m_hMemDC, m_stkRTInfo.m_nBuyNum1, m_hFntSml, m_rcDraw.right / 2, nY, " ", -1, m_stkRTInfo.m_dBuyPrice1, 0);
+	DrawIntText (m_hMemDC, m_stkRTInfo.m_nBuyNum1, m_hFntSml, nPosX, nY, " ", -1, m_stkRTInfo.m_dBuyPrice1, 0);
+	DrawNumLine(m_hMemDC, nMaxNum, m_stkRTInfo.m_nBuyNum1, m_stkRTInfo.m_dBuyPrice1, nLineX, nY + nLineY, nLineW);
+
 	nY += m_nFntSmlHeight + 4;
 	DrawDblText (m_hMemDC, m_stkRTInfo.m_dBuyPrice2, m_hFntSml, m_rcDraw.left, nY, "Âò2: ", -1, false, 0);
-	DrawIntText (m_hMemDC, m_stkRTInfo.m_nBuyNum2, m_hFntSml, m_rcDraw.right / 2, nY, " ", -1, m_stkRTInfo.m_dBuyPrice2, 0);
+	DrawIntText (m_hMemDC, m_stkRTInfo.m_nBuyNum2, m_hFntSml, nPosX, nY, " ", -1, m_stkRTInfo.m_dBuyPrice2, 0);
+	DrawNumLine(m_hMemDC, nMaxNum, m_stkRTInfo.m_nBuyNum2, m_stkRTInfo.m_dBuyPrice2, nLineX, nY + nLineY, nLineW);
+
 	nY += m_nFntSmlHeight + 4;
 	DrawDblText (m_hMemDC, m_stkRTInfo.m_dBuyPrice3, m_hFntSml, m_rcDraw.left, nY, "Âò3: ", -1, false, 0);
-	DrawIntText (m_hMemDC, m_stkRTInfo.m_nBuyNum3, m_hFntSml, m_rcDraw.right / 2, nY, " ", -1, m_stkRTInfo.m_dBuyPrice3, 0);
+	DrawIntText (m_hMemDC, m_stkRTInfo.m_nBuyNum3, m_hFntSml, nPosX, nY, " ", -1, m_stkRTInfo.m_dBuyPrice3, 0);
+	DrawNumLine(m_hMemDC, nMaxNum, m_stkRTInfo.m_nBuyNum3, m_stkRTInfo.m_dBuyPrice3, nLineX, nY + nLineY, nLineW);
+
 	nY += m_nFntSmlHeight + 4;
 	DrawDblText (m_hMemDC, m_stkRTInfo.m_dBuyPrice4, m_hFntSml, m_rcDraw.left, nY, "Âò4: ", -1, false, 0);
-	DrawIntText (m_hMemDC, m_stkRTInfo.m_nBuyNum4, m_hFntSml, m_rcDraw.right / 2, nY, " ", -1, m_stkRTInfo.m_dBuyPrice4, 0);
+	DrawIntText (m_hMemDC, m_stkRTInfo.m_nBuyNum4, m_hFntSml, nPosX, nY, " ", -1, m_stkRTInfo.m_dBuyPrice4, 0);
+	DrawNumLine(m_hMemDC, nMaxNum, m_stkRTInfo.m_nBuyNum4, m_stkRTInfo.m_dBuyPrice4, nLineX, nY + nLineY, nLineW);
+
 	nY += m_nFntSmlHeight + 4;
 	DrawDblText (m_hMemDC, m_stkRTInfo.m_dBuyPrice5, m_hFntSml, m_rcDraw.left, nY, "Âò5: ", -1, false, 0);
-	DrawIntText (m_hMemDC, m_stkRTInfo.m_nBuyNum5, m_hFntSml, m_rcDraw.right / 2, nY, " ", -1, m_stkRTInfo.m_dBuyPrice5, 0);
-	
+	DrawIntText (m_hMemDC, m_stkRTInfo.m_nBuyNum5, m_hFntSml, nPosX, nY, " ", -1, m_stkRTInfo.m_dBuyPrice5, 0);
+	DrawNumLine(m_hMemDC, nMaxNum, m_stkRTInfo.m_nBuyNum5, m_stkRTInfo.m_dBuyPrice5, nLineX, nY + nLineY, nLineW);
+
 	nY = m_rcDraw.top + (m_nFntBigHeight + 8) + (m_nFntMidHeight + 8) * 5 + (m_nFntSmlHeight + 4) * 10 + 16 + m_nFntLrgHeight + 8;;
 	DrawLine (m_hMemDC, m_rcWnd.left, nY, m_rcWnd.right, nY, 1, MSC_GRAY_3);
 	//---------------------------------------------------------------------------------
@@ -231,6 +256,44 @@ int CViewRTInfo::UpdateInfo(void)
 	return nRC;
 }
 
+int	CViewRTInfo::GetMaxNum(void)
+{
+	int nMaxNum = m_stkRTInfo.m_nBuyNum1;
+	if (nMaxNum < m_stkRTInfo.m_nBuyNum2)
+		nMaxNum = m_stkRTInfo.m_nBuyNum2;
+	if (nMaxNum < m_stkRTInfo.m_nBuyNum3)
+		nMaxNum = m_stkRTInfo.m_nBuyNum3;
+	if (nMaxNum < m_stkRTInfo.m_nBuyNum4)
+		nMaxNum = m_stkRTInfo.m_nBuyNum4;
+	if (nMaxNum < m_stkRTInfo.m_nBuyNum5)
+		nMaxNum = m_stkRTInfo.m_nBuyNum5;
+	if (nMaxNum < m_stkRTInfo.m_nSellNum1)
+		nMaxNum = m_stkRTInfo.m_nSellNum1;
+	if (nMaxNum < m_stkRTInfo.m_nSellNum2)
+		nMaxNum = m_stkRTInfo.m_nSellNum2;
+	if (nMaxNum < m_stkRTInfo.m_nSellNum3)
+		nMaxNum = m_stkRTInfo.m_nSellNum3;
+	if (nMaxNum < m_stkRTInfo.m_nSellNum4)
+		nMaxNum = m_stkRTInfo.m_nSellNum4;
+	if (nMaxNum < m_stkRTInfo.m_nSellNum5)
+		nMaxNum = m_stkRTInfo.m_nSellNum5;
+	return nMaxNum;
+}
+
+int	CViewRTInfo::DrawNumLine(HDC hDC, int nMax, int nNum, double dPrice, int nX, int nY, int nW)
+{
+	int nColor = MSC_WHITE;
+	if (dPrice < m_stkRTInfo.m_dClosePrice)
+		nColor = MSC_GREEN_1;
+	else if (dPrice > m_stkRTInfo.m_dClosePrice)
+		nColor = MSC_RED_1;
+
+	int nLen = m_rcDraw.right - nX - 4;
+	nLen = nLen * nNum / nMax;
+	DrawLine(hDC, nX, nY, nX + nLen, nY, nW, nColor);
+
+	return 0;
+}
 bool CViewRTInfo::ReleaseHistory (void)
 {
 	sTradeHistory * pItem = m_lstHistory.RemoveHead ();

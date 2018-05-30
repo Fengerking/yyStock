@@ -41,6 +41,9 @@ protected:
 	virtual int		UpdateView(HDC hDC);
 	virtual int		UpdateInfo(void);
 
+	virtual int		GetMaxNum(void);
+	virtual int		DrawNumLine(HDC hDC, int nMax, int nNum, double dPrice, int nX, int nY, int nW);
+
 	virtual bool	ReleaseHistory (void);
 
 protected:
