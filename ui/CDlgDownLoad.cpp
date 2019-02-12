@@ -170,7 +170,10 @@ int CDlgDownLoad::OnFinish(bool bShow)
 	EnableWindow(GetDlgItem(m_hDlg, IDC_BUTTON_HYGN), TRUE);
 
 	if (bShow)
+	{
 		MessageBox(m_hDlg, "Download finished!", "Information...", MB_OK);
+		EndDialog(m_hDlg, IDC_BUTTON_OK);
+	}
 
 	return 0;
 }
