@@ -190,7 +190,7 @@ bool CBaseGraphics::DrawDblText (HDC hDC, double dNumber, HFONT hFont, int nX, i
 		{
 			if (dNumber > m_dClosePrice)
 				SetTextColor (hDC, MSC_RED);
-			else if (dNumber == m_dClosePrice)
+			else if (dNumber == m_dClosePrice || dNumber == 0)
 				SetTextColor (hDC, MSC_WHITE);
 			else
 				SetTextColor (hDC, MSC_GREEN);
@@ -246,7 +246,7 @@ bool CBaseGraphics::DrawIntText (HDC hDC, int nNumber, HFONT hFont, int nX, int 
 		{
 			if (dPrice > m_dClosePrice)
 				SetTextColor (hDC, MSC_RED);
-			else if (dPrice == m_dClosePrice)
+			else if (dPrice == m_dClosePrice || dPrice == 0)
 				SetTextColor (hDC, MSC_WHITE);
 			else
 				SetTextColor (hDC, MSC_GREEN);

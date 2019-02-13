@@ -287,10 +287,12 @@ int	CViewRTInfo::DrawNumLine(HDC hDC, int nMax, int nNum, double dPrice, int nX,
 		nColor = MSC_GREEN_1;
 	else if (dPrice > m_stkRTInfo.m_dClosePrice)
 		nColor = MSC_RED_1;
+	if (dPrice == 0)
+		nColor = MSC_WHITE;
 
-	int nLen = m_rcDraw.right - nX - 4;
-	nLen = nLen * nNum / nMax;
-	DrawLine(hDC, nX, nY, nX + nLen, nY, nW, nColor);
+	long long llLen = m_rcDraw.right - nX - 4;
+	llLen = llLen * nNum / nMax;
+	DrawLine(hDC, nX, nY, nX + (int)llLen, nY, nW, nColor);
 
 	return 0;
 }

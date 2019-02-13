@@ -54,7 +54,7 @@ int CIOcurl::Open(const char * pURL, long long llOffset, int nFlag)
 		qcSleep(200000 * nTryTimes);
 		nRC = Request(pURL);
 		nTryTimes++;
-		if (nTryTimes > 5)
+		if (nTryTimes > 3)
 			break;
 	}
 
@@ -64,7 +64,7 @@ int CIOcurl::Open(const char * pURL, long long llOffset, int nFlag)
 		ioFile.Open("c:\\work\\Temp\\0000.txt", 0, QCIO_FLAG_WRITE);
 		ioFile.Write((unsigned char *)m_szBufferData.c_str(), m_szBufferData.length());
 	}
-	return QC_ERR_NONE;
+	return nRC;
 }
 
 int CIOcurl::Close(void)
