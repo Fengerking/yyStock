@@ -521,7 +521,7 @@ int	qcStock_CopyRTInfoToKXTInfo(qcStockKXTInfoItem * pKXTInfo, qcStockRealTimeIt
 	if (pKXTInfo == NULL || pRTInfo == NULL)
 		return QC_ERR_ARG;
 
-	sscanf(pRTInfo->m_szDate, "%d/%d%/%d", &pKXTInfo->m_nYear, &pKXTInfo->m_nMonth, &pKXTInfo->m_nDay);
+	sscanf(pRTInfo->m_szDate, "%d/%d/%d", &pKXTInfo->m_nYear, &pKXTInfo->m_nMonth, &pKXTInfo->m_nDay);
 	pKXTInfo->m_dMin = pRTInfo->m_dMinPrice;
 	pKXTInfo->m_dMax = pRTInfo->m_dMaxPrice;
 	pKXTInfo->m_dOpen = pRTInfo->m_dOpenPrice;
