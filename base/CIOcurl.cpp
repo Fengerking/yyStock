@@ -85,6 +85,7 @@ char * CIOcurl::GetData(void)
 
 int	CIOcurl::Request(const char * pURL)
 {
+	m_llSize = 0;
 	qcg_curl_read_times = 0;
 	m_szBufferHead.clear();
 	m_szBufferData.clear();

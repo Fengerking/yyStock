@@ -45,6 +45,8 @@ int	CPngDec::OpenSource(const char * pURL)
 		m_pIO = new CIOcurl();
 	if (m_pIO->Open(pURL, 0, 0) != QC_ERR_NONE)
 		return QC_ERR_FAILED;
+	if (m_pIO->GetSize() < 4096)
+		return QC_ERR_FAILED;
 	m_pBuffData = (unsigned char *)m_pIO->GetData();
 	m_nBuffSize = (int)m_pIO->GetSize();
 	m_nBuffRead = 0;
