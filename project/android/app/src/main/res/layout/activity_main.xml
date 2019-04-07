@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical"
+        android:id="@+id/activity_main"
+        android:background="@color/colorPrimaryDark"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+
+        <ListView
+            android:id="@+id/lstStock"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"/>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:id="@+id/lay_one"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/edt_one"
+                android:layout_width="160dp"
+                android:layout_height="50dp"
+                android:textSize="24dp"
+                android:textColor="@android:color/background_light"/>
+            <Button
+                android:id="@+id/btn_update"
+                android:layout_width="50dp"
+                android:layout_height="36dp"
+                android:text="U" />
+            <Button
+                android:id="@+id/btn_add"
+                android:layout_width="50dp"
+                android:layout_height="36dp"
+                android:text="+" />
+            <Button
+                android:id="@+id/btn_del"
+                android:layout_width="50dp"
+                android:layout_height="36dp"
+                android:text="-" />
+            <Button
+                android:id="@+id/btn_hide"
+                android:layout_width="50dp"
+                android:layout_height="36dp"
+                android:text="H" />
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
+            android:id="@+id/lay_view"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <ImageView
+                android:id="@+id/img_stock"
+                android:background="@color/colorPrimaryDark"
+                android:layout_width="260dp"
+                android:layout_height="fill_parent"
+                android:scaleType="fitXY"/>
+
+            <ListView
+                android:id="@+id/lst_one"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:background="@color/colorPrimaryDark"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>
