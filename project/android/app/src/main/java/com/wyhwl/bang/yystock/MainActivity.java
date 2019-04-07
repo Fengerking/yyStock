@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity
 
     private ArrayList<String>   m_lstHistory = null;
     private long                m_lPrevvolume = 0;
-    private String              m_strPrevTime = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -126,8 +125,8 @@ public class MainActivity extends AppCompatActivity
         }
         m_lstHistory = new ArrayList<String>();
 
-        m_nClrWhite = Color.rgb(160, 160,160);
-        m_nClrBlack = Color.rgb(0, 0,0);
+        m_nClrWhite = Color.rgb(255, 255,255);
+        m_nClrBlack = Color.rgb(200, 200,200);
         CheckWritePermission (true);
 
         m_msgHandler = new msgHandler ();
@@ -208,7 +207,6 @@ public class MainActivity extends AppCompatActivity
 
             if (m_strStockCode != null && m_strStockCode.compareTo(strOne) != 0) {
                 m_nUpdateTimes = 0;
-                m_strPrevTime = "";
                 m_lPrevvolume = 0;
                 m_lstHistory.clear();
                 m_jsnItem = null;
@@ -291,11 +289,10 @@ public class MainActivity extends AppCompatActivity
     private boolean AddOneHist () {
         if (m_jsnItem != null) {
             String  strTime     = m_jsnItem.getString("time");
-            if (m_strPrevTime.compareTo((strTime)) != 0) {
-                long lVolume = m_jsnItem.getLong("volume");
+            long    lVolume = m_jsnItem.getLong("volume");
+            if (lVolume != m_lPrevvolume) {
                 String strHist = String.format("  %s %d", strTime.substring(14), (lVolume - m_lPrevvolume)/ 100);
                 m_lstHistory.add (strHist);
-                m_strPrevTime = strTime;
                 m_lPrevvolume = lVolume;
                 return true;
             }
