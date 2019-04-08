@@ -249,20 +249,24 @@ public class MainActivity extends AppCompatActivity
         JSONObject  jsnResult = JSON.parseObject(strResult);
         for (int i = 0; i < nSize; i++) {
             jsnItem = jsnResult.getJSONObject(m_lstCode.get(i));
-            String  strName     = jsnItem.getString("name");
-            double  dNowPrice   = jsnItem.getDoubleValue("price");
-            double  dYstPrice   = jsnItem.getDoubleValue("yestclose");
-            double  dPercent    = jsnItem.getDoubleValue("percent") * 100;
-            long    lTurnover   = jsnItem.getLong("turnover") / 100000;
+            String strName = jsnItem.getString("name");
+            double dNowPrice = jsnItem.getDoubleValue("price");
+            double dYstPrice = jsnItem.getDoubleValue("yestclose");
+            double dPercent = jsnItem.getDoubleValue("percent") * 100;
+            long lTurnover = jsnItem.getLong("turnover") / 100000;
             if (i == 0)
                 lTurnover = lTurnover / 1000;
 
-            m_strUpdateTime     = "更新时间  " + jsnItem.getString("update");
-            if (dPercent < 0)
+            m_strUpdateTime = "更新时间  " + jsnItem.getString("update");
+            if (dPercent < 0) {
                 dPercent = -dPercent;
-            m_strInfo[i] = String.format("%s  %.2f  % .2f%%  %,d", strName, dNowPrice, dPercent, lTurnover);
+                String strArrow = jsnItem.getString("arrow");
+                m_strInfo[i] = String.format("%s %.2f  %.2f%% %s %,d", strName, dNowPrice, dPercent, strArrow, lTurnover);
+            } else {
+                m_strInfo[i] = String.format("%s %.2f  %.2f%%  %,d", strName, dNowPrice, dPercent, lTurnover);
+            }
 
-            m_nColor[i] = dNowPrice > dYstPrice ? 1 : 0;
+            m_nColor[i] = dNowPrice >= dYstPrice ? 1 : 0;
 
             if (m_strStockCode != null && m_strStockCode.compareTo(m_lstCode.get(i)) == 0) {
                 jsnOne = jsnItem;
@@ -418,9 +422,12 @@ public class MainActivity extends AppCompatActivity
             } else if (position <= 10){
                 strItem = String.format("  %.2f  %,d", dPrice, lNumber);
                 mTextView.setTextSize(18);
+            } else if (position == 11){
+                strItem = "    =====================";
+                mTextView.setTextSize(8);
             } else {
-                dClose = 0;
-                int nIndex = position - 11;
+                 dClose = 0;
+                int nIndex = position - 12;
                 int nSize = m_lstHistory.size();
                 if (nIndex < nSize) {
                     nIndex = nSize - nIndex - 1;
