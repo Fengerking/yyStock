@@ -349,6 +349,12 @@ int	CViewMyStock::OpenMyStockFile(void)
 			if (pStep != NULL)
 				*pStep = 0;
 			strcpy(pItem->m_szName, szLine + 1);
+			if (strcmp(pItem->m_szName, "DXZQ") == 0)
+				strcpy(pItem->m_szName, "东兴证券");
+			else if (strcmp(pItem->m_szName, "ZSZQ") == 0)
+				strcpy(pItem->m_szName, "招商证券");			
+			else if (strcmp(pItem->m_szName, "ZSRZ") == 0)
+				strcpy(pItem->m_szName, "招商融资");
 			if (pStep != NULL)
 			{
 				pLine = pStep + 1;

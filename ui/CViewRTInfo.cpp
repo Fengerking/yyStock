@@ -282,17 +282,32 @@ int	CViewRTInfo::GetMaxNum(void)
 
 int	CViewRTInfo::DrawNumLine(HDC hDC, int nMax, int nNum, double dPrice, int nX, int nY, int nW)
 {
-	int nColor = MSC_WHITE;
+	HBRUSH	hBrushDraw = m_hBrushWhite;
+	int		nColor = MSC_WHITE;
 	if (dPrice < m_stkRTInfo.m_dClosePrice)
+	{
 		nColor = MSC_GREEN_1;
+		hBrushDraw = m_hBrushGreen;
+	}
 	else if (dPrice > m_stkRTInfo.m_dClosePrice)
+	{
 		nColor = MSC_RED_1;
+		hBrushDraw = m_hBrushRed;
+	}
 	if (dPrice == 0)
+	{
 		nColor = MSC_WHITE;
+		hBrushDraw = m_hBrushWhite;
+	}
 
 	long long llLen = m_rcDraw.right - nX - 4;
 	llLen = llLen * nNum / nMax;
-	DrawLine(hDC, nX, nY, nX + (int)llLen, nY, nW, nColor);
+	if (llLen <= 0)
+		llLen = 1;
+	//DrawLine(hDC, nX, nY, nX + (int)llLen, nY, nW, nColor);
+	RECT	rcItem;
+	SetRect(&rcItem, nX, nY, nX + (int)llLen, nY + nW);
+	FillRect(hDC, &rcItem, hBrushDraw);
 
 	return 0;
 }
