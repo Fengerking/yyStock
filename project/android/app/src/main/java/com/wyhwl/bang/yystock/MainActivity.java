@@ -60,6 +60,8 @@ public class MainActivity extends AppCompatActivity
     private Button              m_btnHide = null;
     private ImageView           m_imgStock = null;
     private ListView            m_lstOne = null;
+    private ListView            m_lstInfo = null;
+    private ListView            m_lstHist = null;
 
     private String              m_szCode[] = {"0000001","0600023","0600789","0600577","0601216","0600895"};
     private ArrayList<String>   m_lstCode = null;
@@ -104,6 +106,8 @@ public class MainActivity extends AppCompatActivity
         m_btnHide.setOnClickListener(this);
         m_imgStock = (ImageView)findViewById(R.id.img_stock);
         m_lstOne = (ListView)findViewById(R.id.lst_one);
+        m_lstInfo = (ListView)findViewById(R.id.lst_info);
+        m_lstHist = (ListView)findViewById(R.id.lst_hist);
 
         SharedPreferences settings = m_context.getSharedPreferences("User_Setting", 0);
         String strCode = settings.getString("selectStock", null);
@@ -277,6 +281,8 @@ public class MainActivity extends AppCompatActivity
             AddOneHist ();
             m_jsnItem = jsnOne;
             m_lstOne.setAdapter(new stockOneAdapter());
+            m_lstInfo.setAdapter(new stockInfoAdapter());
+            m_lstHist.setAdapter(new stockHistAdapter());
         }
     }
 
@@ -288,6 +294,8 @@ public class MainActivity extends AppCompatActivity
         AddOneHist ();
         m_jsnItem = jsnResult.getJSONObject(m_strStockCode);
         m_lstOne.setAdapter(new stockOneAdapter());
+        m_lstInfo.setAdapter(new stockInfoAdapter());
+        m_lstHist.setAdapter(new stockHistAdapter());
     }
 
     private boolean AddOneHist () {
@@ -364,7 +372,7 @@ public class MainActivity extends AppCompatActivity
 
     public class stockOneAdapter extends BaseAdapter {
         public int getCount() {
-            return 20;
+            return 11;
         }
         public Object getItem(int arg0) {
             return arg0;
@@ -417,22 +425,10 @@ public class MainActivity extends AppCompatActivity
             lNumber = lNumber / 100;
             String strItem = "";
             if (position == 5) {
-                strItem = String.format("    %.2f", dPrice);
+                strItem = String.format("   %.2f", dPrice);
                 mTextView.setTextSize(30);
             } else if (position <= 10){
                 strItem = String.format("  %.2f  %,d", dPrice, lNumber);
-                mTextView.setTextSize(18);
-            } else if (position == 11){
-                strItem = "    =====================";
-                mTextView.setTextSize(8);
-            } else {
-                 dClose = 0;
-                int nIndex = position - 12;
-                int nSize = m_lstHistory.size();
-                if (nIndex < nSize) {
-                    nIndex = nSize - nIndex - 1;
-                    strItem = m_lstHistory.get(nIndex);
-                }
                 mTextView.setTextSize(18);
             }
             mTextView.setText(strItem);
@@ -445,6 +441,65 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public class stockInfoAdapter extends BaseAdapter {
+        public int getCount() {
+            return 3;
+        }
+        public Object getItem(int arg0) {
+            return arg0;
+        }
+        public long getItemId(int position) {
+            return position;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            TextView mTextView = new TextView(getApplicationContext());
+            if (m_jsnItem == null)
+                return mTextView;
+            double  dClose = m_jsnItem.getDoubleValue("yestclose");
+            double  dPrice = 0;
+            String  strItem = "";
+            if (position == 0) {
+                strItem = "Close";
+            } else if (position == 1) {
+                strItem = "Open";
+            } else if (position == 2) {
+                strItem = "Buy";
+            }
+            mTextView.setTextSize(16);
+            mTextView.setText(strItem);
+            mTextView.setTextColor(m_nClrWhite);
+            return mTextView;
+        }
+    }
+
+    public class stockHistAdapter extends BaseAdapter {
+        public int getCount() {
+            return 10;
+        }
+        public Object getItem(int arg0) {
+            return arg0;
+        }
+        public long getItemId(int position) {
+            return position;
+        }
+
+        public View getView(int position, View convertView, ViewGroup parent) {
+            TextView mTextView = new TextView(getApplicationContext());
+            if (m_jsnItem == null)
+                return mTextView;
+            String  strItem = "";
+            int nSize = m_lstHistory.size();
+            if (position < nSize) {
+                position = nSize - position - 1;
+                strItem = m_lstHistory.get(position);
+            }
+            mTextView.setTextSize(16);
+            mTextView.setText(strItem);
+            mTextView.setTextColor(m_nClrWhite);
+            return mTextView;
+        }
+    }
     public class httpDataCallBack extends StringCallback {
         public void onError(Call call, Exception e, int id) {
             Toast.makeText(m_context, "获取数据出错了！ " + e.getMessage(), Toast.LENGTH_SHORT).show();

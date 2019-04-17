@@ -55,6 +55,26 @@
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="horizontal"
+            android:id="@+id/lay_hist"
+            android:layout_width="fill_parent"
+            android:layout_height="72dp">
+
+            <ListView
+                android:id="@+id/lst_info"
+                android:layout_width="260dp"
+                android:layout_height="fill_parent"
+                android:background="@color/colorPrimaryDark"/>
+
+            <ListView
+                android:id="@+id/lst_hist"
+                android:layout_width="match_parent"
+                android:layout_height="fill_parent"
+                android:background="@color/colorPrimaryDark"/>
+
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
             android:id="@+id/lay_view"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
