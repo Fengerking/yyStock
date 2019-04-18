@@ -57,11 +57,11 @@
             android:orientation="horizontal"
             android:id="@+id/lay_hist"
             android:layout_width="fill_parent"
-            android:layout_height="72dp">
+            android:layout_height="96dp">
 
             <ListView
                 android:id="@+id/lst_info"
-                android:layout_width="260dp"
+                android:layout_width="120dp"
                 android:layout_height="fill_parent"
                 android:background="@color/colorPrimaryDark"/>
 

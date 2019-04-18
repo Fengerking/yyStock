@@ -108,8 +108,11 @@ public class MainActivity extends AppCompatActivity
         m_lstOne = (ListView)findViewById(R.id.lst_one);
         m_lstInfo = (ListView)findViewById(R.id.lst_info);
         m_lstHist = (ListView)findViewById(R.id.lst_hist);
+        m_lstOne.setVisibility(View.INVISIBLE);
+        m_imgStock.setVisibility(View.INVISIBLE);
 
         SharedPreferences settings = m_context.getSharedPreferences("User_Setting", 0);
+        m_strStockCode = settings.getString("StockCode", "");
         String strCode = settings.getString("selectStock", null);
         m_lstCode = new ArrayList<String>();
         if (strCode == null) {
@@ -155,6 +158,7 @@ public class MainActivity extends AppCompatActivity
         SharedPreferences settings = m_context.getSharedPreferences("User_Setting", 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString("selectStock", strCode);
+        editor.putString("StockCode", m_strStockCode);
         editor.commit();
     }
 
@@ -175,11 +179,13 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.btn_hide:
-                m_lstOne.setVisibility(View.INVISIBLE);
-                m_imgStock.setVisibility(View.INVISIBLE);
-                m_strStockCode = "";
-                m_nUpdateTimes = 0;
-                m_edtStock.setText("");
+                if (m_imgStock.getVisibility() == View.VISIBLE) {
+                    m_lstOne.setVisibility(View.INVISIBLE);
+                    m_imgStock.setVisibility(View.INVISIBLE);
+                } else {
+                    m_lstOne.setVisibility(View.VISIBLE);
+                    m_imgStock.setVisibility(View.VISIBLE);
+                }
                 break;
 
             default:
@@ -206,16 +212,14 @@ public class MainActivity extends AppCompatActivity
                 strOne = "1" + strOne;
         }
         if (strOne.length() == 7) {
-            m_lstOne.setVisibility(View.VISIBLE);
-            m_imgStock.setVisibility(View.VISIBLE);
-
             if (m_strStockCode != null && m_strStockCode.compareTo(strOne) != 0) {
                 m_nUpdateTimes = 0;
                 m_lPrevvolume = 0;
                 m_lstHistory.clear();
                 m_jsnItem = null;
+                m_strStockCode = strOne;
             }
-            m_strStockCode = strOne;
+
 
             if (!OneInList(m_strStockCode)) {
                 strURL = "https://api.money.126.net/data/feed/";
@@ -224,11 +228,12 @@ public class MainActivity extends AppCompatActivity
                         .get().url(strURL).id(201)
                         .build().execute(new httpDataCallBack());
             }
+        }
 
+        if (m_imgStock.getVisibility() == View.VISIBLE){
             m_nUpdateTimes++;
             if (m_nUpdateTimes % 10 != 1)
                 return;
-
             strURL = "https://img1.money.126.net/chart/hs/time/540x360/";
             strURL = strURL + m_strStockCode + ".png";
             String strPath = "/sdcard/yyStock00/";
@@ -302,8 +307,9 @@ public class MainActivity extends AppCompatActivity
         if (m_jsnItem != null) {
             String  strTime     = m_jsnItem.getString("time");
             long    lVolume = m_jsnItem.getLong("volume");
+            double  dPrice = m_jsnItem.getDoubleValue("price");
             if (lVolume != m_lPrevvolume) {
-                String strHist = String.format("  %s %d", strTime.substring(14), (lVolume - m_lPrevvolume)/ 100);
+                String strHist = String.format("  %s   %.2f    %d", strTime.substring(10), dPrice, (lVolume - m_lPrevvolume)/ 100);
                 m_lstHistory.add (strHist);
                 m_lPrevvolume = lVolume;
                 return true;
@@ -443,7 +449,7 @@ public class MainActivity extends AppCompatActivity
 
     public class stockInfoAdapter extends BaseAdapter {
         public int getCount() {
-            return 3;
+            return 4;
         }
         public Object getItem(int arg0) {
             return arg0;
@@ -460,11 +466,13 @@ public class MainActivity extends AppCompatActivity
             double  dPrice = 0;
             String  strItem = "";
             if (position == 0) {
-                strItem = "Close";
+                strItem = String.format("YTCL:   %.2f", m_jsnItem.getDoubleValue("yestclose"));
             } else if (position == 1) {
-                strItem = "Open";
+                strItem = String.format("OPEN:   %.2f", m_jsnItem.getDoubleValue("open"));
             } else if (position == 2) {
-                strItem = "Buy";
+                strItem = String.format("HIGH:   %.2f", m_jsnItem.getDoubleValue("high"));
+            } else if (position == 3) {
+                strItem = String.format("LOW :   %.2f", m_jsnItem.getDoubleValue("low"));
             }
             mTextView.setTextSize(16);
             mTextView.setText(strItem);
