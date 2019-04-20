@@ -27,30 +27,31 @@
 
             <EditText
                 android:id="@+id/edt_one"
-                android:layout_width="160dp"
+                android:layout_width="128dp"
                 android:layout_height="50dp"
                 android:textSize="24dp"
                 android:textColor="@android:color/background_light"/>
             <Button
+                android:id="@+id/btn_hide"
+                android:layout_width="52dp"
+                android:layout_height="40dp"
+                android:text="H" />
+            <Button
                 android:id="@+id/btn_update"
-                android:layout_width="50dp"
-                android:layout_height="36dp"
+                android:layout_width="52dp"
+                android:layout_height="40dp"
                 android:text="U" />
             <Button
                 android:id="@+id/btn_add"
-                android:layout_width="50dp"
-                android:layout_height="36dp"
+                android:layout_width="52dp"
+                android:layout_height="40dp"
                 android:text="+" />
             <Button
                 android:id="@+id/btn_del"
-                android:layout_width="50dp"
-                android:layout_height="36dp"
+                android:layout_width="52dp"
+                android:layout_height="40dp"
                 android:text="-" />
-            <Button
-                android:id="@+id/btn_hide"
-                android:layout_width="50dp"
-                android:layout_height="36dp"
-                android:text="H" />
+
         </LinearLayout>
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"

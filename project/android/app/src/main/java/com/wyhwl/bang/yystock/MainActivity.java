@@ -2,6 +2,7 @@ package com.wyhwl.bang.yystock;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -11,6 +12,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
 
 import android.view.View;
@@ -113,6 +116,7 @@ public class MainActivity extends AppCompatActivity
 
         SharedPreferences settings = m_context.getSharedPreferences("User_Setting", 0);
         m_strStockCode = settings.getString("StockCode", "");
+        m_edtStock.setText(m_strStockCode);
         String strCode = settings.getString("selectStock", null);
         m_lstCode = new ArrayList<String>();
         if (strCode == null) {
@@ -160,6 +164,28 @@ public class MainActivity extends AppCompatActivity
         editor.putString("selectStock", strCode);
         editor.putString("StockCode", m_strStockCode);
         editor.commit();
+    }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.activity_main_menu, menu);
+        return true;
+    }
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // TODO Auto-generated method stub
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.menu_settings:
+                startActivity(new Intent(this, MyStockActivity.class));
+                break;
+            case R.id.menu_exit:
+                finish();
+                System.exit(RESULT_OK);
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void onClick(View v){
@@ -236,7 +262,7 @@ public class MainActivity extends AppCompatActivity
                 return;
             strURL = "https://img1.money.126.net/chart/hs/time/540x360/";
             strURL = strURL + m_strStockCode + ".png";
-            String strPath = "/sdcard/yyStock00/";
+            String strPath = "/sdcard/yyStock/";
             String strFile = strOne + ".png";
             OkHttpUtils
                     .get().url(strURL).id(100)
