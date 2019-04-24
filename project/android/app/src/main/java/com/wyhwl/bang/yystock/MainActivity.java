@@ -11,6 +11,7 @@ import android.os.Message;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Layout;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -26,6 +27,7 @@ import android.widget.TextView;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.AdapterView;
+import android.widget.LinearLayout;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -65,6 +67,7 @@ public class MainActivity extends AppCompatActivity
     private ListView            m_lstOne = null;
     private ListView            m_lstInfo = null;
     private ListView            m_lstHist = null;
+    private LinearLayout        m_layImage = null;
 
     private String              m_szCode[] = {"0000001","0600023","0600789","0600577","0601216","0600895"};
     private ArrayList<String>   m_lstCode = null;
@@ -83,11 +86,23 @@ public class MainActivity extends AppCompatActivity
     private ArrayList<String>   m_lstHistory = null;
     private long                m_lPrevvolume = 0;
 
+    private ArrayList<String>   m_lstImageType;
+    private int                 m_nImageType = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         m_context = this;
+
+        m_lstImageType = new ArrayList<String>();
+        m_lstImageType.add ("http://img1.money.126.net/chart/hs/time/540x360/");
+        m_lstImageType.add ("http://img1.money.126.net/chart/hs/kline/day/30/");
+        m_lstImageType.add ("http://img1.money.126.net/chart/hs/kline/day/90/");
+        m_lstImageType.add ("http://img1.money.126.net/chart/hs/kline/day/180/");
+        m_lstImageType.add ("http://img1.money.126.net/chart/hs/kline/week/");
+        m_lstImageType.add ("http://img1.money.126.net/chart/hs/kline/month/");
+
         m_lstStock = (ListView)findViewById(R.id.lstStock);
         m_lvListener = new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -113,6 +128,15 @@ public class MainActivity extends AppCompatActivity
         m_lstHist = (ListView)findViewById(R.id.lst_hist);
         m_lstOne.setVisibility(View.INVISIBLE);
         m_imgStock.setVisibility(View.INVISIBLE);
+
+        m_layImage = (LinearLayout)findViewById(R.id.lay_image);
+        m_layImage.setVisibility(View.INVISIBLE);
+        ((Button)findViewById(R.id.btn_fs)).setOnClickListener(this);
+        ((Button)findViewById(R.id.btn_30Days)).setOnClickListener(this);
+        ((Button)findViewById(R.id.btn_90Days)).setOnClickListener(this);
+        ((Button)findViewById(R.id.btn_180Days)).setOnClickListener(this);
+        ((Button)findViewById(R.id.btn_week)).setOnClickListener(this);
+        ((Button)findViewById(R.id.btn_month)).setOnClickListener(this);
 
         SharedPreferences settings = m_context.getSharedPreferences("User_Setting", 0);
         m_strStockCode = settings.getString("StockCode", "");
@@ -208,10 +232,41 @@ public class MainActivity extends AppCompatActivity
                 if (m_imgStock.getVisibility() == View.VISIBLE) {
                     m_lstOne.setVisibility(View.INVISIBLE);
                     m_imgStock.setVisibility(View.INVISIBLE);
+                    m_layImage.setVisibility(View.INVISIBLE);
                 } else {
                     m_lstOne.setVisibility(View.VISIBLE);
                     m_imgStock.setVisibility(View.VISIBLE);
+                    m_layImage.setVisibility(View.VISIBLE);
                 }
+                break;
+
+            case R.id.btn_update:
+                startActivity(new Intent(this, MyStockActivity.class));
+                break;
+
+            case R.id.btn_fs:
+                m_nImageType = 0;
+                m_nUpdateTimes = 0;
+                break;
+            case R.id.btn_30Days:
+                m_nImageType = 1;
+                m_nUpdateTimes = 0;
+                break;
+            case R.id.btn_90Days:
+                m_nImageType = 2;
+                m_nUpdateTimes = 0;
+                break;
+            case R.id.btn_180Days:
+                m_nImageType = 3;
+                m_nUpdateTimes = 0;
+                break;
+            case R.id.btn_week:
+                m_nImageType = 4;
+                m_nUpdateTimes = 0;
+                break;
+            case R.id.btn_month:
+                m_nImageType = 5;
+                m_nUpdateTimes = 0;
                 break;
 
             default:
@@ -260,7 +315,8 @@ public class MainActivity extends AppCompatActivity
             m_nUpdateTimes++;
             if (m_nUpdateTimes % 10 != 1)
                 return;
-            strURL = "https://img1.money.126.net/chart/hs/time/540x360/";
+            //strURL = "https://img1.money.126.net/chart/hs/time/540x360/";
+            strURL = m_lstImageType.get(m_nImageType);
             strURL = strURL + m_strStockCode + ".png";
             String strPath = "/sdcard/yyStock/";
             String strFile = strOne + ".png";

@@ -68,7 +68,7 @@
 
             <ListView
                 android:id="@+id/lst_info"
-                android:layout_width="120dp"
+                android:layout_width="132dp"
                 android:layout_height="fill_parent"
                 android:background="@color/colorPrimaryDark"/>
 
@@ -82,9 +82,56 @@
 
         <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
             android:orientation="horizontal"
+            android:id="@+id/lay_image"
+            android:layout_width="fill_parent"
+            android:layout_height="42dp">
+
+            <Button
+                android:id="@+id/btn_fs"
+                android:layout_width="52dp"
+                android:layout_height="40dp"
+                android:layout_marginLeft="8dp"
+                android:text="FS" />
+
+            <Button
+                android:id="@+id/btn_30Days"
+                android:layout_width="52dp"
+                android:layout_height="40dp"
+                android:text="30" />
+
+            <Button
+                android:id="@+id/btn_90Days"
+                android:layout_width="52dp"
+                android:layout_height="40dp"
+                android:text="90" />
+
+            <Button
+                android:id="@+id/btn_180Days"
+                android:layout_width="52dp"
+                android:layout_height="40dp"
+                android:text="180" />
+
+            <Button
+                android:id="@+id/btn_week"
+                android:layout_width="52dp"
+                android:layout_height="40dp"
+                android:text="W" />
+
+            <Button
+                android:id="@+id/btn_month"
+                android:layout_width="52dp"
+                android:layout_height="40dp"
+                android:text="M" />
+
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            android:orientation="horizontal"
             android:id="@+id/lay_view"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
+
+
 
             <ImageView
                 android:id="@+id/img_stock"
