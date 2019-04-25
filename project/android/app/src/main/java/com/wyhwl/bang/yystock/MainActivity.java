@@ -96,12 +96,12 @@ public class MainActivity extends AppCompatActivity
         m_context = this;
 
         m_lstImageType = new ArrayList<String>();
-        m_lstImageType.add ("http://img1.money.126.net/chart/hs/time/540x360/");
-        m_lstImageType.add ("http://img1.money.126.net/chart/hs/kline/day/30/");
-        m_lstImageType.add ("http://img1.money.126.net/chart/hs/kline/day/90/");
-        m_lstImageType.add ("http://img1.money.126.net/chart/hs/kline/day/180/");
-        m_lstImageType.add ("http://img1.money.126.net/chart/hs/kline/week/");
-        m_lstImageType.add ("http://img1.money.126.net/chart/hs/kline/month/");
+        m_lstImageType.add ("https://img1.money.126.net/chart/hs/time/540x360/");
+        m_lstImageType.add ("https://img1.money.126.net/chart/hs/kline/day/30/");
+        m_lstImageType.add ("https://img1.money.126.net/chart/hs/kline/day/90/");
+        m_lstImageType.add ("https://img1.money.126.net/chart/hs/kline/day/180/");
+        m_lstImageType.add ("https://img1.money.126.net/chart/hs/kline/week/");
+        m_lstImageType.add ("https://img1.money.126.net/chart/hs/kline/month/");
 
         m_lstStock = (ListView)findViewById(R.id.lstStock);
         m_lvListener = new AdapterView.OnItemClickListener() {
@@ -131,6 +131,7 @@ public class MainActivity extends AppCompatActivity
 
         m_layImage = (LinearLayout)findViewById(R.id.lay_image);
         m_layImage.setVisibility(View.INVISIBLE);
+        ((Button)findViewById(R.id.btn_imghide)).setOnClickListener(this);
         ((Button)findViewById(R.id.btn_fs)).setOnClickListener(this);
         ((Button)findViewById(R.id.btn_30Days)).setOnClickListener(this);
         ((Button)findViewById(R.id.btn_90Days)).setOnClickListener(this);
@@ -229,7 +230,7 @@ public class MainActivity extends AppCompatActivity
                 break;
 
             case R.id.btn_hide:
-                if (m_imgStock.getVisibility() == View.VISIBLE) {
+                if (m_layImage.getVisibility() == View.VISIBLE) {
                     m_lstOne.setVisibility(View.INVISIBLE);
                     m_imgStock.setVisibility(View.INVISIBLE);
                     m_layImage.setVisibility(View.INVISIBLE);
@@ -242,6 +243,14 @@ public class MainActivity extends AppCompatActivity
 
             case R.id.btn_update:
                 startActivity(new Intent(this, MyStockActivity.class));
+                break;
+
+            case R.id.btn_imghide:
+                if (m_imgStock.getVisibility() == View.VISIBLE) {
+                    m_imgStock.setVisibility(View.INVISIBLE);
+                } else {
+                    m_imgStock.setVisibility(View.VISIBLE);
+                }
                 break;
 
             case R.id.btn_fs:
