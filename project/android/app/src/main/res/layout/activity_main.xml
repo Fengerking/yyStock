@@ -137,14 +137,26 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
 
-
-
-            <ImageView
-                android:id="@+id/img_stock"
-                android:background="@color/colorPrimaryDark"
+            <RelativeLayout
+                android:id="@+id/lay_imgView"
                 android:layout_width="260dp"
                 android:layout_height="fill_parent"
-                android:scaleType="fitXY"/>
+                android:layout_centerInParent="true" >
+
+                <ImageView
+                    android:id="@+id/img_stockBG"
+                    android:background="@drawable/ic_launcher_foreground"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"/>
+
+                <ImageView
+                    android:id="@+id/img_stock"
+                    android:background="@color/colorPrimaryDark"
+                    android:layout_width="fill_parent"
+                    android:layout_height="fill_parent"
+                    android:scaleType="fitXY"/>
+
+            </RelativeLayout>
 
             <ListView
                 android:id="@+id/lst_one"

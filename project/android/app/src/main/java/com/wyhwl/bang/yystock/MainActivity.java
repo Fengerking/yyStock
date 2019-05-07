@@ -41,6 +41,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.zhy.http.okhttp.OkHttpUtils;
 import com.zhy.http.okhttp.callback.FileCallBack;
 import com.zhy.http.okhttp.callback.StringCallback;
+
 import okhttp3.Call;
 import okhttp3.Request;
 
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity
     private Button              m_btnUpdate = null;
     private Button              m_btnHide = null;
     private ImageView           m_imgStock = null;
+    private ImageView           m_imgStockBG = null;
     private ListView            m_lstOne = null;
     private ListView            m_lstInfo = null;
     private ListView            m_lstHist = null;
@@ -85,9 +87,13 @@ public class MainActivity extends AppCompatActivity
 
     private ArrayList<String>   m_lstHistory = null;
     private long                m_lPrevvolume = 0;
+    private double              m_dPrevPrice = 0.0;
 
     private ArrayList<String>   m_lstImageType;
     private int                 m_nImageType = 0;
+
+    private String              m_strArrowUP = "↑";
+    private String              m_strArrowDown = "↓";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -123,11 +129,13 @@ public class MainActivity extends AppCompatActivity
         m_btnHide = (Button)findViewById(R.id.btn_hide);
         m_btnHide.setOnClickListener(this);
         m_imgStock = (ImageView)findViewById(R.id.img_stock);
+        m_imgStockBG = (ImageView)findViewById(R.id.img_stockBG);
         m_lstOne = (ListView)findViewById(R.id.lst_one);
         m_lstInfo = (ListView)findViewById(R.id.lst_info);
         m_lstHist = (ListView)findViewById(R.id.lst_hist);
         m_lstOne.setVisibility(View.INVISIBLE);
         m_imgStock.setVisibility(View.INVISIBLE);
+        m_imgStockBG.setVisibility(View.INVISIBLE);
 
         m_layImage = (LinearLayout)findViewById(R.id.lay_image);
         m_layImage.setVisibility(View.INVISIBLE);
@@ -234,10 +242,11 @@ public class MainActivity extends AppCompatActivity
                     m_lstOne.setVisibility(View.INVISIBLE);
                     m_imgStock.setVisibility(View.INVISIBLE);
                     m_layImage.setVisibility(View.INVISIBLE);
+                    m_imgStockBG.setVisibility(View.INVISIBLE);
                 } else {
                     m_lstOne.setVisibility(View.VISIBLE);
-                    m_imgStock.setVisibility(View.VISIBLE);
                     m_layImage.setVisibility(View.VISIBLE);
+                    m_imgStockBG.setVisibility(View.VISIBLE);
                 }
                 break;
 
@@ -305,6 +314,7 @@ public class MainActivity extends AppCompatActivity
             if (m_strStockCode != null && m_strStockCode.compareTo(strOne) != 0) {
                 m_nUpdateTimes = 0;
                 m_lPrevvolume = 0;
+                m_dPrevPrice = 0;
                 m_lstHistory.clear();
                 m_jsnItem = null;
                 m_strStockCode = strOne;
@@ -358,9 +368,9 @@ public class MainActivity extends AppCompatActivity
                 lTurnover = lTurnover / 1000;
 
             m_strUpdateTime = "更新时间  " + jsnItem.getString("update");
+            String strArrow = jsnItem.getString("arrow");
             if (dPercent < 0) {
                 dPercent = -dPercent;
-                String strArrow = jsnItem.getString("arrow");
                 m_strInfo[i] = String.format("%s %.2f  %.2f%% %s %,d", strName, dNowPrice, dPercent, strArrow, lTurnover);
             } else {
                 m_strInfo[i] = String.format("%s %.2f  %.2f%%  %,d", strName, dNowPrice, dPercent, lTurnover);
@@ -400,9 +410,17 @@ public class MainActivity extends AppCompatActivity
             long    lVolume = m_jsnItem.getLong("volume");
             double  dPrice = m_jsnItem.getDoubleValue("price");
             if (lVolume != m_lPrevvolume) {
-                String strHist = String.format("  %s   %.2f    %d", strTime.substring(10), dPrice, (lVolume - m_lPrevvolume)/ 100);
+                String strHist;
+                strHist = String.format("%s   %.2f      %d", strTime.substring(10), dPrice, (lVolume - m_lPrevvolume) / 100);
+                if (m_dPrevPrice > 0) {
+                    if (dPrice > m_dPrevPrice)
+                        strHist = String.format("%s   %.2f %s %d", strTime.substring(10), dPrice, m_strArrowUP, (lVolume - m_lPrevvolume) / 100);
+                    else if (dPrice < m_dPrevPrice)
+                        strHist = String.format("%s   %.2f %s %d", strTime.substring(10), dPrice, m_strArrowDown, (lVolume - m_lPrevvolume) / 100);
+                }
                 m_lstHistory.add (strHist);
                 m_lPrevvolume = lVolume;
+                m_dPrevPrice = dPrice;
                 return true;
             }
         }

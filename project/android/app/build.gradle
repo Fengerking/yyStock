@@ -27,4 +27,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'com.zhy:okhttputils:2.6.2'
     implementation 'com.alibaba:fastjson:1.1.56.android'
+    implementation 'com.squareup.okhttp3:okhttp:3.2.0'
 }
