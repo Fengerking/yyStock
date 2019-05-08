@@ -1,4 +1,4 @@
-package com.wyhwl.bang.yystock;
+package com.yystock.stockinfo;
 
 import android.Manifest;
 import android.content.Context;
@@ -312,7 +312,7 @@ public class MainActivity extends AppCompatActivity
                 strOne = "0" + strOne;
             else if (strOne.charAt(0) == '3')
                 strOne = "1" + strOne;
-           else if (strOne.charAt(0) == '0' && strOne.charAt(1) == '0')
+            else if (strOne.charAt(0) == '0' && strOne.charAt(1) == '0')
                 strOne = "1" + strOne;
         }
         if (strOne.length() == 7) {
@@ -444,20 +444,20 @@ public class MainActivity extends AppCompatActivity
 
     class msgHandler extends Handler {
         public void handleMessage(Message msg) {
-             if (msg.what ==MSG_UPDATE_INFO) {
-                 m_bMessage = false;
-                 UpdateStockList();
-             } else if (msg.what == MSG_PARSE_RESULT) {
-                 ShowStockList();
-                 if (m_bResume) {
-                     m_bMessage = true;
-                     m_msgHandler.sendEmptyMessageDelayed(MSG_UPDATE_INFO, 1000);
-                 }
-             } else if (msg.what == MSG_PARSE_ONE) {
-                 ShowStockOne();
-             } else if (msg.what ==  MSG_HIDE_INPUT){
-                 InputMethodManager imm = (InputMethodManager) m_context.getSystemService(Context.INPUT_METHOD_SERVICE);
-                 imm.hideSoftInputFromWindow(m_edtStock.getWindowToken(), 0);
+            if (msg.what ==MSG_UPDATE_INFO) {
+                m_bMessage = false;
+                UpdateStockList();
+            } else if (msg.what == MSG_PARSE_RESULT) {
+                ShowStockList();
+                if (m_bResume) {
+                    m_bMessage = true;
+                    m_msgHandler.sendEmptyMessageDelayed(MSG_UPDATE_INFO, 1000);
+                }
+            } else if (msg.what == MSG_PARSE_ONE) {
+                ShowStockOne();
+            } else if (msg.what ==  MSG_HIDE_INPUT){
+                InputMethodManager imm = (InputMethodManager) m_context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(m_edtStock.getWindowToken(), 0);
             }
         }
     }
@@ -656,13 +656,13 @@ public class MainActivity extends AppCompatActivity
             //Toast.makeText(m_context, "下载文件出错了！ " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         public void onResponse(File file, int id) {
-             try {
+            try {
                 FileInputStream fis = new FileInputStream (file.getPath());
                 Bitmap bmp = BitmapFactory.decodeStream(fis);
                 m_imgStock.setImageBitmap(bmp);
                 fis.close();
                 file.delete();
-             }catch (Exception e) {
+            }catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -692,4 +692,5 @@ public class MainActivity extends AppCompatActivity
         }
         return true;
     }
+    public native String stringFromJNI();
 }

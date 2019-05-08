@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">stockInfo</string>
+    <string name="menu_mystock">MyStock</string>
+    <string name="menu_exit">Exit</string>
+</resources>
