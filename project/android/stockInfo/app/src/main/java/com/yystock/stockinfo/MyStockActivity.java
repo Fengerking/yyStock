@@ -1,11 +1,18 @@
 package com.yystock.stockinfo;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -16,9 +23,11 @@ import android.widget.Toast;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.zhy.http.okhttp.OkHttpUtils;
+import com.zhy.http.okhttp.callback.FileCallBack;
 import com.zhy.http.okhttp.callback.StringCallback;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -26,6 +35,7 @@ import java.util.Collections;
 import java.util.Comparator;
 
 import okhttp3.Call;
+import okhttp3.Request;
 
 
 public class MyStockActivity extends AppCompatActivity {
@@ -43,11 +53,17 @@ public class MyStockActivity extends AppCompatActivity {
     private Context                     m_context = null;
     private ListView                    m_lvMyStock = null;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_my_stock);
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            //actionBar.hide();
+            int color = Color.parseColor("#00574B");
+            ColorDrawable drawable = new ColorDrawable(color);
+            actionBar.setBackgroundDrawable(drawable);
+        }
         super.setTitle("MyStock");
 
         readMyStockFile ();
@@ -59,6 +75,9 @@ public class MyStockActivity extends AppCompatActivity {
     }
 
     private void updateInfo () {
+        if (m_lstStockInfo == null)
+            return;
+
         String strURL = "https://api.money.126.net/data/feed/";
         for (int i = 0; i < m_lstStockInfo.size(); i++) {
             strURL += m_lstStockInfo.get(i).m_strCode; strURL += ",";
@@ -69,6 +88,9 @@ public class MyStockActivity extends AppCompatActivity {
     }
 
     private void showResult () {
+        if (m_lstStockInfo == null)
+            return;
+
         m_lstResult.clear();
 
         int nStart = m_strResponse.indexOf('{');
@@ -132,11 +154,15 @@ public class MyStockActivity extends AppCompatActivity {
             m_lstResult.add (new stockView ());
         }
 
+        ArrayList<stockItem>        lstItems = new ArrayList<stockItem>();
+        stockItem                   stkToday = null;
+
         strItem = "  ";
         int     nTotalNum = 0;
         double  dTotalBuy = 0;
         double  dTotalNow = 0;
         double  dTotalWin = 0;
+
         String  strName = "";
         for (j = 0; j < m_lstStockInfo.size(); j++) {
             stkItem = m_lstStockInfo.get(j);
@@ -146,6 +172,9 @@ public class MyStockActivity extends AppCompatActivity {
                 dTotalBuy += stkItem.m_nNumber * stkItem.m_dBuyPrice;
                 dTotalNow += stkItem.m_nNumber * stkItem.m_dNowPrice;
                 strName = stkItem.m_strName;
+
+                stkToday.m_nNumber += stkItem.m_nNumber;
+
             } else {
                 if (nTotalNum > 0) {
                     stkView = new stockView ();
@@ -157,12 +186,23 @@ public class MyStockActivity extends AppCompatActivity {
                     else
                         stkView.m_nTextColor = Color.rgb(168, 168,168);
                     m_lstResult.add (stkView);
+
+                    lstItems.add(stkToday);
+                    stkToday = null;
                 }
+
                 strItem = stkItem.m_strCode;
                 nTotalNum = stkItem.m_nNumber;
                 dTotalBuy = stkItem.m_nNumber * stkItem.m_dBuyPrice;
                 dTotalNow = stkItem.m_nNumber * stkItem.m_dNowPrice;
                 strName = stkItem.m_strName;
+
+                if (stkToday == null)
+                    stkToday = new stockItem();
+                stkToday.m_strName = strName;
+                stkToday.m_nNumber += stkItem.m_nNumber;
+                stkToday.m_dClsPrice = stkItem.m_dClsPrice;
+                stkToday.m_dNowPrice = stkItem.m_dNowPrice;
             }
 
         }
@@ -175,6 +215,24 @@ public class MyStockActivity extends AppCompatActivity {
             stkView.m_nTextColor = Color.rgb(168, 168,168);
         stkView.m_nTextSize = 18;
         m_lstResult.add (stkView);
+        lstItems.add(stkToday);
+
+        m_lstResult.add (new stockView ());
+        for (i = 0; i < lstItems.size(); i++) {
+            stkItem = lstItems.get(i);
+            stkView = new stockView ();
+            double dPercent = (stkItem.m_dNowPrice - stkItem.m_dClsPrice) * 100 / stkItem.m_dClsPrice;
+            double dStockWin = stkItem.m_nNumber * (stkItem.m_dNowPrice - stkItem.m_dClsPrice);
+            stkView.m_strItem = String.format("%s  %d  %,.2f  %,.2f%%,   %,.2f", stkItem.m_strName,
+                    stkItem.m_nNumber, stkItem.m_dNowPrice, dPercent, dStockWin);
+            stkView.m_nTextSize = 18;
+            if (stkItem.m_dNowPrice > stkItem.m_dClsPrice)
+                stkView.m_nTextColor = Color.rgb(255, 255,255);
+            else
+                stkView.m_nTextColor = Color.rgb(168, 168,168);
+            m_lstResult.add (stkView);
+        }
+        lstItems.clear();
 
         m_lstResult.add (new stockView ());
         stkView = new stockView ();
@@ -210,6 +268,11 @@ public class MyStockActivity extends AppCompatActivity {
     }
 
     private void readMyStockFile () {
+        String strMyStockFile = "/sdcard/yyStock/mystock.txt";
+        File fileMyStock = new File (strMyStockFile);
+        if (!fileMyStock.exists()){
+            return;
+        }
         m_lstStockInfo = new ArrayList<stockItem>();
         m_lstStockComp = new ArrayList<stockComp>();
         m_lstResult = new ArrayList<stockView>();
@@ -288,7 +351,6 @@ public class MyStockActivity extends AppCompatActivity {
         Collections.sort (m_lstStockInfo, sortComp);
     }
 
-
     public class SortComparator implements Comparator {
         public int compare(Object lhs, Object rhs) {
             stockItem a = (stockItem) lhs;
@@ -343,17 +405,5 @@ public class MyStockActivity extends AppCompatActivity {
             }
         }
     }
-}
 
-/*
-:DXZQ:cash=1332.71
-600577,2018-05-02,4.99,51400
-600789,2019-02-22,9.29,125200
-:ZSZQ:cash=62.92
-600577,2018-05-02,3.44,43700
-600789,2018-05-02,9.42,56200
-:ZSRZ:cash=0:debt=2979676.97
-600577,2018-05-02,3.81,292400
-600023,2018-05-02,4.97,956890
-600789,2019-02-26,9.81,186900
- */
+}

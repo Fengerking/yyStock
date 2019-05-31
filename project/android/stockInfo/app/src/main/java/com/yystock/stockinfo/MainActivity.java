@@ -6,13 +6,13 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Layout;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.inputmethod.InputMethodManager;
@@ -52,6 +52,10 @@ public class MainActivity extends AppCompatActivity
     public static final int     MSG_UPDATE_INFO     = 1001;
     public static final int     MSG_PARSE_RESULT    = 1002;
     public static final int     MSG_PARSE_ONE       = 1003;
+    public static final int     HTTP_DOWN_STOCKINFO = 2000;
+    public static final int     HTTP_DOWN_STOCKONE  = 2001;
+    public static final int     HTTP_DOWN_STOCKPIC  = 2010;
+    public static final int     HTTP_DOWN_STOCKTXT  = 2011;
 
     private msgHandler          m_msgHandler    = null;
     private boolean             m_bMessage = false;
@@ -104,6 +108,15 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        super.setTitle("yyStock Realtime Information");
+        ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            //actionBar.hide();
+            int color = Color.parseColor("#00574B");
+            ColorDrawable drawable = new ColorDrawable(color);
+            actionBar.setBackgroundDrawable(drawable);
+        }
+
         m_context = this;
 
         m_lstImageType = new ArrayList<String>();
@@ -213,6 +226,9 @@ public class MainActivity extends AppCompatActivity
         // TODO Auto-generated method stub
         int id = item.getItemId();
         switch (id) {
+            case R.id.menu_download:
+                downloadMyStockTxt ();
+                break;
             case R.id.menu_settings:
                 startActivity(new Intent(this, MyStockActivity.class));
                 break;
@@ -303,7 +319,7 @@ public class MainActivity extends AppCompatActivity
             strURL += m_lstCode.get(i); strURL += ",";
         }
         OkHttpUtils
-                .get().url(strURL).id(101)
+                .get().url(strURL).id(HTTP_DOWN_STOCKINFO)
                 .build().execute(new httpDataCallBack());
 
         String strOne = m_edtStock.getText().toString();
@@ -325,12 +341,11 @@ public class MainActivity extends AppCompatActivity
                 m_strStockCode = strOne;
             }
 
-
             if (!OneInList(m_strStockCode)) {
                 strURL = "https://api.money.126.net/data/feed/";
                 strURL += m_strStockCode;
                 OkHttpUtils
-                        .get().url(strURL).id(201)
+                        .get().url(strURL).id(HTTP_DOWN_STOCKONE)
                         .build().execute(new httpDataCallBack());
             }
         }
@@ -345,10 +360,20 @@ public class MainActivity extends AppCompatActivity
             String strPath = "/sdcard/yyStock/";
             String strFile = strOne + ".png";
             OkHttpUtils
-                    .get().url(strURL).id(100)
+                    .get().url(strURL).id(HTTP_DOWN_STOCKPIC)
                     .tag(m_context).build()
                     .execute(new DownLoadFileCallBack(strPath, strFile));
         }
+    }
+
+    private void downloadMyStockTxt () {
+        String strURL = "https://bangnote.oss-cn-shanghai.aliyuncs.com/bangfei/mystock.txt";
+        String strPath = "/sdcard/yyStock/";
+        String strFile = "mystock.txt";
+        OkHttpUtils
+                .get().url(strURL).id(HTTP_DOWN_STOCKTXT)
+                .tag(m_context).build()
+                .execute(new DownLoadFileCallBack(strPath, strFile));
     }
 
     private void ShowStockList () {
@@ -629,10 +654,10 @@ public class MainActivity extends AppCompatActivity
         }
 
         public void onResponse(String response, int id) {
-            if (id == 101) {
+            if (id == HTTP_DOWN_STOCKINFO) {
                 m_strResponse =response;
                 m_msgHandler.sendEmptyMessageDelayed(MSG_PARSE_RESULT, 0);
-            } else {
+            } else if (id == HTTP_DOWN_STOCKONE){
                 m_strStockOne = response;
                 m_msgHandler.sendEmptyMessageDelayed(MSG_PARSE_ONE, 0);
             }
@@ -656,14 +681,19 @@ public class MainActivity extends AppCompatActivity
             //Toast.makeText(m_context, "下载文件出错了！ " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
         public void onResponse(File file, int id) {
-            try {
-                FileInputStream fis = new FileInputStream (file.getPath());
-                Bitmap bmp = BitmapFactory.decodeStream(fis);
-                m_imgStock.setImageBitmap(bmp);
-                fis.close();
-                file.delete();
-            }catch (Exception e) {
-                e.printStackTrace();
+            if (id == HTTP_DOWN_STOCKPIC) {
+                try {
+                    FileInputStream fis = new FileInputStream(file.getPath());
+                    Bitmap bmp = BitmapFactory.decodeStream(fis);
+                    updateBitmap(bmp, 0);
+                    m_imgStock.setImageBitmap(bmp);
+                    fis.close();
+                    file.delete();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else if (id == HTTP_DOWN_STOCKTXT) {
+                Toast.makeText(m_context, "文件下载成功!", Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -692,5 +722,6 @@ public class MainActivity extends AppCompatActivity
         }
         return true;
     }
-    public native String stringFromJNI();
+
+    public native int updateBitmap(Object bmp, int type);
 }

@@ -1,24 +1,42 @@
 #include <jni.h>
 #include <string>
-
-/*
 #include "./android/bitmap.h"
 
-	// for bitmap 
-	jclass				m_pClsBitmap;
-	jmethodID			m_fBmpCreate;
-	jobject 			m_pBmpVideo; 
-*/
+extern "C" JNIEXPORT int JNICALL
+Java_com_yystock_stockinfo_MainActivity_updateBitmap (JNIEnv *env, jobject obj, jobject bmp, jint type) {
+    AndroidBitmapInfo 	bmpInfo;
+    char *             	pPixels = NULL;
+    int *               pColor = NULL;
+    int                 nColor = 0;
 
-extern "C" JNIEXPORT jstring JNICALL
-Java_com_yystock_stockinfo_MainActivity_stringFromJNI(
-        JNIEnv *env,
-        jobject /* this */) {
-    std::string hello = "Hello from C++";
-    return env->NewStringUTF(hello.c_str());
+    AndroidBitmap_getInfo(env, bmp, &bmpInfo);
+    AndroidBitmap_lockPixels(env, bmp, (void **)&pPixels);
+
+    for (int i = 1; i < bmpInfo.height - 1; i++) {
+        pColor = (int *)(pPixels + (i * bmpInfo.stride));
+        for (int j = 1; j < bmpInfo.width - 1; j++) {
+            nColor = *pColor;
+            if (nColor == 0XFFFFFFFF) // Background color
+                *pColor = 0XFF485700;
+            if (nColor == 0XFFFDE9DD) // FenShi background
+                *pColor = 0XFF485700;
+            if (nColor == 0XFF0A0AFE) // FenShi background
+                *pColor = 0XFFFFFFFF;
+            if (nColor == 0XFF5B5FEE) // KX tu Red block
+                *pColor = 0XFFFFFFFF;
+            pColor++;
+        }
+    }
+
+    AndroidBitmap_unlockPixels(env, bmp);
+
+    return 1;
 }
 
 /*
+jclass				m_pClsBitmap;
+jmethodID			m_fBmpCreate;
+jobject 			m_pBmpVideo;
 int	CNDKVDecRnd::SendBitmap (JNIEnv* pEnv, QC_DATA_BUFF * pBuff)
 {
 	if (m_pClsBitmap == NULL) {
