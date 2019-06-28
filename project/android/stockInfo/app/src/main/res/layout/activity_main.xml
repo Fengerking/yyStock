@@ -146,9 +146,10 @@
 
                 <ImageView
                     android:id="@+id/img_stockBG"
-                    android:background="@drawable/ic_launcher_foreground"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"/>
+                    android:background="@drawable/img_stock_bg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"/>
 
                 <ImageView
                     android:id="@+id/img_stock"
