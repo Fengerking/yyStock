@@ -1,17 +1,17 @@
-package com.yystock.stockinfo;
+package com.yystock.yang;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.ActionBar;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -206,7 +206,6 @@ public class MainActivity extends AppCompatActivity
             m_bMessage = true;
             m_msgHandler.sendEmptyMessageDelayed(MSG_UPDATE_INFO, 2);
         }
-
     }
     protected void onStop(){
         super.onStop();
@@ -398,13 +397,23 @@ public class MainActivity extends AppCompatActivity
             if (i == 0)
                 lTurnover = lTurnover / 1000;
 
-            m_strUpdateTime = "更新时间  " + jsnItem.getString("update");
+            m_strUpdateTime = "更新时间 " + jsnItem.getString("update");
             String strArrow = jsnItem.getString("arrow");
-            if (dPercent < 0) {
-                dPercent = -dPercent;
-                m_strInfo[i] = String.format("%s %.2f  %.2f%% %s %,d", strName, dNowPrice, dPercent, strArrow, lTurnover);
-            } else {
-                m_strInfo[i] = String.format("%s %.2f  %.2f%%  %,d", strName, dNowPrice, dPercent, lTurnover);
+            if (i == 0) {
+                if (dPercent < 0) {
+                    dPercent = -dPercent;
+                    m_strInfo[i] = String.format("%s %.2f %.2f%%%s%,d", strName, dNowPrice, dPercent, m_strArrowDown, lTurnover);
+                } else {
+                    m_strInfo[i] = String.format("%s %.2f %.2f%%%s%,d", strName, dNowPrice, dPercent, m_strArrowUP, lTurnover);
+                }
+            }
+            else {
+                if (dPercent < 0) {
+                    dPercent = -dPercent;
+                    m_strInfo[i] = String.format("%s %.2f %.2f%% %s %,d", strName, dNowPrice, dPercent, m_strArrowDown, lTurnover);
+                } else {
+                    m_strInfo[i] = String.format("%s %.2f %.2f%% %s %,d", strName, dNowPrice, dPercent, m_strArrowUP, lTurnover);
+                }
             }
 
             m_nColor[i] = dNowPrice >= dYstPrice ? 1 : 0;
@@ -442,12 +451,12 @@ public class MainActivity extends AppCompatActivity
             double  dPrice = m_jsnItem.getDoubleValue("price");
             if (lVolume != m_lPrevvolume) {
                 String strHist;
-                strHist = String.format("%s   %.2f      %d", strTime.substring(10), dPrice, (lVolume - m_lPrevvolume) / 100);
+                strHist = String.format("%s  %.2f %d", strTime.substring(10), dPrice, (lVolume - m_lPrevvolume) / 100);
                 if (m_dPrevPrice > 0) {
                     if (dPrice > m_dPrevPrice)
-                        strHist = String.format("%s   %.2f %s %d", strTime.substring(10), dPrice, m_strArrowUP, (lVolume - m_lPrevvolume) / 100);
+                        strHist = String.format("%s  %.2f %d %s", strTime.substring(10), dPrice, (lVolume - m_lPrevvolume) / 100, m_strArrowUP);
                     else if (dPrice < m_dPrevPrice)
-                        strHist = String.format("%s   %.2f %s %d", strTime.substring(10), dPrice, m_strArrowDown, (lVolume - m_lPrevvolume) / 100);
+                        strHist = String.format("%s  %.2f %d %s", strTime.substring(10), dPrice, (lVolume - m_lPrevvolume) / 100, m_strArrowDown);
                 }
                 m_lstHistory.add (strHist);
                 m_lPrevvolume = lVolume;
@@ -501,6 +510,7 @@ public class MainActivity extends AppCompatActivity
 
         public View getView(int position, View convertView, ViewGroup parent) {
             TextView mTextView = new TextView(getApplicationContext());
+            mTextView.setTypeface(Typeface.MONOSPACE);
             if (position <  m_lstCode.size()) {
                 mTextView.setText(m_strInfo[position]);
                 if (m_nColor[position] > 0)
@@ -511,7 +521,7 @@ public class MainActivity extends AppCompatActivity
                 mTextView.setText(m_strUpdateTime);
                 mTextView.setTextColor(m_nClrWhite);
             }
-            mTextView.setTextSize(24);
+            mTextView.setTextSize(22);
             return mTextView;
         }
     }
@@ -529,6 +539,7 @@ public class MainActivity extends AppCompatActivity
 
         public View getView(int position, View convertView, ViewGroup parent) {
             TextView mTextView = new TextView(getApplicationContext());
+            mTextView.setTypeface(Typeface.MONOSPACE);
             if (m_jsnItem == null)
                 return mTextView;
             double  dClose = m_jsnItem.getDoubleValue("yestclose");
@@ -571,11 +582,11 @@ public class MainActivity extends AppCompatActivity
             lNumber = lNumber / 100;
             String strItem = "";
             if (position == 5) {
-                strItem = String.format("   %.2f", dPrice);
+                strItem = String.format(" %.2f", dPrice);
                 mTextView.setTextSize(30);
             } else if (position <= 10){
-                strItem = String.format("  %.2f  %,d", dPrice, lNumber);
-                mTextView.setTextSize(18);
+                strItem = String.format(" %.2f %,d", dPrice, lNumber);
+                mTextView.setTextSize(16);
             }
             mTextView.setText(strItem);
 
@@ -600,19 +611,20 @@ public class MainActivity extends AppCompatActivity
 
         public View getView(int position, View convertView, ViewGroup parent) {
             TextView mTextView = new TextView(getApplicationContext());
+            mTextView.setTypeface(Typeface.MONOSPACE);
             if (m_jsnItem == null)
                 return mTextView;
             double  dClose = m_jsnItem.getDoubleValue("yestclose");
             double  dPrice = 0;
             String  strItem = "";
             if (position == 0) {
-                strItem = String.format("YTCL:   %.2f", m_jsnItem.getDoubleValue("yestclose"));
+                strItem = String.format("YTCL: %.2f", m_jsnItem.getDoubleValue("yestclose"));
             } else if (position == 1) {
-                strItem = String.format("OPEN:   %.2f", m_jsnItem.getDoubleValue("open"));
+                strItem = String.format("OPEN: %.2f", m_jsnItem.getDoubleValue("open"));
             } else if (position == 2) {
-                strItem = String.format("HIGH:   %.2f", m_jsnItem.getDoubleValue("high"));
+                strItem = String.format("HIGH: %.2f", m_jsnItem.getDoubleValue("high"));
             } else if (position == 3) {
-                strItem = String.format("LOW :   %.2f", m_jsnItem.getDoubleValue("low"));
+                strItem = String.format("LOW : %.2f", m_jsnItem.getDoubleValue("low"));
             }
             mTextView.setTextSize(16);
             mTextView.setText(strItem);
@@ -634,6 +646,7 @@ public class MainActivity extends AppCompatActivity
 
         public View getView(int position, View convertView, ViewGroup parent) {
             TextView mTextView = new TextView(getApplicationContext());
+            mTextView.setTypeface(Typeface.MONOSPACE);
             if (m_jsnItem == null)
                 return mTextView;
             String  strItem = "";
@@ -700,27 +713,28 @@ public class MainActivity extends AppCompatActivity
     }
 
     private boolean CheckWritePermission (boolean bInit) {
-        if (bInit) {
-            //检查权限（NEED_PERMISSION）是否被授权 PackageManager.PERMISSION_GRANTED表示同意授权
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    != PackageManager.PERMISSION_GRANTED) {
-                //用户已经拒绝过一次，再次弹出权限申请对话框需要给用户一个解释
-                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    Toast.makeText(this, "请开通文件读写权限，否则无法正常使用本应用！", Toast.LENGTH_SHORT).show();
-                }
-                //申请权限
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
-
-            } else {
-                //Toast.makeText(this, "授权成功！", Toast.LENGTH_SHORT).show();
-                return true;
-            }
-        } else {
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                //Toast.makeText(this, "请开通文件读写权限，否则无法正常使用本应用！", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-        }
+//        if (bInit) {
+//            //检查权限（NEED_PERMISSION）是否被授权 PackageManager.PERMISSION_GRANTED表示同意授权
+//            AppCompatActivity.
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+//                    != PackageManager.PERMISSION_GRANTED) {
+//                //用户已经拒绝过一次，再次弹出权限申请对话框需要给用户一个解释
+//                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+//                    Toast.makeText(this, "请开通文件读写权限，否则无法正常使用本应用！", Toast.LENGTH_SHORT).show();
+//                }
+//                //申请权限
+//                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, REQUEST_WRITE_EXTERNAL_STORAGE);
+//
+//            } else {
+//                //Toast.makeText(this, "授权成功！", Toast.LENGTH_SHORT).show();
+//                return true;
+//            }
+//        } else {
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+//                //Toast.makeText(this, "请开通文件读写权限，否则无法正常使用本应用！", Toast.LENGTH_SHORT).show();
+//                return false;
+//            }
+//        }
         return true;
     }
 
