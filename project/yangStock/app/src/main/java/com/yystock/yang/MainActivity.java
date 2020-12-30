@@ -410,9 +410,9 @@ public class MainActivity extends AppCompatActivity
             else {
                 if (dPercent < 0) {
                     dPercent = -dPercent;
-                    m_strInfo[i] = String.format("%s %.2f %.2f%% %s %,d", strName, dNowPrice, dPercent, m_strArrowDown, lTurnover);
+                    m_strInfo[i] = String.format("%s %.2f %.2f%% %s%,d", strName, dNowPrice, dPercent, m_strArrowDown, lTurnover);
                 } else {
-                    m_strInfo[i] = String.format("%s %.2f %.2f%% %s %,d", strName, dNowPrice, dPercent, m_strArrowUP, lTurnover);
+                    m_strInfo[i] = String.format("%s %.2f %.2f%% %s%,d", strName, dNowPrice, dPercent, m_strArrowUP, lTurnover);
                 }
             }
 
